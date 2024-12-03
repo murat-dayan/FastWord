@@ -11,6 +11,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.rememberNavController
+import com.muratdayan.auth.navigation.authNavGraph
+import com.muratdayan.navigation.NavigationGraph
 import com.muratdayan.ui.theme.FastWordTheme
 
 class MainActivity : ComponentActivity() {
@@ -19,10 +22,14 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             FastWordTheme {
+                val navController = rememberNavController()
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
+                    NavigationGraph(
+                        navHostController = navController,
+                        modifier = Modifier.padding(innerPadding),
+                        authNavGraph = {
+                            authNavGraph(it)
+                        }
                     )
                 }
             }
@@ -30,10 +37,3 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
