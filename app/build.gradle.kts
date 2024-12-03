@@ -6,12 +6,12 @@ plugins {
 
 android {
     namespace = "com.muratdayan.fastword"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.muratdayan.fastword"
         minSdk = 28
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -40,6 +40,23 @@ android {
 }
 
 dependencies {
+
+    // Core Modüller
+    implementation(project(":core:common"))
+    implementation(project(":core:ui"))
+    implementation(project(":core:navigation"))
+
+    // Data ve Domain
+    implementation(project(":data"))
+    implementation(project(":domain"))
+
+    // Feature Modülleri
+    implementation(project(":feature:auth"))
+    implementation(project(":feature:friends"))
+    implementation(project(":feature:game"))
+    implementation(project(":feature:leaderboard"))
+    implementation(project(":feature:shop"))
+    implementation(project(":feature:settings"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

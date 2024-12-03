@@ -21,3 +21,14 @@ dependencyResolutionManagement {
 
 rootProject.name = "Fast Word"
 include(":app")
+include(":core:common")
+include(":core:ui")
+include(":core:navigation")
+include(":data")
+include(":domain")
+include(":feature:friends")
+include(":feature:game")
+include(":feature:leaderboard")
+include(":feature:settings")
+include(":feature:shop")
+include(":feature:auth")
