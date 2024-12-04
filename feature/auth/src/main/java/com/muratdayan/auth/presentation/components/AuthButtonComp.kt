@@ -44,7 +44,7 @@ fun AuthButtonComp(
         modifier = modifier
             .fillMaxWidth()
             .clip(MaterialTheme.shapes.medium)
-            .background(MaterialTheme.colorScheme.background)
+            .background(containerColor)
             .clickable { onClick() }
             .padding(Dimensions.paddingSmall),
         contentAlignment = Alignment.Center
