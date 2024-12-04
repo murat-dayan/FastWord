@@ -7,10 +7,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -23,6 +26,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.muratdayan.core_ui.ui.theme.Dimensions
 import com.muratdayan.ui.R
@@ -38,6 +42,7 @@ fun FastWordButtonComp(
     @DrawableRes icon: Int? = null,
     iconTint: Color = MaterialTheme.colorScheme.primary,
     textColor: Color = MaterialTheme.colorScheme.primary,
+    textSize: TextUnit = Dimensions.textSizeMedium,
     containerColor: Color = MaterialTheme.extendedColors.customBlue.colorContainer
 ) {
     Box(
@@ -51,23 +56,22 @@ fun FastWordButtonComp(
     ) {
         Row(
             modifier = Modifier
+                .fillMaxWidth()
                 .padding(horizontal = Dimensions.paddingMedium),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+            horizontalArrangement = Arrangement.SpaceBetween
         ) {
             FastWordTextComp(
                 text = text,
-                modifier = Modifier
-                    .weight(0.9f),
+                modifier = Modifier,
                 color = textColor,
                 fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.bodyLarge
+                style = MaterialTheme.typography.titleMedium,
+                fontSize = textSize
             )
 
             Row(
-                modifier = Modifier
-                    .weight(0.1f),
+                modifier = Modifier,
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 FastWordTextComp(
@@ -95,7 +99,7 @@ fun FastWordButtonComp(
 
 @Preview
 @Composable
-fun FastWordButtonCompPreview(){
+private fun FastWordButtonCompPreview(){
     FastWordTheme {
         FastWordButtonComp(
             icon = R.drawable.ic_flash

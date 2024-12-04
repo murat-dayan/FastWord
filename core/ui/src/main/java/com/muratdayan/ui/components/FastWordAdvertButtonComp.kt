@@ -55,7 +55,7 @@ fun FastWordAdvertButtonComp(
         Row (
             modifier = Modifier
                 .wrapContentSize()
-                .padding(Dimensions.paddingSmall),
+                .padding(end = Dimensions.paddingSmall),
             horizontalArrangement = Arrangement.spacedBy(Dimensions.spacingSmall,Alignment.CenterHorizontally),
             verticalAlignment = Alignment.CenterVertically
         ){
@@ -68,7 +68,6 @@ fun FastWordAdvertButtonComp(
                 color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.Bold
             )
-            Spacer(modifier = Modifier.height(Dimensions.spacingMedium))
             Row(
                 modifier = Modifier
                     .background(MaterialTheme.colorScheme.inverseSurface)
@@ -81,8 +80,10 @@ fun FastWordAdvertButtonComp(
                 )
                 Icon(
                     painter = painterResource(iconValue),
+                    modifier = Modifier
+                        .size(30.dp),
                     contentDescription = null,
-                    tint = Color.Unspecified
+                    tint = Color.Unspecified,
                 )
             }
         }
