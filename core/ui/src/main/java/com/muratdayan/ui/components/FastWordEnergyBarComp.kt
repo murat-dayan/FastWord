@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -37,14 +39,15 @@ fun FastWordEnergyBarComp(
 
     Box(
         modifier = modifier
-            .height(50.dp),
+            .height(50.dp)
+            .width(100.dp),
         contentAlignment = Alignment.CenterStart
     ) {
 
         Box(
             modifier = modifier
                 .height(30.dp)
-                .fillMaxWidth()
+                .wrapContentWidth()
                 .clip(MaterialTheme.shapes.small)
                 .background(MaterialTheme.colorScheme.scrim)
         ) {
