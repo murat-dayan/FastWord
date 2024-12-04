@@ -11,7 +11,8 @@ import androidx.navigation.compose.navigation
 fun NavigationGraph(
     modifier: Modifier = Modifier,
     navHostController: NavHostController,
-    authNavGraph: (NavGraphBuilder.(modifier: Modifier)->Unit)?
+    authNavGraph: (NavGraphBuilder.(modifier: Modifier)->Unit)?,
+    gameNavGraph: (NavGraphBuilder.(modifier: Modifier)->Unit)?
 ){
 
     NavHost(
@@ -19,6 +20,7 @@ fun NavigationGraph(
         startDestination = Screen.SignInScreenRoute.route
     ) {
         authNavGraph?.invoke(this, modifier)
+        gameNavGraph?.invoke(this, modifier)
     }
 
 }

@@ -13,9 +13,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import com.muratdayan.auth.navigation.authNavGraph
+import com.muratdayan.game.navigation.gameNavGraph
 import com.muratdayan.navigation.NavigationGraph
+import com.muratdayan.navigation.Screen
 import com.muratdayan.ui.theme.FastWordTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,7 +32,15 @@ class MainActivity : ComponentActivity() {
                         navHostController = navController,
                         modifier = Modifier.padding(innerPadding),
                         authNavGraph = {
-                            authNavGraph(it)
+                            authNavGraph(
+                                modifier = it,
+                                navigateToGame = {
+                                    navController.navigate(Screen.MainScreenRoute.route)
+                                }
+                            )
+                        },
+                        gameNavGraph = {
+                            gameNavGraph(modifier = it)
                         }
                     )
                 }

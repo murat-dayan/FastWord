@@ -4,12 +4,15 @@ import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -34,40 +37,46 @@ fun AuthButtonComp(
     onClick: () -> Unit = {},
     modifier: Modifier = Modifier,
     @DrawableRes icon: Int,
-    textColor: Color = MaterialTheme.colorScheme.primary
+    textColor: Color = MaterialTheme.colorScheme.primary,
+    containerColor: Color = MaterialTheme.colorScheme.background
 ) {
-    Row (
+    Box(
         modifier = modifier
             .fillMaxWidth()
+            .clip(MaterialTheme.shapes.medium)
             .background(MaterialTheme.colorScheme.background)
-            .clip(MaterialTheme.shapes.large)
-            .padding(Dimensions.paddingSmall)
             .clickable { onClick() }
-            ,
-
-        horizontalArrangement = Arrangement.Center,
-        verticalAlignment = Alignment.CenterVertically
-    ){
-        Icon(
-            painter = painterResource(icon),
-            contentDescription = null,
-            modifier = Modifier.size(30.dp),
-            tint = Color.Unspecified
-        )
-
-        FastWordTextComp(
-            text = text,
-            color = textColor,
-            fontWeight = FontWeight.Bold,
-            modifier = Modifier.weight(1f),
-            textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodyLarge,
-            fontSize = Dimensions.textSizeLarge
-        )
+            .padding(Dimensions.paddingSmall),
+        contentAlignment = Alignment.Center
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Icon(
+                painter = painterResource(icon),
+                contentDescription = null,
+                modifier = Modifier
+                    .size(30.dp)
+                    .weight(0.1f)
+                ,
+                tint = Color.Unspecified,
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = text,
+                modifier = Modifier
+                    .weight(0.9f),
+                color = textColor,
+                fontWeight = FontWeight.Bold,
+                textAlign = TextAlign.Center,
+                style = MaterialTheme.typography.bodyLarge
+            )
+        }
     }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
 fun AuthButtonCompPreview() {
     FastWordTheme {
