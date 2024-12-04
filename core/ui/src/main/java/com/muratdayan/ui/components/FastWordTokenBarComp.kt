@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -34,13 +35,13 @@ fun FastWordTokenBarComp(
 ){
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .height(50.dp),
         contentAlignment = Alignment.CenterStart
     ) {
 
         Box(
-            modifier = modifier
+            modifier = Modifier
                 .height(30.dp)
                 .fillMaxWidth()
                 .clip(MaterialTheme.shapes.small)
@@ -85,7 +86,8 @@ fun FastWordTokenBarComp(
         FastWordTextComp(
             text = tokenValue.toString(),
             modifier = Modifier
-                .align(Alignment.Center),
+                .align(Alignment.Center)
+                .padding(start = Dimensions.paddingMedium),
             color = MaterialTheme.colorScheme.background,
             fontWeight = FontWeight.Bold
         )

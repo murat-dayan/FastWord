@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -35,7 +36,7 @@ fun FastWordEnergyBarComp(
     val barColor = MaterialTheme.colorScheme.onTertiaryContainer
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .height(50.dp),
         contentAlignment = Alignment.CenterStart
     ) {
