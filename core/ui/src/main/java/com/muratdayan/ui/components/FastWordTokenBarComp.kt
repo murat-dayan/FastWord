@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -36,18 +37,26 @@ fun FastWordTokenBarComp(
 
     Box(
         modifier = modifier
-            .height(50.dp),
+            .height(50.dp)
+            .width(80.dp),
         contentAlignment = Alignment.CenterStart
     ) {
 
         Box(
-            modifier = Modifier
+            modifier = modifier
                 .height(30.dp)
-                .fillMaxWidth()
+                .wrapContentWidth()
                 .clip(MaterialTheme.shapes.small)
+                .align(Alignment.CenterEnd)
                 .background(MaterialTheme.colorScheme.scrim)
         ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.scrim)
 
+            )
         }
 
         Box(
@@ -57,7 +66,6 @@ fun FastWordTokenBarComp(
         ) {
             Box(
                 modifier = Modifier
-                    .padding(bottom = Dimensions.paddingSmall, end = Dimensions.paddingSmall)
                     .fillMaxHeight()
                     .align(Alignment.TopStart)
             ) {
@@ -76,8 +84,7 @@ fun FastWordTokenBarComp(
                 Icon(
                     painter = painterResource(R.drawable.ic_add),
                     contentDescription = null,
-                    modifier = Modifier
-                        .size(width = 30.dp, height = 25.dp),
+                    modifier = Modifier.height(20.dp),
                     tint = MaterialTheme.colorScheme.background
                 )
             }
@@ -86,13 +93,15 @@ fun FastWordTokenBarComp(
         FastWordTextComp(
             text = tokenValue.toString(),
             modifier = Modifier
-                .align(Alignment.Center)
-                .padding(start = Dimensions.paddingMedium),
+                .align(Alignment.CenterEnd)
+                .padding(end = Dimensions.paddingSmall),
             color = MaterialTheme.colorScheme.background,
+            textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold
         )
     }
 }
+
 
 
 

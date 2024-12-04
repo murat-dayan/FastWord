@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -24,18 +25,12 @@ fun FastWordProfileImageComp(
     size: Int = 100,
     contentDescription: String? = null,
     contentScale: ContentScale = ContentScale.Crop,
-    borderColor: Color? = null,
-    borderWidth: Int = 0
 ){
     Box(
         modifier = modifier
             .size(size.dp)
             .clip(CircleShape)
-            .then(
-                if (borderColor != null && borderWidth > 0) {
-                    Modifier.background(borderColor)
-                } else Modifier
-            )
+            .background(MaterialTheme.colorScheme.background)
     ) {
         Image(
             painter = imagePainter,
@@ -49,11 +44,11 @@ fun FastWordProfileImageComp(
 }
 
 @Composable
-@Preview(showBackground = true)
+@Preview()
 private fun FastWordProfileImageCompPreview(){
     FastWordTheme {
         FastWordProfileImageComp(
-            imagePainter = painterResource(R.drawable.avatar)
+            imagePainter = painterResource(R.drawable.avatar),
         )
     }
 }
