@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -33,6 +35,7 @@ import com.muratdayan.ui.theme.extendedColors
 
 @Composable
 fun FastWordAdvertButtonComp(
+    modifier: Modifier = Modifier,
     containerColor: Color = MaterialTheme.extendedColors.customBlue.colorContainer,
     priceValue: Int,
     @DrawableRes iconValue:Int = R.drawable.ic_flash,
@@ -40,9 +43,9 @@ fun FastWordAdvertButtonComp(
 ){
 
     Box(
-        modifier = Modifier
-            .fillMaxWidth()
+        modifier = modifier
             .height(50.dp)
+            .wrapContentWidth()
             .background(containerColor)
             .clickable {
                 onClick()
@@ -50,8 +53,10 @@ fun FastWordAdvertButtonComp(
         contentAlignment = Alignment.Center
     ){
         Row (
-            modifier = Modifier.fillMaxSize(),
-            horizontalArrangement = Arrangement.spacedBy(Dimensions.spacingSmall),
+            modifier = Modifier
+                .wrapContentSize()
+                .padding(Dimensions.paddingSmall),
+            horizontalArrangement = Arrangement.spacedBy(Dimensions.spacingSmall,Alignment.CenterHorizontally),
             verticalAlignment = Alignment.CenterVertically
         ){
             Icon(
