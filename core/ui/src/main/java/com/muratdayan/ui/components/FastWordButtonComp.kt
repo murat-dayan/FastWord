@@ -36,6 +36,7 @@ fun FastWordButtonComp(
     onClick: () -> Unit = {},
     modifier: Modifier = Modifier,
     @DrawableRes icon: Int? = null,
+    iconTint: Color = MaterialTheme.colorScheme.primary,
     textColor: Color = MaterialTheme.colorScheme.primary,
     containerColor: Color = MaterialTheme.extendedColors.customBlue.colorContainer
 ) {
@@ -60,7 +61,7 @@ fun FastWordButtonComp(
                     .weight(0.9f),
                 color = textColor,
                 fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Justify,
+                textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.bodyLarge
             )
 
@@ -84,7 +85,7 @@ fun FastWordButtonComp(
                         modifier = Modifier
                             .size(30.dp)
                         ,
-                        tint = Color.Unspecified,
+                        tint = iconTint,
                     )
                 }
             }
