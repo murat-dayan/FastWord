@@ -1,5 +1,6 @@
 [versions]
 agp = "8.7.3"
+gson = "2.10.1"
 kotlin = "2.0.21"
 coreKtx = "1.15.0"
 junit = "4.13.2"
@@ -13,11 +14,17 @@ material = "1.12.0"
 kspVersion = "2.0.21-1.0.27"
 hiltVersion = "2.52"
 hiltNavigationCompose = "1.2.0"
+okhttp = "4.12.0"
 uiTextGoogleFonts = "1.7.5"
 navigation = "2.8.4"
+ktorClientAndroid = "2.3.12"
+supabase = "2.5.2"
+coilCompose = "2.6.0"
+kotlinxSerializationJson = "1.6.3"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
+gson = { module = "com.google.code.gson:gson", version.ref = "gson" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "junitVersion" }
 androidx-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
@@ -39,6 +46,13 @@ androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-com
 androidx-ui-text-google-fonts = { group = "androidx.compose.ui", name = "ui-text-google-fonts", version.ref = "uiTextGoogleFonts" }
 navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigation" }
 lifecycle-runtime-compose = { group = "androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "lifecycleRuntimeKtx" }
+okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
+coil-compose = { module = "io.coil-kt: coil-compose", version.ref = "coilCompose" }
+kotlinx-serialization-json = { module = "org.jetbrains.kotlinx: kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+realtime-kt = { module = "io.github.jan-tennert.supabase:realtime-kt", version.ref = "supabase" }
+supabase-bom = { group = "io.github.jan-tennert.supabase", name = "bom", version.ref = "supabase" }
+ktor-client-android = { module = "io.ktor:ktor-client-android", version.ref = "ktorClientAndroid" }
+postgrest-kt = { module = "io.github.jan-tennert.supabase: postgrest-kt" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }

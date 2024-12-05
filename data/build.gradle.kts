@@ -1,6 +1,11 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.hiltAndroid)
+    alias(libs.plugins.kotlinAndroidKsp)
+    kotlin("plugin.serialization")
 }
 
 android {
@@ -9,6 +14,25 @@ android {
 
     defaultConfig {
         minSdk = 28
+
+        val keyStoreFile = project.rootProject.file("apikeys.properties")
+        val properties = Properties()
+        properties.load(keyStoreFile.inputStream())
+
+        val supabaseUrl = properties.getProperty("SUPABASE_URL")?:""
+        val supabaseKey = properties.getProperty("SUPABASE_KEY")?:""
+
+        buildConfigField(
+            type = "String",
+            name = "SUPABASE_URL",
+            value = supabaseUrl
+        )
+
+        buildConfigField(
+            type = "String",
+            name = "SUPABASE_KEY",
+            value = supabaseKey
+        )
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
@@ -30,6 +54,9 @@ android {
     kotlinOptions {
         jvmTarget = "11"
     }
+    buildFeatures {
+        buildConfig = true
+    }
 }
 
 dependencies {
@@ -40,4 +67,14 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    implementation (platform (libs.supabase.bom))
+    implementation (libs.realtime.kt)
+    implementation (libs.postgrest.kt)
+    implementation (libs.ktor.client.android)
+    implementation (libs.kotlinx.serialization.json)
+
+
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
 }
