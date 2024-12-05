@@ -25,10 +25,15 @@ fun FastWordGameCardComp(
     imagePainter: Painter = painterResource(com.muratdayan.ui.R.drawable.avatar),
     name: String,
     cardInfo: String,
-    score: String?=null
+    score: String?=null,
+    onClickCard: ()->Unit = {},
+    onClickImage: ()->Unit = {},
+    onClickPlay: ()->Unit={}
 ){
 
-    FastWordBaseCardComp {
+    FastWordBaseCardComp (
+        onClick = onClickCard
+    ){
         Row (
             modifier = modifier.fillMaxSize(),
             verticalAlignment = Alignment.CenterVertically,
@@ -37,7 +42,8 @@ fun FastWordGameCardComp(
             FastWordProfileImageComp(
                 modifier = Modifier,
                 imagePainter = imagePainter,
-                size = 30
+                size = 30,
+                onClick = onClickImage
             )
             Column (
                 modifier = Modifier
@@ -78,7 +84,7 @@ fun FastWordGameCardComp(
                 modifier = Modifier
                     .weight(1.5f),
                 text = "Play",
-                onClick = {},
+                onClick = onClickPlay,
                 icon = com.muratdayan.ui.R.drawable.ic_flash,
                 iconTint = MaterialTheme.colorScheme.primary)
         }

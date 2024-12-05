@@ -2,6 +2,7 @@ package com.muratdayan.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -25,12 +26,16 @@ fun FastWordProfileImageComp(
     size: Int = 100,
     contentDescription: String? = null,
     contentScale: ContentScale = ContentScale.Crop,
+    onClick : ()->Unit = {}
 ){
     Box(
         modifier = modifier
             .size(size.dp)
             .clip(CircleShape)
             .background(MaterialTheme.colorScheme.background)
+            .clickable {
+                onClick()
+            }
     ) {
         Image(
             painter = imagePainter,

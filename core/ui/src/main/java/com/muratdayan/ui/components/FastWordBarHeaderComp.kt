@@ -19,7 +19,10 @@ fun FastWordBarHeaderComp(
     maxEnergy: Int=10,
     modifier: Modifier = Modifier,
     coinValue: Int,
-    emeraldValue: Int
+    emeraldValue: Int,
+    onEnergyClick: ()->Unit={},
+    onCoinClick: ()->Unit={},
+    onEmeraldClick: ()->Unit={}
 ){
 
     Row (
@@ -31,15 +34,18 @@ fun FastWordBarHeaderComp(
     ){
         FastWordEnergyBarComp(
             currentEnergy = currentEnergy,
-            maxEnergy = maxEnergy
+            maxEnergy = maxEnergy,
+            onClick = onEnergyClick
         )
         FastWordTokenBarComp(
             tokenValue = coinValue,
-            icon = R.drawable.ic_coin
+            icon = R.drawable.ic_coin,
+            onClick = onCoinClick
         )
         FastWordTokenBarComp(
             tokenValue = emeraldValue,
-            icon = R.drawable.ic_emerald
+            icon = R.drawable.ic_emerald,
+            onClick = onEmeraldClick
         )
     }
 

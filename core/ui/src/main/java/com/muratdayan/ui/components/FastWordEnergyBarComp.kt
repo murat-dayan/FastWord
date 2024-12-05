@@ -1,6 +1,7 @@
 package com.muratdayan.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -31,7 +32,8 @@ import com.muratdayan.ui.theme.extendedColors
 fun FastWordEnergyBarComp(
     currentEnergy: Int = 0,
     maxEnergy: Int = 0,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {}
 ){
 
     val energyFraction = currentEnergy.toFloat() / maxEnergy.toFloat()
@@ -40,7 +42,10 @@ fun FastWordEnergyBarComp(
     Box(
         modifier = modifier
             .height(50.dp)
-            .width(100.dp),
+            .width(100.dp)
+            .clickable {
+                onClick()
+            },
         contentAlignment = Alignment.CenterStart
     ) {
 

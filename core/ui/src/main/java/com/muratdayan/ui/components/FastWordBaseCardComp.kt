@@ -1,6 +1,7 @@
 package com.muratdayan.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,12 +21,16 @@ import com.muratdayan.ui.theme.FastWordTheme
 @Composable
 fun FastWordBaseCardComp(
     modifier: Modifier = Modifier,
+    onClick : () -> Unit = {},
     content: @Composable () -> Unit
 ) {
     Card(
         modifier = modifier
             .fillMaxWidth()
             .height(70.dp)
+            .clickable {
+                onClick()
+            }
             .padding(bottom = Dimensions.spacingSmall),
         shape = MaterialTheme.shapes.small,
         colors = CardDefaults.cardColors(
