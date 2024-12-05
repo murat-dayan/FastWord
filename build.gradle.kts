@@ -11,4 +11,6 @@ plugins {
     alias(libs.plugins.android.library) apply false
     alias(libs.plugins.kotlinAndroidKsp) apply false
     alias(libs.plugins.hiltAndroid) apply false
+    kotlin("jvm") version "2.0.0"
+    kotlin("plugin.serialization") version "2.0.0"
 }
