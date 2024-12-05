@@ -32,7 +32,8 @@ import com.muratdayan.ui.theme.FastWordTheme
 
 @Composable
 internal fun MainScreenRoot(
-    modifier: Modifier= Modifier
+    modifier: Modifier= Modifier,
+    mainScreenViewModel: MainScreenViewModel
 ){
 
     MainScreen(
