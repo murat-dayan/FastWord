@@ -2,6 +2,7 @@ package com.muratdayan.ui.components
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -33,12 +34,16 @@ fun FastWordTokenBarComp(
     tokenValue: Int = 0,
     modifier: Modifier = Modifier,
     @DrawableRes icon: Int = R.drawable.ic_emerald,
+    onClick: () -> Unit = {}
 ){
 
     Box(
         modifier = modifier
             .height(50.dp)
-            .width(80.dp),
+            .width(80.dp)
+            .clickable {
+                onClick()
+            },
         contentAlignment = Alignment.CenterStart
     ) {
 
