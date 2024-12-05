@@ -33,7 +33,7 @@ internal fun FriendCardComp(
 
     Card (
         modifier = modifier
-            .width(150.dp),
+            .width(100.dp),
         shape = MaterialTheme.shapes.large,
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.primary

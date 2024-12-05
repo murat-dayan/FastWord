@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -43,11 +44,13 @@ fun FastWordButtonComp(
     iconTint: Color = MaterialTheme.colorScheme.primary,
     textColor: Color = MaterialTheme.colorScheme.primary,
     textSize: TextUnit = Dimensions.textSizeMedium,
+    textAlignment: TextAlign = TextAlign.Start,
     containerColor: Color = MaterialTheme.extendedColors.customBlue.colorContainer
 ) {
     Box(
         modifier = modifier
             .fillMaxWidth()
+            .height(40.dp)
             .clip(MaterialTheme.shapes.medium)
             .background(containerColor)
             .clickable { onClick() }
@@ -56,33 +59,36 @@ fun FastWordButtonComp(
     ) {
         Row(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
                 .padding(horizontal = Dimensions.paddingMedium),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             FastWordTextComp(
                 text = text,
-                modifier = Modifier,
+                modifier = Modifier
+                    .weight(1f),
                 color = textColor,
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.titleMedium,
-                fontSize = textSize
+                fontSize = textSize,
+                textAlign = textAlignment
             )
 
-            Row(
-                modifier = Modifier,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                FastWordTextComp(
-                    text = energyText,
+            icon?.let {
+                Row(
                     modifier = Modifier,
-                    color = textColor,
-                    fontWeight = FontWeight.Bold,
-                    textAlign = TextAlign.Center,
-                    fontSize = Dimensions.textSizeLarge
-                )
-                icon?.let {
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    FastWordTextComp(
+                        text = energyText,
+                        modifier = Modifier,
+                        color = textColor,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = TextAlign.Center,
+                        fontSize = Dimensions.textSizeLarge
+                    )
+
                     Icon(
                         painter = painterResource(icon),
                         contentDescription = null,
@@ -91,6 +97,7 @@ fun FastWordButtonComp(
                         ,
                         tint = iconTint,
                     )
+
                 }
             }
         }
@@ -102,7 +109,8 @@ fun FastWordButtonComp(
 private fun FastWordButtonCompPreview(){
     FastWordTheme {
         FastWordButtonComp(
-            icon = R.drawable.ic_flash
+            icon = null,
+            textAlignment = TextAlign.Center
         )
     }
 }
