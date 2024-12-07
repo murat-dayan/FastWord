@@ -2,6 +2,8 @@ package com.muratdayan.auth.presentation.signin
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.muratdayan.auth.domain.usecase.GuestSignInUseCase
+import com.muratdayan.common.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -15,6 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
+    private val guestSignInUseCase: GuestSignInUseCase
 ): ViewModel() {
 
 
@@ -28,14 +31,26 @@ class SignInViewModel @Inject constructor(
         when(action){
             SignInContract.UiAction.FacebookSignIn -> {}
             SignInContract.UiAction.GuestSignIn -> {
-                navigateToGame()
+                guestSignIn()
             }
         }
     }
 
-    private fun navigateToGame(){
+    private fun guestSignIn(){
         viewModelScope.launch {
-            emitUiEffect(SignInContract.UiEffect.NavigateToMainScreen)
+            updateUiState { copy(isLoading = true) }
+            guestSignInUseCase.invoke().collect{result->
+                when(result){
+                    is Result.Error -> {
+
+                        updateUiState { copy(errorMessage = result.error.message, isLoading = false) }
+                    }
+                    is Result.Success -> {
+                        updateUiState { copy(isGuestSignInEnabled = false, isLoading = false) }
+                        emitUiEffect(SignInContract.UiEffect.NavigateToMainScreen)
+                    }
+                }
+            }
         }
     }
 

@@ -4,6 +4,8 @@ object SignInContract {
 
     data class UiState(
         val isLoading: Boolean = false,
+        val errorMessage: String? = null,
+        val isGuestSignInEnabled: Boolean = true,
     )
 
     sealed interface UiAction{

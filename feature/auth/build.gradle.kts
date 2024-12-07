@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hiltAndroid)
     alias(libs.plugins.kotlinAndroidKsp)
+    kotlin("plugin.serialization")
 }
 
 android {
@@ -42,6 +43,7 @@ dependencies {
     implementation(project(":core:ui"))
     implementation(project(":core:navigation"))
     implementation(project(":core:common"))
+    implementation(project(":domain"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -65,4 +67,10 @@ dependencies {
 
     implementation(libs.lifecycle.runtime.compose)
     implementation(libs.navigation.compose)
+
+    implementation (platform (libs.supabase.bom))
+    implementation (libs.realtime.kt)
+    implementation (libs.postgrest.kt)
+    implementation (libs.ktor.client.android)
+    implementation (libs.kotlinx.serialization.json)
 }
