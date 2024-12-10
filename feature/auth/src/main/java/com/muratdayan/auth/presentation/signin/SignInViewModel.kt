@@ -1,11 +1,11 @@
 package com.muratdayan.auth.presentation.signin
 
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.muratdayan.auth.domain.usecase.FacebookSignInUseCase
 import com.muratdayan.auth.domain.usecase.GetFacebookSignUrlUseCase
 import com.muratdayan.auth.domain.usecase.GuestSignInUseCase
+import com.muratdayan.common.LoginStateManager
 import com.muratdayan.common.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -22,7 +22,8 @@ import javax.inject.Inject
 class SignInViewModel @Inject constructor(
     private val guestSignInUseCase: GuestSignInUseCase,
     private val facebookSignInUseCase: FacebookSignInUseCase,
-    private val getFacebookSignUrlUseCase: GetFacebookSignUrlUseCase
+    private val getFacebookSignUrlUseCase: GetFacebookSignUrlUseCase,
+    private val loginStateManager: LoginStateManager
 ) : ViewModel() {
 
 
@@ -101,6 +102,7 @@ class SignInViewModel @Inject constructor(
                     }
 
                     is Result.Success -> {
+                        loginStateManager.setLoggedIn(true)
                         updateUiState { copy(isGuestSignInEnabled = false, isLoading = false) }
                         emitUiEffect(SignInContract.UiEffect.NavigateToMainScreen)
                     }
@@ -108,6 +110,8 @@ class SignInViewModel @Inject constructor(
             }
         }
     }
+
+
 
     private fun updateUiState(block: SignInContract.UiState.() -> SignInContract.UiState) {
         _uiState.update(block)

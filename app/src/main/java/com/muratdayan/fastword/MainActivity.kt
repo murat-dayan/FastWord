@@ -13,14 +13,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import com.muratdayan.auth.navigation.authNavGraph
+import com.muratdayan.common.LoginStateManager
 import com.muratdayan.game.navigation.gameNavGraph
 import com.muratdayan.navigation.NavigationGraph
 import com.muratdayan.navigation.Screen
 import com.muratdayan.ui.theme.FastWordTheme
 import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+
+    @Inject
+    lateinit var loginStateManager: LoginStateManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -30,6 +36,7 @@ class MainActivity : ComponentActivity() {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     NavigationGraph(
                         navHostController = navController,
+                        isSignedIn = loginStateManager.isLoggedIn(),
                         modifier = Modifier.padding(innerPadding),
                         authNavGraph = {
                             authNavGraph(
