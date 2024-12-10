@@ -10,6 +10,7 @@ import androidx.navigation.compose.navigation
 @Composable
 fun NavigationGraph(
     modifier: Modifier = Modifier,
+    isSignedIn: Boolean,
     navHostController: NavHostController,
     authNavGraph: (NavGraphBuilder.(modifier: Modifier)->Unit)?,
     gameNavGraph: (NavGraphBuilder.(modifier: Modifier)->Unit)?
@@ -17,7 +18,7 @@ fun NavigationGraph(
 
     NavHost(
         navController = navHostController,
-        startDestination = Screen.SignInScreenRoute.route
+        startDestination = if (isSignedIn) Screen.MainScreenRoute.route else Screen.SignInScreenRoute.route
     ) {
         authNavGraph?.invoke(this, modifier)
         gameNavGraph?.invoke(this, modifier)
