@@ -1,5 +1,8 @@
 package com.muratdayan.auth.presentation.signin
 
+import android.content.Context
+import android.net.Uri
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -21,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.muratdayan.auth.R
 import com.muratdayan.auth.presentation.components.AuthButtonComp
+import com.muratdayan.auth.utils.openCustomTab
 import com.muratdayan.core_ui.ui.theme.Dimensions
 import com.muratdayan.foodrecipecomposemvi.common.collectWithLifecycle
 import com.muratdayan.ui.components.FastWordTextComp
@@ -62,9 +66,13 @@ private fun SignInScreen(
             SignInContract.UiEffect.NavigateToMainScreen -> {
                 navigateToGame()
             }
+
+            is SignInContract.UiEffect.OpenCustomTab -> {
+                openCustomTab(context, effect.uri)
+                onUiAction(SignInContract.UiAction.ClearFacebookUrl)
+            }
         }
     }
-
 
 
     Column (
@@ -111,6 +119,8 @@ private fun SignInScreen(
 
 
 }
+
+
 
 @Composable
 @Preview(showBackground = true)

@@ -1,7 +1,10 @@
 package com.muratdayan.auth.presentation.signin
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.muratdayan.auth.domain.usecase.FacebookSignInUseCase
+import com.muratdayan.auth.domain.usecase.GetFacebookSignUrlUseCase
 import com.muratdayan.auth.domain.usecase.GuestSignInUseCase
 import com.muratdayan.common.Result
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,34 +20,86 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignInViewModel @Inject constructor(
-    private val guestSignInUseCase: GuestSignInUseCase
-): ViewModel() {
+    private val guestSignInUseCase: GuestSignInUseCase,
+    private val facebookSignInUseCase: FacebookSignInUseCase,
+    private val getFacebookSignUrlUseCase: GetFacebookSignUrlUseCase
+) : ViewModel() {
 
 
     private val _uiState = MutableStateFlow(SignInContract.UiState())
     val uiState: StateFlow<SignInContract.UiState> = _uiState.asStateFlow()
 
     private val _uiEffect by lazy { Channel<SignInContract.UiEffect>() }
-    val uiEffect: Flow<SignInContract.UiEffect> by  lazy { _uiEffect.receiveAsFlow() }
+    val uiEffect: Flow<SignInContract.UiEffect> by lazy { _uiEffect.receiveAsFlow() }
 
-    fun onAction(action: SignInContract.UiAction){
-        when(action){
-            SignInContract.UiAction.FacebookSignIn -> {}
+    fun onAction(action: SignInContract.UiAction) {
+        when (action) {
+            SignInContract.UiAction.FacebookSignIn -> {
+                viewModelScope.launch {
+                    handleFacebookSignIn()
+                }
+            }
+
             SignInContract.UiAction.GuestSignIn -> {
                 guestSignIn()
+            }
+
+            SignInContract.UiAction.ClearFacebookUrl -> {
+                clearFacebookUri()
             }
         }
     }
 
-    private fun guestSignIn(){
+    private suspend fun handleFacebookSignIn() {
+        try {
+
+            val url = getFacebookSignUrlUseCase.invoke()
+            emitUiEffect(SignInContract.UiEffect.OpenCustomTab(url))
+            updateUiState { copy(facebookSignInUrl = url) }
+
+            facebookSignInUseCase.invoke().collect { result ->
+                updateUiState { copy(isLoading = true) }
+                when (result) {
+                    is Result.Error -> {
+                        updateUiState {
+                            copy(
+                                errorMessage = result.error.message,
+                                isLoading = false
+                            )
+                        }
+                    }
+
+                    is Result.Success -> {
+                        updateUiState { copy(isFacebookSignInEnabled = false, isLoading = false) }
+                        emitUiEffect(SignInContract.UiEffect.NavigateToMainScreen)
+                    }
+                }
+            }
+        } catch (e: Exception) {
+            updateUiState { copy(errorMessage = e.message, isLoading = false) }
+
+        }
+    }
+
+    private fun clearFacebookUri(){
+        updateUiState { copy(facebookSignInUrl = null) }
+    }
+
+    private fun guestSignIn() {
         viewModelScope.launch {
             updateUiState { copy(isLoading = true) }
-            guestSignInUseCase.invoke().collect{result->
-                when(result){
+            guestSignInUseCase.invoke().collect { result ->
+                when (result) {
                     is Result.Error -> {
 
-                        updateUiState { copy(errorMessage = result.error.message, isLoading = false) }
+                        updateUiState {
+                            copy(
+                                errorMessage = result.error.message,
+                                isLoading = false
+                            )
+                        }
                     }
+
                     is Result.Success -> {
                         updateUiState { copy(isGuestSignInEnabled = false, isLoading = false) }
                         emitUiEffect(SignInContract.UiEffect.NavigateToMainScreen)
@@ -54,11 +109,11 @@ class SignInViewModel @Inject constructor(
         }
     }
 
-    private fun updateUiState(block: SignInContract.UiState.() -> SignInContract.UiState){
+    private fun updateUiState(block: SignInContract.UiState.() -> SignInContract.UiState) {
         _uiState.update(block)
     }
 
-    private suspend fun emitUiEffect(uiEffect: SignInContract.UiEffect){
+    private suspend fun emitUiEffect(uiEffect: SignInContract.UiEffect) {
         _uiEffect.send(uiEffect)
     }
 
