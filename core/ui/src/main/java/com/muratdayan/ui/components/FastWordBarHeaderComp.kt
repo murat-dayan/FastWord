@@ -56,7 +56,7 @@ fun FastWordBarHeaderComp(
 private fun FastWordBarHeaderCompPreview(){
     FastWordTheme {
         FastWordBarHeaderComp(
-            currentEnergy = 32,
+            currentEnergy = 1,
             coinValue = 12,
             emeraldValue = 2
         )
