@@ -24,7 +24,7 @@ fun FastWordGameCardComp(
     modifier: Modifier = Modifier,
     imagePainter: Painter = painterResource(com.muratdayan.ui.R.drawable.avatar),
     name: String,
-    cardInfo: String,
+    cardInfo: String?=null,
     score: String?=null,
     onClickCard: ()->Unit = {},
     onClickImage: ()->Unit = {},
@@ -57,12 +57,14 @@ fun FastWordGameCardComp(
                     fontSize = Dimensions.textSizeMedium
                 )
 
-                FastWordTextComp(
-                    text = cardInfo,
-                    color = MaterialTheme.colorScheme.scrim,
-                    style = MaterialTheme.typography.bodySmall,
-                    fontSize = Dimensions.textSizeSmall
-                )
+                cardInfo?.let {
+                    FastWordTextComp(
+                        text = cardInfo,
+                        color = MaterialTheme.colorScheme.scrim,
+                        style = MaterialTheme.typography.bodySmall,
+                        fontSize = Dimensions.textSizeSmall
+                    )
+                }
             }
             score?.let {
                 Box(
@@ -97,8 +99,6 @@ private fun FastWordGameCardCompPreview(){
     FastWordTheme {
         FastWordGameCardComp(
             name = "Murat",
-            cardInfo = "Test",
-            score = "1-0"
         )
     }
 }
