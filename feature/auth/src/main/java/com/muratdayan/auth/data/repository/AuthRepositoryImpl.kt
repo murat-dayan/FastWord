@@ -7,6 +7,7 @@ import com.muratdayan.common.AppError
 import com.muratdayan.common.DataError
 import com.muratdayan.common.Result
 import com.muratdayan.domain.model.UserDataModel
+import com.muratdayan.domain.model.UserStatsModel
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.gotrue.auth
 import io.github.jan.supabase.gotrue.providers.Facebook
@@ -19,6 +20,7 @@ import kotlinx.serialization.json.put
 import java.io.IOException
 import java.net.SocketTimeoutException
 import java.net.UnknownHostException
+import java.util.UUID
 import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
@@ -53,7 +55,9 @@ class AuthRepositoryImpl @Inject constructor(
                     userName = randomName
                 )
                 supabaseClient.from("users").insert(userData)
+                saveUserStats(user.id)
                 emit(Result.Success(true))
+
             }else{
                 Log.e("AuthRepositoryImpl", "guestSignIn: User is null", )
                 emit(Result.Error(DataError.Remote.ServerError))
@@ -127,6 +131,12 @@ class AuthRepositoryImpl @Inject constructor(
             Log.e("AuthRepositoryImpl", "isUserNameTaken: ", e)
             true
         }
+
+    }
+
+    private suspend fun saveUserStats(userId: String){
+        val userStats = UserStatsModel(userId)
+        supabaseClient.from("user_stats").insert(userStats)
 
     }
 
