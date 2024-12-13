@@ -14,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.rememberNavController
 import com.muratdayan.auth.navigation.authNavGraph
 import com.muratdayan.common.LoginStateManager
+import com.muratdayan.friends.navigation.friendsNavGraph
 import com.muratdayan.game.navigation.gameNavGraph
 import com.muratdayan.leaderboard.navigation.leaderBoardNavGraph
 import com.muratdayan.navigation.NavigationGraph
@@ -56,6 +57,9 @@ class MainActivity : ComponentActivity() {
                         },
                         leaderBoardNavGraph = {
                             leaderBoardNavGraph(modifier = it)
+                        },
+                        friendsNavGraph = {
+                            friendsNavGraph(modifier = it)
                         }
                     )
                 }
