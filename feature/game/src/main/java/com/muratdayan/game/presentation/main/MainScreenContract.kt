@@ -12,9 +12,18 @@ object MainScreenContract {
     sealed interface UiAction{
         data object PlayNow:UiAction
         data object GetUserStats: UiAction
+        data object GoToShop: UiAction
+        data object GoToSettings: UiAction
+        data object GoToFriends: UiAction
+        data object GoToLeaderBoard: UiAction
     }
 
     sealed class UiEffect(){
         data object NavigateToPlayScreen: UiEffect()
+        data object NavigateToShopScreen: UiEffect()
+        data object NavigateToSettingsScreen: UiEffect()
+        data object NavigateToFriendsScreen: UiEffect()
+        data object NavigateToLeaderBoardScreen: UiEffect()
+
     }
 }

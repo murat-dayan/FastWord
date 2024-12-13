@@ -10,6 +10,10 @@ import com.muratdayan.navigation.Screen
 
 fun NavGraphBuilder.gameNavGraph(
     modifier: Modifier = Modifier,
+    navigateToShop: () -> Unit,
+    navigateToSettings: () -> Unit,
+    navigateToFriends: () -> Unit,
+    navigateToLeaderBoard: () -> Unit
 ) {
     composable(
         route = Screen.MainScreenRoute.route
@@ -17,7 +21,12 @@ fun NavGraphBuilder.gameNavGraph(
         val mainScreenViewModel = hiltViewModel<MainScreenViewModel>()
         MainScreenRoot(
             modifier = modifier,
-            mainScreenViewModel = mainScreenViewModel
+            mainScreenViewModel = mainScreenViewModel,
+            navigateToShop = navigateToShop,
+            navigateToSettings = navigateToSettings,
+            navigateToFriends = navigateToFriends,
+            navigateToLeaderBoard = navigateToLeaderBoard
+
         )
 
     }

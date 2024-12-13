@@ -16,6 +16,7 @@ object SignInContract {
         data object FacebookSignIn: UiAction
         data object GuestSignIn: UiAction
         data object ClearFacebookUrl: UiAction
+
     }
 
     sealed class UiEffect(){
