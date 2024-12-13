@@ -27,13 +27,14 @@ fun FastWordTextComp(
     fontWeight: FontWeight = FontWeight.Normal,
     fontSize: TextUnit = Dimensions.textSizeMedium,
     lineHeight: TextUnit = Dimensions.lineHeightXLarge,
-    onClick: ()->Unit = {}
+    onClick: (() -> Unit)? = null
 ){
     Text(
-        modifier = modifier
-            .clickable {
-                onClick()
-            },
+        modifier = if (onClick != null) {
+            modifier.clickable { onClick() }
+        } else {
+            modifier
+        },
         text = text,
         style = style,
         color = color,
