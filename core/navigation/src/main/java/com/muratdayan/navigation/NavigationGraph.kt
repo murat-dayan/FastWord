@@ -13,7 +13,8 @@ fun NavigationGraph(
     isSignedIn: Boolean,
     navHostController: NavHostController,
     authNavGraph: (NavGraphBuilder.(modifier: Modifier)->Unit)?,
-    gameNavGraph: (NavGraphBuilder.(modifier: Modifier)->Unit)?
+    gameNavGraph: (NavGraphBuilder.(modifier: Modifier)->Unit)?,
+    shopNavGraph: (NavGraphBuilder.(modifier: Modifier)->Unit)?
 ){
 
     NavHost(
@@ -22,6 +23,7 @@ fun NavigationGraph(
     ) {
         authNavGraph?.invoke(this, modifier)
         gameNavGraph?.invoke(this, modifier)
+        shopNavGraph?.invoke(this, modifier)
     }
 
 }
