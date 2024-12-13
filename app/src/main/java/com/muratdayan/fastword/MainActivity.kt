@@ -17,6 +17,7 @@ import com.muratdayan.common.LoginStateManager
 import com.muratdayan.game.navigation.gameNavGraph
 import com.muratdayan.navigation.NavigationGraph
 import com.muratdayan.navigation.Screen
+import com.muratdayan.shop.navigation.shopNavGraph
 import com.muratdayan.ui.theme.FastWordTheme
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
@@ -48,6 +49,9 @@ class MainActivity : ComponentActivity() {
                         },
                         gameNavGraph = {
                             gameNavGraph(modifier = it)
+                        },
+                        shopNavGraph = {
+                            shopNavGraph(modifier = it)
                         }
                     )
                 }
