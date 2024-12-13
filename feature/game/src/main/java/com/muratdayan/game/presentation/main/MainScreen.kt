@@ -11,14 +11,17 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.muratdayan.core_ui.ui.theme.Dimensions
 import com.muratdayan.game.R
 import com.muratdayan.game.presentation.main.component.FriendCardComp
@@ -29,6 +32,8 @@ import com.muratdayan.ui.components.FastWordGameCardComp
 import com.muratdayan.ui.components.FastWordProfileImageComp
 import com.muratdayan.ui.components.FastWordTextComp
 import com.muratdayan.ui.theme.FastWordTheme
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 
 @Composable
 internal fun MainScreenRoot(
@@ -36,56 +41,78 @@ internal fun MainScreenRoot(
     mainScreenViewModel: MainScreenViewModel
 ){
 
+    val uiState = mainScreenViewModel.uiState.collectAsStateWithLifecycle()
+    val uiEffect = mainScreenViewModel.uiEffect
+
     MainScreen(
-        modifier = modifier
+        modifier = modifier,
+        uiState = uiState.value,
+        uiEffect = uiEffect,
+        onAction = mainScreenViewModel::onAction
     )
 }
 
 @Composable
 private fun MainScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    uiState: MainScreenContract.UiState,
+    uiEffect: Flow<MainScreenContract.UiEffect>,
+    onAction: (MainScreenContract.UiAction) -> Unit
 ){
+
+    LaunchedEffect(true) {
+        onAction(MainScreenContract.UiAction.GetUserStats)
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.primary)
     ) {
         // Sabit Header
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(MaterialTheme.colorScheme.primary)
-                .padding(Dimensions.paddingSmall)
-        ) {
-            // Header Row
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
+        if (uiState.userStats != null){
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(MaterialTheme.colorScheme.primary)
+                    .padding(Dimensions.paddingSmall)
             ) {
-                FastWordProfileImageComp(
-                    imagePainter = painterResource(com.muratdayan.ui.R.drawable.avatar),
-                    size = 50
-                )
+                // Header Row
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    FastWordProfileImageComp(
+                        imagePainter = painterResource(com.muratdayan.ui.R.drawable.avatar),
+                        size = 50
+                    )
 
-                FastWordBarHeaderComp(
-                    currentEnergy = 10,
-                    maxEnergy = 10,
-                    coinValue = 12,
-                    emeraldValue = 2
+                    FastWordBarHeaderComp(
+                        currentEnergy = uiState.userStats.energy?:0,
+                        maxEnergy = 10,
+                        coinValue = uiState.userStats.token?:0,
+                        emeraldValue = uiState.userStats.emerald?:0
+                    )
+                }
+
+                // Advert Header
+                FastWordAdvertHeaderComp()
+
+                FastWordButtonComp(
+                    text = "Play Now",
+                    energyText = "3",
+                    onClick = {},
+                    icon = com.muratdayan.ui.R.drawable.ic_flash,
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    iconTint = MaterialTheme.colorScheme.primary
                 )
             }
-
-            // Advert Header
-            FastWordAdvertHeaderComp()
-
-            FastWordButtonComp(
-                text = "Play Now",
-                energyText = "3",
-                onClick = {},
-                icon = com.muratdayan.ui.R.drawable.ic_flash,
-                containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                iconTint = MaterialTheme.colorScheme.primary
+        }
+        if (uiState.isLoading){
+            CircularProgressIndicator(
+                modifier = Modifier.fillMaxSize(),
+                color = MaterialTheme.colorScheme.background
             )
         }
 
@@ -160,6 +187,10 @@ private fun MainScreen(
 @Composable
 fun MainScreenPreview(){
     FastWordTheme {
-        MainScreen()
+        MainScreen(
+            uiState = MainScreenContract.UiState(),
+            uiEffect = emptyFlow(),
+            onAction = {}
+        )
     }
 }
