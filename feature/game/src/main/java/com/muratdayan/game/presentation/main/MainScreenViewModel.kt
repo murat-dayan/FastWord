@@ -42,6 +42,27 @@ class MainScreenViewModel @Inject constructor(
             MainScreenContract.UiAction.GetUserStats -> {
                 getUserStats()
             }
+
+            MainScreenContract.UiAction.GoToFriends -> {
+                viewModelScope.launch {
+                    emitUiEffect(MainScreenContract.UiEffect.NavigateToFriendsScreen)
+                }
+            }
+            MainScreenContract.UiAction.GoToLeaderBoard -> {
+                viewModelScope.launch {
+                    emitUiEffect(MainScreenContract.UiEffect.NavigateToLeaderBoardScreen)
+                }
+            }
+            MainScreenContract.UiAction.GoToSettings -> {
+                viewModelScope.launch {
+                    emitUiEffect(MainScreenContract.UiEffect.NavigateToSettingsScreen)
+                }
+            }
+            MainScreenContract.UiAction.GoToShop -> {
+                viewModelScope.launch {
+                    emitUiEffect(MainScreenContract.UiEffect.NavigateToShopScreen)
+                }
+            }
         }
     }
 

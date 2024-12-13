@@ -4,16 +4,24 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -21,9 +29,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.muratdayan.core_ui.ui.theme.Dimensions
-import com.muratdayan.game.R
+import com.muratdayan.foodrecipecomposemvi.common.collectWithLifecycle
 import com.muratdayan.game.presentation.main.component.FriendCardComp
 import com.muratdayan.ui.components.FastWordAdvertHeaderComp
 import com.muratdayan.ui.components.FastWordBarHeaderComp
@@ -35,10 +44,15 @@ import com.muratdayan.ui.theme.FastWordTheme
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
 
+
 @Composable
 internal fun MainScreenRoot(
     modifier: Modifier= Modifier,
-    mainScreenViewModel: MainScreenViewModel
+    mainScreenViewModel: MainScreenViewModel,
+    navigateToShop: () -> Unit,
+    navigateToSettings: () -> Unit,
+    navigateToFriends: () -> Unit,
+    navigateToLeaderBoard: () -> Unit,
 ){
 
     val uiState = mainScreenViewModel.uiState.collectAsStateWithLifecycle()
@@ -48,7 +62,11 @@ internal fun MainScreenRoot(
         modifier = modifier,
         uiState = uiState.value,
         uiEffect = uiEffect,
-        onAction = mainScreenViewModel::onAction
+        onAction = mainScreenViewModel::onAction,
+        navigateToShop = navigateToShop,
+        navigateToSettings = navigateToSettings,
+        navigateToFriends = navigateToFriends,
+        navigateToLeaderBoard = navigateToLeaderBoard
     )
 }
 
@@ -57,11 +75,35 @@ private fun MainScreen(
     modifier: Modifier = Modifier,
     uiState: MainScreenContract.UiState,
     uiEffect: Flow<MainScreenContract.UiEffect>,
-    onAction: (MainScreenContract.UiAction) -> Unit
+    onAction: (MainScreenContract.UiAction) -> Unit,
+    navigateToShop: () -> Unit,
+    navigateToSettings: () -> Unit,
+    navigateToFriends: () -> Unit,
+    navigateToLeaderBoard: () -> Unit,
 ){
 
     LaunchedEffect(true) {
         onAction(MainScreenContract.UiAction.GetUserStats)
+    }
+
+    uiEffect.collectWithLifecycle { effect->
+        when(effect){
+            MainScreenContract.UiEffect.NavigateToPlayScreen -> {
+                //TODO Navigate to play screen
+            }
+            MainScreenContract.UiEffect.NavigateToFriendsScreen -> {
+                navigateToFriends()
+            }
+            MainScreenContract.UiEffect.NavigateToLeaderBoardScreen -> {
+                navigateToLeaderBoard()
+            }
+            MainScreenContract.UiEffect.NavigateToSettingsScreen -> {
+                navigateToSettings()
+            }
+            MainScreenContract.UiEffect.NavigateToShopScreen -> {
+                navigateToShop()
+            }
+        }
     }
 
     Column(
@@ -69,7 +111,6 @@ private fun MainScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.primary)
     ) {
-        // Sabit Header
         if (uiState.userStats != null){
             Column(
                 modifier = Modifier
@@ -180,17 +221,86 @@ private fun MainScreen(
                 )
             }
         }
+
+        NavigationBar(
+            modifier = Modifier
+                .fillMaxWidth()
+                .consumeWindowInsets(WindowInsets.navigationBars) // Automatically handles bottom padding
+                .then(Modifier.padding(bottom = 0.dp)),
+            containerColor = MaterialTheme.colorScheme.primary,
+        ) {
+
+            NavigationBarItem(
+                selected = false,
+                onClick = {
+                    onAction(MainScreenContract.UiAction.GoToShop)
+                },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.ShoppingCart,
+                        contentDescription = "Home",
+                        tint = MaterialTheme.colorScheme.background
+                    )
+                },
+            )
+
+            NavigationBarItem(
+                selected = false,
+                onClick = {
+                    onAction(MainScreenContract.UiAction.GoToLeaderBoard)
+                },
+                icon = {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Default.List,
+                        contentDescription = "Home",
+                        tint = MaterialTheme.colorScheme.background
+                    )
+                },
+            )
+
+            NavigationBarItem(
+                selected = false,
+                onClick = {
+                    onAction(MainScreenContract.UiAction.GoToFriends)
+                },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = "Home",
+                        tint = MaterialTheme.colorScheme.background
+                    )
+                },
+            )
+
+            NavigationBarItem(
+                selected = false,
+                onClick = {
+                    onAction(MainScreenContract.UiAction.GoToSettings)
+                },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = "Home",
+                        tint = MaterialTheme.colorScheme.background
+                    )
+                },
+            )
+        }
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun MainScreenPreview(){
     FastWordTheme {
         MainScreen(
             uiState = MainScreenContract.UiState(),
             uiEffect = emptyFlow(),
-            onAction = {}
+            onAction = {},
+            navigateToShop = {},
+            navigateToSettings = {},
+            navigateToFriends = {},
+            navigateToLeaderBoard = {}
         )
     }
 }
