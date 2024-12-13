@@ -16,7 +16,8 @@ fun NavigationGraph(
     gameNavGraph: (NavGraphBuilder.(modifier: Modifier)->Unit)?,
     shopNavGraph: (NavGraphBuilder.(modifier: Modifier)->Unit)?,
     leaderBoardNavGraph: (NavGraphBuilder.(modifier: Modifier)->Unit)?,
-    friendsNavGraph: (NavGraphBuilder.(modifier: Modifier)->Unit)?
+    friendsNavGraph: (NavGraphBuilder.(modifier: Modifier)->Unit)?,
+    settingsNavGraph: (NavGraphBuilder.(modifier: Modifier)->Unit)?
 ){
 
     NavHost(
@@ -28,6 +29,7 @@ fun NavigationGraph(
         shopNavGraph?.invoke(this, modifier)
         leaderBoardNavGraph?.invoke(this, modifier)
         friendsNavGraph?.invoke(this, modifier)
+        settingsNavGraph?.invoke(this, modifier)
     }
 
 }
