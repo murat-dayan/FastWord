@@ -45,14 +45,15 @@ fun FastWordEnergyBarComp(
             .width(100.dp)
             .clickable {
                 onClick()
-            },
+            }
+        ,
         contentAlignment = Alignment.CenterStart
     ) {
 
         Box(
             modifier = modifier
                 .height(30.dp)
-                .wrapContentWidth()
+                .width(80.dp)
                 .clip(MaterialTheme.shapes.small)
                 .background(MaterialTheme.colorScheme.scrim)
         ) {
@@ -106,12 +107,12 @@ fun FastWordEnergyBarComp(
     }
 }
 
-@Preview
+@Preview(showBackground = true)
 @Composable
 private fun FastWordEnergyBarCompPreview(){
     FastWordTheme {
         FastWordEnergyBarComp(
-            currentEnergy = 3,
+            currentEnergy = 1,
             maxEnergy = 10
         )
     }
