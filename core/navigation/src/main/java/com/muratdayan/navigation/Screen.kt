@@ -6,5 +6,6 @@ sealed class Screen(val route:String) {
     data object MainScreenRoute: Screen("main_screen")
     data object ShopScreenRoute: Screen("shop_screen")
     data object LeaderBoardScreenRoute: Screen("leaderboard_screen")
+    data object FriendsScreenRoute: Screen("friends_screen")
 
 }
