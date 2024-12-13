@@ -24,13 +24,15 @@ import com.muratdayan.ui.theme.FastWordTheme
 fun FastWordBaseCardComp(
     modifier: Modifier = Modifier,
     onClick : () -> Unit = {},
+    height: Int = 70,
     containerColor: Color = MaterialTheme.colorScheme.background,
-    content: @Composable () -> Unit
+    content: @Composable () -> Unit,
+
 ) {
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .height(70.dp)
+            .height(height.dp)
             .clickable {
                 onClick()
             }
