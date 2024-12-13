@@ -36,7 +36,8 @@ import com.muratdayan.ui.theme.extendedColors
 
 @Composable
 fun FastWordButtonComp(
-    text: String = "Sign In",
+    text: String?= null,
+    iconText: String? = null,
     energyText: String = "3",
     onClick: () -> Unit = {},
     modifier: Modifier = Modifier,
@@ -64,30 +65,34 @@ fun FastWordButtonComp(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
-            FastWordTextComp(
-                text = text,
-                modifier = Modifier
-                    .weight(1f),
-                color = textColor,
-                fontWeight = FontWeight.Bold,
-                style = MaterialTheme.typography.titleMedium,
-                fontSize = textSize,
-                textAlign = textAlignment
-            )
+            text?.let {
+                FastWordTextComp(
+                    text = text,
+                    modifier = Modifier
+                        .weight(1f),
+                    color = textColor,
+                    fontWeight = FontWeight.Bold,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontSize = textSize,
+                    textAlign = textAlignment
+                )
+            }
 
             icon?.let {
                 Row(
                     modifier = Modifier,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    FastWordTextComp(
-                        text = energyText,
-                        modifier = Modifier,
-                        color = textColor,
-                        fontWeight = FontWeight.Bold,
-                        textAlign = TextAlign.Center,
-                        fontSize = Dimensions.textSizeLarge
-                    )
+                    iconText?.let {
+                        FastWordTextComp(
+                            text = energyText,
+                            modifier = Modifier,
+                            color = textColor,
+                            fontWeight = FontWeight.Bold,
+                            textAlign = TextAlign.Center,
+                            fontSize = Dimensions.textSizeLarge
+                        )
+                    }
 
                     Icon(
                         painter = painterResource(icon),
@@ -109,6 +114,7 @@ fun FastWordButtonComp(
 private fun FastWordButtonCompPreview(){
     FastWordTheme {
         FastWordButtonComp(
+            text = "asdsd",
             icon = null,
             textAlignment = TextAlign.Center
         )
