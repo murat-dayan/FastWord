@@ -4,7 +4,7 @@ import android.util.Log
 import com.muratdayan.common.AppError
 import com.muratdayan.common.DataError
 import com.muratdayan.common.Result
-import com.muratdayan.game.domain.model.UserStatsModel
+import com.muratdayan.domain.model.UserStatsModel
 import com.muratdayan.game.domain.repository.GameRepository
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.gotrue.auth

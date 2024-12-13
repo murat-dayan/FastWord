@@ -1,9 +1,9 @@
-package com.muratdayan.game.domain.model
+package com.muratdayan.domain.model
 
 import android.util.Log
-import kotlinx.datetime.Instant
-import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
+import java.time.Instant
+
 
 @Serializable
 data class UserStatsModel(

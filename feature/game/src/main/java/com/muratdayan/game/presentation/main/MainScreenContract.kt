@@ -1,11 +1,11 @@
 package com.muratdayan.game.presentation.main
 
-import com.muratdayan.game.domain.model.UserStatsModel
+import com.muratdayan.domain.model.UserStatsModel
 
 object MainScreenContract {
 
     data class UiState(
-        val userStats: UserStatsModel? = null,
+        val userStats: com.muratdayan.domain.model.UserStatsModel? = null,
         val isLoading: Boolean = false,
     )
 
