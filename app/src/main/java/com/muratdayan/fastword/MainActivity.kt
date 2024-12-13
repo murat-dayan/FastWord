@@ -15,6 +15,7 @@ import androidx.navigation.compose.rememberNavController
 import com.muratdayan.auth.navigation.authNavGraph
 import com.muratdayan.common.LoginStateManager
 import com.muratdayan.game.navigation.gameNavGraph
+import com.muratdayan.leaderboard.navigation.leaderBoardNavGraph
 import com.muratdayan.navigation.NavigationGraph
 import com.muratdayan.navigation.Screen
 import com.muratdayan.shop.navigation.shopNavGraph
@@ -52,6 +53,9 @@ class MainActivity : ComponentActivity() {
                         },
                         shopNavGraph = {
                             shopNavGraph(modifier = it)
+                        },
+                        leaderBoardNavGraph = {
+                            leaderBoardNavGraph(modifier = it)
                         }
                     )
                 }
