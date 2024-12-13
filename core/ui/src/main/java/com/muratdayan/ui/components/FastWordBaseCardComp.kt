@@ -12,7 +12,9 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.muratdayan.core_ui.ui.theme.Dimensions
@@ -22,6 +24,7 @@ import com.muratdayan.ui.theme.FastWordTheme
 fun FastWordBaseCardComp(
     modifier: Modifier = Modifier,
     onClick : () -> Unit = {},
+    containerColor: Color = MaterialTheme.colorScheme.background,
     content: @Composable () -> Unit
 ) {
     Card(
@@ -34,14 +37,15 @@ fun FastWordBaseCardComp(
             .padding(bottom = Dimensions.spacingSmall),
         shape = MaterialTheme.shapes.small,
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.background
+            containerColor = containerColor
         ),
 
     ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = Dimensions.paddingSmall)
+                .padding(horizontal = Dimensions.paddingSmall),
+            contentAlignment = Alignment.Center
         ){
             content()
         }
