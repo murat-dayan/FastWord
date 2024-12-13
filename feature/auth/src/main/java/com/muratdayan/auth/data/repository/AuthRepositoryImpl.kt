@@ -1,9 +1,6 @@
 package com.muratdayan.auth.data.repository
 
-import android.content.Context
-import android.net.Uri
 import android.util.Log
-import androidx.browser.customtabs.CustomTabsIntent
 import com.muratdayan.auth.domain.repository.AuthRepository
 import com.muratdayan.auth.utils.generateRandomName
 import com.muratdayan.common.AppError
@@ -11,7 +8,6 @@ import com.muratdayan.common.DataError
 import com.muratdayan.common.Result
 import com.muratdayan.domain.model.UserDataModel
 import io.github.jan.supabase.SupabaseClient
-import io.github.jan.supabase.annotations.SupabaseInternal
 import io.github.jan.supabase.gotrue.auth
 import io.github.jan.supabase.gotrue.providers.Facebook
 import io.github.jan.supabase.postgrest.from
@@ -45,6 +41,8 @@ class AuthRepositoryImpl @Inject constructor(
             supabaseClient.auth.signInAnonymously(
                 data = userMetadata
             )
+
+            supabaseClient.auth.refreshCurrentSession()
 
             val user = supabaseClient.auth.currentUserOrNull()
 
