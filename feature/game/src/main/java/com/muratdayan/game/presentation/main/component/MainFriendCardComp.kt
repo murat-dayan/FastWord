@@ -56,14 +56,15 @@ internal fun FriendCardComp(
                 text = friendName,
                 style = MaterialTheme.typography.bodyMedium,
                 fontSize = Dimensions.textSizeMedium,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
 
             FastWordButtonComp(
                 text = "Play",
                 onClick = {},
                 icon = com.muratdayan.ui.R.drawable.ic_flash,
-                iconTint = MaterialTheme.colorScheme.primary
+                iconTint = MaterialTheme.colorScheme.primary,
+                iconText = "3"
             )
 
         }
