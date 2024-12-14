@@ -142,7 +142,7 @@ private fun MainScreen(
 
                 FastWordButtonComp(
                     text = "Play Now",
-                    energyText = "3",
+                    iconText = "3",
                     onClick = {},
                     icon = com.muratdayan.ui.R.drawable.ic_flash,
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
