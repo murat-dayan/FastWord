@@ -19,6 +19,7 @@ import com.muratdayan.game.navigation.gameNavGraph
 import com.muratdayan.leaderboard.navigation.leaderBoardNavGraph
 import com.muratdayan.navigation.NavigationGraph
 import com.muratdayan.navigation.Screen
+import com.muratdayan.profile.navigation.profileNavGraph
 import com.muratdayan.settings.navigation.settingsNavGraph
 import com.muratdayan.shop.navigation.shopNavGraph
 import com.muratdayan.ui.theme.FastWordTheme
@@ -78,6 +79,9 @@ class MainActivity : ComponentActivity() {
                         },
                         settingsNavGraph = {
                             settingsNavGraph(modifier = it)
+                        },
+                        profileNavGraph = {
+                            profileNavGraph(modifier = it)
                         }
                     )
                 }
