@@ -38,7 +38,6 @@ import com.muratdayan.ui.theme.extendedColors
 fun FastWordButtonComp(
     text: String?= null,
     iconText: String? = null,
-    energyText: String = "3",
     onClick: () -> Unit = {},
     modifier: Modifier = Modifier,
     @DrawableRes icon: Int? = null,
@@ -85,7 +84,7 @@ fun FastWordButtonComp(
                 ) {
                     iconText?.let {
                         FastWordTextComp(
-                            text = energyText,
+                            text = iconText,
                             modifier = Modifier,
                             color = textColor,
                             fontWeight = FontWeight.Bold,
@@ -114,9 +113,8 @@ fun FastWordButtonComp(
 private fun FastWordButtonCompPreview(){
     FastWordTheme {
         FastWordButtonComp(
-            text = "asdsd",
-            icon = null,
-            textAlignment = TextAlign.Center
+            icon = R.drawable.ic_flash,
+            iconText = "4"
         )
     }
 }
