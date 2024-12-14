@@ -87,6 +87,7 @@ fun FastWordGameCardComp(
                     .weight(1.5f),
                 text = "Play",
                 onClick = onClickPlay,
+                iconText = "3",
                 icon = com.muratdayan.ui.R.drawable.ic_flash,
                 iconTint = MaterialTheme.colorScheme.primary)
         }
