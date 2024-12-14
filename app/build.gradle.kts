@@ -59,6 +59,7 @@ dependencies {
     implementation(project(":feature:leaderboard"))
     implementation(project(":feature:shop"))
     implementation(project(":feature:settings"))
+    implementation(project(":feature:profile"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
