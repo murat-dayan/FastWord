@@ -3,7 +3,7 @@ package com.muratdayan.domain.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class UserDataModel(
-    val id: String,
-    val user_name: String,
+data class FriendsDataModel(
+    val friend_id:String,
+    val user:UserDataModel,
 )

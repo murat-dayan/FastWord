@@ -52,7 +52,7 @@ class AuthRepositoryImpl @Inject constructor(
 
                 val userData = UserDataModel(
                     id = user.id,
-                    userName = randomName
+                    user_name = randomName
                 )
                 supabaseClient.from("users").insert(userData)
                 saveUserStats(user.id)
@@ -86,7 +86,7 @@ class AuthRepositoryImpl @Inject constructor(
 
                 val userData = UserDataModel(
                     id = user.id,
-                    userName = displayName
+                    user_name = displayName
                 )
                 supabaseClient.from("users").insert(userData)
                 emit(Result.Success(true))
@@ -123,7 +123,7 @@ class AuthRepositoryImpl @Inject constructor(
                 .from("users")
                 .select {
                     filter {
-                        eq("userName", userName)
+                        eq("user_name", userName)
                     }
                 }.decodeSingleOrNull<UserDataModel>()
             response != null

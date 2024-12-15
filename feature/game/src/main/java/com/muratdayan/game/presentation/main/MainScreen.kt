@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.filled.Person
@@ -88,6 +89,7 @@ private fun MainScreen(
 
     LaunchedEffect(true) {
         onAction(MainScreenContract.UiAction.GetUserStats)
+        onAction(MainScreenContract.UiAction.GetFriends)
     }
 
     uiEffect.collectWithLifecycle { effect->
@@ -153,6 +155,7 @@ private fun MainScreen(
 
                 FastWordButtonComp(
                     text = "Play Now",
+                    isLoading = uiState.isLoading,
                     iconText = "3",
                     onClick = {},
                     icon = com.muratdayan.ui.R.drawable.ic_flash,
@@ -161,12 +164,6 @@ private fun MainScreen(
                 )
             }
 
-        if (uiState.isLoading){
-            CircularProgressIndicator(
-                modifier = Modifier.fillMaxSize(),
-                color = MaterialTheme.colorScheme.background
-            )
-        }
 
         // Kaydırılabilir İçerik
         LazyColumn(
@@ -188,11 +185,13 @@ private fun MainScreen(
             }
             item {
                 LazyRow {
-                    items(10) {
-                        FriendCardComp(
-                            friendImagePainter = painterResource(com.muratdayan.ui.R.drawable.avatar),
-                            friendName = "Murat"
-                        )
+                    uiState.friends?.let {friendsList->
+                        items(friendsList){friend->
+                            FriendCardComp(
+                                friendImagePainter = painterResource(com.muratdayan.ui.R.drawable.avatar),
+                                friendName = friend.user.user_name
+                            )
+                        }
                     }
                 }
             }

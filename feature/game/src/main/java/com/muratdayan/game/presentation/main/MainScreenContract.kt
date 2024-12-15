@@ -6,12 +6,14 @@ object MainScreenContract {
 
     data class UiState(
         val userStats: com.muratdayan.domain.model.UserStatsModel? = null,
+        val friends: List<com.muratdayan.domain.model.FriendsDataModel>? = null,
         val isLoading: Boolean = false,
     )
 
     sealed interface UiAction{
         data object PlayNow:UiAction
         data object GetUserStats: UiAction
+        data object GetFriends: UiAction
         data object GoToShop: UiAction
         data object GoToSettings: UiAction
         data object GoToFriends: UiAction
