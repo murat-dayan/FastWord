@@ -103,7 +103,7 @@ private fun SignInScreen(
             textColor = MaterialTheme.colorScheme.secondary,
             onClick = {
                 onUiAction(SignInContract.UiAction.FacebookSignIn)
-            }
+            },
         )
 
         AuthButtonComp(
@@ -112,7 +112,8 @@ private fun SignInScreen(
             textColor = MaterialTheme.colorScheme.primary,
             onClick = {
                 onUiAction(SignInContract.UiAction.GuestSignIn)
-            }
+            },
+            isLoading = uiState.isLoading
         )
 
     }
