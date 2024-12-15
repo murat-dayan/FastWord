@@ -5,5 +5,5 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class UserDataModel(
     val id: String,
-    val userName: String,
+    val user_name: String,
 )
