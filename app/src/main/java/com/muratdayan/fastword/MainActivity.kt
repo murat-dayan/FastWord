@@ -17,6 +17,7 @@ import com.muratdayan.common.LoginStateManager
 import com.muratdayan.friends.navigation.friendsNavGraph
 import com.muratdayan.game.navigation.gameNavGraph
 import com.muratdayan.leaderboard.navigation.leaderBoardNavGraph
+import com.muratdayan.navigation.NavGraphDependencies
 import com.muratdayan.navigation.NavigationGraph
 import com.muratdayan.navigation.Screen
 import com.muratdayan.profile.navigation.profileNavGraph
@@ -43,56 +44,61 @@ class MainActivity : ComponentActivity() {
                         navHostController = navController,
                         isSignedIn = loginStateManager.isLoggedIn(),
                         modifier = Modifier.padding(innerPadding),
-                        authNavGraph = {
-                            authNavGraph(
-                                modifier = it,
-                                navigateToGame = {
-                                    navController.navigate(Screen.MainScreenRoute.route)
-                                }
-                            )
-                        },
-                        gameNavGraph = {
-                            gameNavGraph(
-                                modifier = it,
-                                navigateToShop = {
-                                    navController.navigate(Screen.ShopScreenRoute.route)
-                                },
-                                navigateToSettings = {
-                                    navController.navigate(Screen.SettingsScreenRoute.route)
-                                },
-                                navigateToFriends = {
-                                    navController.navigate(Screen.FriendsScreenRoute.route)
-                                },
-                                navigateToLeaderBoard = {
-                                    navController.navigate(Screen.LeaderBoardScreenRoute.route)
-                                }
-                            )
-                        },
-                        shopNavGraph = {
-                            shopNavGraph(modifier = it)
-                        },
-                        leaderBoardNavGraph = {
-                            leaderBoardNavGraph(modifier = it)
-                        },
-                        friendsNavGraph = {
-                            friendsNavGraph(modifier = it)
-                        },
-                        settingsNavGraph = {
-                            settingsNavGraph(
-                                modifier = it,
-                                navigateToSignInScreen = {
-                                    navController.navigate(Screen.SignInScreenRoute.route){
-                                        popUpTo(navController.graph.startDestinationId){
-                                            inclusive = true
-                                        }
-                                        launchSingleTop = true
+                        navGraphDependencies = NavGraphDependencies(
+                            authNavGraph = {
+                                authNavGraph(
+                                    modifier = it,
+                                    navigateToGame = {
+                                        navController.navigate(Screen.MainScreenRoute.route)
                                     }
-                                }
-                            )
-                        },
-                        profileNavGraph = {
-                            profileNavGraph(modifier = it)
-                        }
+                                )
+                            },
+                            gameNavGraph = {
+                                gameNavGraph(
+                                    modifier = it,
+                                    navigateToShop = {
+                                        navController.navigate(Screen.ShopScreenRoute.route)
+                                    },
+                                    navigateToSettings = {
+                                        navController.navigate(Screen.SettingsScreenRoute.route)
+                                    },
+                                    navigateToFriends = {
+                                        navController.navigate(Screen.FriendsScreenRoute.route)
+                                    },
+                                    navigateToLeaderBoard = {
+                                        navController.navigate(Screen.LeaderBoardScreenRoute.route)
+                                    },
+                                    navigateToProfile = {
+                                        navController.navigate(Screen.ProfileScreenRoute.route)
+                                    }
+                                )
+                            },
+                            shopNavGraph = {
+                                shopNavGraph(modifier = it)
+                            },
+                            leaderBoardNavGraph = {
+                                leaderBoardNavGraph(modifier = it)
+                            },
+                            friendsNavGraph = {
+                                friendsNavGraph(modifier = it)
+                            },
+                            settingsNavGraph = {
+                                settingsNavGraph(
+                                    modifier = it,
+                                    navigateToSignInScreen = {
+                                        navController.navigate(Screen.SignInScreenRoute.route) {
+                                            popUpTo(navController.graph.startDestinationId) {
+                                                inclusive = true
+                                            }
+                                            launchSingleTop = true
+                                        }
+                                    }
+                                )
+                            },
+                            profileNavGraph = {
+                                profileNavGraph(modifier = it)
+                            }
+                        )
                     )
                 }
             }
