@@ -131,9 +131,9 @@ private fun LeaderBoardScreen(
                     scoreText = "100",
                     orderText = "${index + 1}",
                     iconOrderPainter = when (index) {
-                        0 -> painterResource(R.drawable.ic_crown)
-                        1 -> painterResource(R.drawable.ic_crown)
-                        2 -> painterResource(R.drawable.ic_crown)
+                        0 -> painterResource(com.muratdayan.ui.R.drawable.ic_crown)
+                        1 -> painterResource(com.muratdayan.ui.R.drawable.ic_crown)
+                        2 -> painterResource(com.muratdayan.ui.R.drawable.ic_crown)
                         else -> null
                     },
                     iconTint = when (index) {
