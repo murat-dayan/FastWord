@@ -7,10 +7,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -31,6 +34,7 @@ import com.muratdayan.ui.theme.FastWordTheme
 @Composable
 fun AuthButtonComp(
     text: String = "Sign In",
+    isLoading: Boolean = false,
     onClick: () -> Unit = {},
     modifier: Modifier = Modifier,
     @DrawableRes icon: Int,
@@ -40,35 +44,46 @@ fun AuthButtonComp(
     Box(
         modifier = modifier
             .fillMaxWidth()
+            .height(50.dp)
             .clip(MaterialTheme.shapes.medium)
             .background(containerColor)
             .clickable { onClick() }
             .padding(Dimensions.paddingSmall),
         contentAlignment = Alignment.Center
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Icon(
-                painter = painterResource(icon),
-                contentDescription = null,
+        if (isLoading) {
+            CircularProgressIndicator(
+                color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
                     .size(30.dp)
-                    .weight(0.1f)
-                ,
-                tint = Color.Unspecified,
             )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text(
-                text = text,
+        }else{
+            Row(
                 modifier = Modifier
-                    .weight(0.9f),
-                color = textColor,
-                fontWeight = FontWeight.Bold,
-                textAlign = TextAlign.Center,
-                style = MaterialTheme.typography.bodyLarge
-            )
+                    .fillMaxSize(),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Icon(
+                    painter = painterResource(icon),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .size(30.dp)
+                        .weight(0.1f)
+                    ,
+                    tint = Color.Unspecified,
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(
+                    text = text,
+                    modifier = Modifier
+                        .weight(0.9f),
+                    color = textColor,
+                    fontWeight = FontWeight.Bold,
+                    textAlign = TextAlign.Center,
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
         }
     }
 }
@@ -78,7 +93,8 @@ fun AuthButtonComp(
 fun AuthButtonCompPreview() {
     FastWordTheme {
         AuthButtonComp(
-            icon = R.drawable.ic_guest
+            icon = R.drawable.ic_guest,
+            isLoading = false
         )
     }
 }
