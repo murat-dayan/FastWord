@@ -12,26 +12,20 @@ fun NavigationGraph(
     modifier: Modifier = Modifier,
     isSignedIn: Boolean,
     navHostController: NavHostController,
-    authNavGraph: (NavGraphBuilder.(modifier: Modifier)->Unit)?,
-    gameNavGraph: (NavGraphBuilder.(modifier: Modifier)->Unit)?,
-    shopNavGraph: (NavGraphBuilder.(modifier: Modifier)->Unit)?,
-    leaderBoardNavGraph: (NavGraphBuilder.(modifier: Modifier)->Unit)?,
-    friendsNavGraph: (NavGraphBuilder.(modifier: Modifier)->Unit)?,
-    settingsNavGraph: (NavGraphBuilder.(modifier: Modifier)->Unit)?,
-    profileNavGraph: (NavGraphBuilder.(modifier: Modifier)->Unit)?
+    navGraphDependencies: NavGraphDependencies
 ){
 
     NavHost(
         navController = navHostController,
         startDestination = if (isSignedIn) Screen.MainScreenRoute.route else Screen.SignInScreenRoute.route
     ) {
-        authNavGraph?.invoke(this, modifier)
-        gameNavGraph?.invoke(this, modifier)
-        shopNavGraph?.invoke(this, modifier)
-        leaderBoardNavGraph?.invoke(this, modifier)
-        friendsNavGraph?.invoke(this, modifier)
-        settingsNavGraph?.invoke(this, modifier)
-        profileNavGraph?.invoke(this, modifier)
+        navGraphDependencies.authNavGraph?.invoke(this, modifier)
+        navGraphDependencies.gameNavGraph?.invoke(this, modifier)
+        navGraphDependencies.shopNavGraph?.invoke(this, modifier)
+        navGraphDependencies.leaderBoardNavGraph?.invoke(this, modifier)
+        navGraphDependencies.friendsNavGraph?.invoke(this, modifier)
+        navGraphDependencies.settingsNavGraph?.invoke(this, modifier)
+        navGraphDependencies.profileNavGraph?.invoke(this, modifier)
 
     }
 
