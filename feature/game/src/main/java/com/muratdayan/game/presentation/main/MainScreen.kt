@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material.icons.Icons
@@ -53,6 +54,7 @@ internal fun MainScreenRoot(
     navigateToSettings: () -> Unit,
     navigateToFriends: () -> Unit,
     navigateToLeaderBoard: () -> Unit,
+    navigateToProfile: () -> Unit,
 ){
 
     val uiState = mainScreenViewModel.uiState.collectAsStateWithLifecycle()
@@ -66,7 +68,8 @@ internal fun MainScreenRoot(
         navigateToShop = navigateToShop,
         navigateToSettings = navigateToSettings,
         navigateToFriends = navigateToFriends,
-        navigateToLeaderBoard = navigateToLeaderBoard
+        navigateToLeaderBoard = navigateToLeaderBoard,
+        navigateToProfile = navigateToProfile
     )
 }
 
@@ -80,6 +83,7 @@ private fun MainScreen(
     navigateToSettings: () -> Unit,
     navigateToFriends: () -> Unit,
     navigateToLeaderBoard: () -> Unit,
+    navigateToProfile: () -> Unit,
 ){
 
     LaunchedEffect(true) {
@@ -103,6 +107,10 @@ private fun MainScreen(
             MainScreenContract.UiEffect.NavigateToShopScreen -> {
                 navigateToShop()
             }
+
+            MainScreenContract.UiEffect.NavigateToProfileScreen ->{
+                navigateToProfile()
+            }
         }
     }
 
@@ -111,7 +119,7 @@ private fun MainScreen(
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.primary)
     ) {
-        if (uiState.userStats != null){
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -126,14 +134,17 @@ private fun MainScreen(
                 ) {
                     FastWordProfileImageComp(
                         imagePainter = painterResource(com.muratdayan.ui.R.drawable.avatar),
-                        size = 50
+                        size = 50,
+                        onClick = {
+                            onAction(MainScreenContract.UiAction.GoToProfile)
+                        }
                     )
 
                     FastWordBarHeaderComp(
-                        currentEnergy = uiState.userStats.energy?:0,
+                        currentEnergy = uiState.userStats?.energy ?:0,
                         maxEnergy = 10,
-                        coinValue = uiState.userStats.token?:0,
-                        emeraldValue = uiState.userStats.emerald?:0
+                        coinValue = uiState.userStats?.token ?:0,
+                        emeraldValue = uiState.userStats?.emerald ?:0
                     )
                 }
 
@@ -149,7 +160,7 @@ private fun MainScreen(
                     iconTint = MaterialTheme.colorScheme.primary
                 )
             }
-        }
+
         if (uiState.isLoading){
             CircularProgressIndicator(
                 modifier = Modifier.fillMaxSize(),
@@ -225,7 +236,7 @@ private fun MainScreen(
         NavigationBar(
             modifier = Modifier
                 .fillMaxWidth()
-                .consumeWindowInsets(WindowInsets.navigationBars) // Automatically handles bottom padding
+                .consumeWindowInsets(WindowInsets.navigationBars)
                 .then(Modifier.padding(bottom = 0.dp)),
             containerColor = MaterialTheme.colorScheme.primary,
         ) {
@@ -289,7 +300,7 @@ private fun MainScreen(
     }
 }
 
-@Preview(showBackground = true, showSystemUi = true)
+@Preview(showBackground = true)
 @Composable
 fun MainScreenPreview(){
     FastWordTheme {
@@ -300,7 +311,8 @@ fun MainScreenPreview(){
             navigateToShop = {},
             navigateToSettings = {},
             navigateToFriends = {},
-            navigateToLeaderBoard = {}
+            navigateToLeaderBoard = {},
+            navigateToProfile = {}
         )
     }
 }

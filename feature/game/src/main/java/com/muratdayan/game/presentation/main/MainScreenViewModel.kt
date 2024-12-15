@@ -63,6 +63,12 @@ class MainScreenViewModel @Inject constructor(
                     emitUiEffect(MainScreenContract.UiEffect.NavigateToShopScreen)
                 }
             }
+
+            MainScreenContract.UiAction.GoToProfile -> {
+                viewModelScope.launch {
+                    emitUiEffect(MainScreenContract.UiEffect.NavigateToProfileScreen)
+                }
+            }
         }
     }
 

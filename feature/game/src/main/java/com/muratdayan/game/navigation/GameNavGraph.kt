@@ -13,7 +13,8 @@ fun NavGraphBuilder.gameNavGraph(
     navigateToShop: () -> Unit,
     navigateToSettings: () -> Unit,
     navigateToFriends: () -> Unit,
-    navigateToLeaderBoard: () -> Unit
+    navigateToLeaderBoard: () -> Unit,
+    navigateToProfile: () -> Unit,
 ) {
     composable(
         route = Screen.MainScreenRoute.route
@@ -25,7 +26,8 @@ fun NavGraphBuilder.gameNavGraph(
             navigateToShop = navigateToShop,
             navigateToSettings = navigateToSettings,
             navigateToFriends = navigateToFriends,
-            navigateToLeaderBoard = navigateToLeaderBoard
+            navigateToLeaderBoard = navigateToLeaderBoard,
+            navigateToProfile = navigateToProfile
 
         )
 

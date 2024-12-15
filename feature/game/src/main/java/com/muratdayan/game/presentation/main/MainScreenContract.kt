@@ -16,6 +16,7 @@ object MainScreenContract {
         data object GoToSettings: UiAction
         data object GoToFriends: UiAction
         data object GoToLeaderBoard: UiAction
+        data object GoToProfile: UiAction
     }
 
     sealed class UiEffect(){
@@ -24,6 +25,7 @@ object MainScreenContract {
         data object NavigateToSettingsScreen: UiEffect()
         data object NavigateToFriendsScreen: UiEffect()
         data object NavigateToLeaderBoardScreen: UiEffect()
+        data object NavigateToProfileScreen: UiEffect()
 
     }
 }
