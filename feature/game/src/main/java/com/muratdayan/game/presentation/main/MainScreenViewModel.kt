@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.muratdayan.common.Result
+import com.muratdayan.game.domain.usecase.GetFriendsUseCase
 import com.muratdayan.game.domain.usecase.GetUserStatsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -22,7 +23,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainScreenViewModel @Inject constructor(
-    private val getUserStatsUseCase: GetUserStatsUseCase
+    private val getUserStatsUseCase: GetUserStatsUseCase,
+    private val getFriendsUseCase: GetFriendsUseCase,
 ): ViewModel() {
 
     private val _uiState = MutableStateFlow(MainScreenContract.UiState())
@@ -69,8 +71,40 @@ class MainScreenViewModel @Inject constructor(
                     emitUiEffect(MainScreenContract.UiEffect.NavigateToProfileScreen)
                 }
             }
+
+            MainScreenContract.UiAction.GetFriends -> {
+                getFriends()
+            }
         }
     }
+
+    private fun getFriends(){
+        viewModelScope.launch {
+            updateUiState { copy(isLoading = true) }
+
+            getFriendsUseCase.invoke()
+                .onStart {
+                    updateUiState { copy(isLoading = true) }
+                }
+                .catch {
+                    updateUiState { copy(isLoading = false, userStats = null) }
+                }
+                .collect{resultFriendsState->
+                    when(resultFriendsState){
+                        is Result.Error -> {
+                            updateUiState { copy(isLoading = false, friends = null) }
+                        }
+                        is Result.Success -> {
+                            updateUiState {
+                                copy(isLoading = false, friends = resultFriendsState.data)
+                            }
+                        }
+                    }
+                }
+        }
+    }
+
+
 
     private fun getUserStats() {
         viewModelScope.launch {
