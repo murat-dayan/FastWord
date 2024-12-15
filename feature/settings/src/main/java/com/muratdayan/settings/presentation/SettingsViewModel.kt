@@ -2,6 +2,7 @@ package com.muratdayan.settings.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.muratdayan.common.LoginStateManager
 import com.muratdayan.common.Result
 import com.muratdayan.settings.domain.usecase.ExitAppUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +20,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
-    private val exitAppUseCase: ExitAppUseCase
+    private val exitAppUseCase: ExitAppUseCase,
+    private val loginStateManager: LoginStateManager
 ) : ViewModel(){
 
     private val _uiState = MutableStateFlow(SettingsContract.UiState())
@@ -46,6 +48,7 @@ class SettingsViewModel @Inject constructor(
                     }
                     is Result.Success -> {
                         updateUiState { copy(isLoading = false) }
+                        loginStateManager.setLoggedIn(false)
                         emitUiEffect(SettingsContract.UiEffect.NavigateToSignInScreen)
                     }
                 }

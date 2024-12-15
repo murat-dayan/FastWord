@@ -81,7 +81,12 @@ class MainActivity : ComponentActivity() {
                             settingsNavGraph(
                                 modifier = it,
                                 navigateToSignInScreen = {
-                                    navController.navigate(Screen.SignInScreenRoute.route)
+                                    navController.navigate(Screen.SignInScreenRoute.route){
+                                        popUpTo(navController.graph.startDestinationId){
+                                            inclusive = true
+                                        }
+                                        launchSingleTop = true
+                                    }
                                 }
                             )
                         },
