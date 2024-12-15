@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -37,6 +38,7 @@ import com.muratdayan.ui.theme.extendedColors
 @Composable
 fun FastWordButtonComp(
     text: String?= null,
+    isLoading: Boolean = false,
     iconText: String? = null,
     onClick: () -> Unit = {},
     modifier: Modifier = Modifier,
@@ -57,51 +59,59 @@ fun FastWordButtonComp(
             .padding(Dimensions.paddingSmall),
         contentAlignment = Alignment.Center
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = Dimensions.paddingMedium),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            text?.let {
-                FastWordTextComp(
-                    text = text,
-                    modifier = Modifier
-                        .weight(1f),
-                    color = textColor,
-                    fontWeight = FontWeight.Bold,
-                    style = MaterialTheme.typography.titleMedium,
-                    fontSize = textSize,
-                    textAlign = textAlignment
-                )
-            }
-
-            icon?.let {
-                Row(
-                    modifier = Modifier,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    iconText?.let {
-                        FastWordTextComp(
-                            text = iconText,
-                            modifier = Modifier,
-                            color = textColor,
-                            fontWeight = FontWeight.Bold,
-                            textAlign = TextAlign.Center,
-                            fontSize = Dimensions.textSizeLarge
-                        )
-                    }
-
-                    Icon(
-                        painter = painterResource(icon),
-                        contentDescription = null,
+        if (isLoading) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(20.dp),
+                color = MaterialTheme.colorScheme.onPrimary,
+                strokeWidth = 2.dp
+            )
+        } else {
+            Row(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = Dimensions.paddingMedium),
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                text?.let {
+                    FastWordTextComp(
+                        text = text,
                         modifier = Modifier
-                            .size(30.dp)
-                        ,
-                        tint = iconTint,
+                            .weight(1f),
+                        color = textColor,
+                        fontWeight = FontWeight.Bold,
+                        style = MaterialTheme.typography.titleMedium,
+                        fontSize = textSize,
+                        textAlign = textAlignment
                     )
+                }
 
+                icon?.let {
+                    Row(
+                        modifier = Modifier,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        iconText?.let {
+                            FastWordTextComp(
+                                text = iconText,
+                                modifier = Modifier,
+                                color = textColor,
+                                fontWeight = FontWeight.Bold,
+                                textAlign = TextAlign.Center,
+                                fontSize = Dimensions.textSizeLarge
+                            )
+                        }
+
+                        Icon(
+                            painter = painterResource(icon),
+                            contentDescription = null,
+                            modifier = Modifier
+                                .size(30.dp)
+                            ,
+                            tint = iconTint,
+                        )
+
+                    }
                 }
             }
         }
@@ -114,7 +124,8 @@ private fun FastWordButtonCompPreview(){
     FastWordTheme {
         FastWordButtonComp(
             icon = R.drawable.ic_flash,
-            iconText = "4"
+            iconText = "4",
+            isLoading = true
         )
     }
 }
