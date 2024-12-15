@@ -78,7 +78,12 @@ class MainActivity : ComponentActivity() {
                             friendsNavGraph(modifier = it)
                         },
                         settingsNavGraph = {
-                            settingsNavGraph(modifier = it)
+                            settingsNavGraph(
+                                modifier = it,
+                                navigateToSignInScreen = {
+                                    navController.navigate(Screen.SignInScreenRoute.route)
+                                }
+                            )
                         },
                         profileNavGraph = {
                             profileNavGraph(modifier = it)

@@ -23,27 +23,56 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.muratdayan.core_ui.ui.theme.Dimensions
+import com.muratdayan.foodrecipecomposemvi.common.collectWithLifecycle
 import com.muratdayan.settings.R
 import com.muratdayan.settings.presentation.components.SettingsCardComp
 import com.muratdayan.ui.components.FastWordBaseCardComp
 import com.muratdayan.ui.components.FastWordButtonComp
 import com.muratdayan.ui.components.FastWordTextComp
 import com.muratdayan.ui.theme.FastWordTheme
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.emptyFlow
 
 @Composable
 fun SettingsScreenRoot(
     modifier: Modifier = Modifier,
+    viewModel: SettingsViewModel,
+    navigateToSignInScreen: () -> Unit
 ) {
+
+    val uiState = viewModel.uiState.collectAsStateWithLifecycle()
+
     SettingsScreen(
-        modifier = modifier
+        modifier = modifier,
+        uiState = uiState.value,
+        uiEffect = viewModel.uiEffect,
+        onAction = viewModel::onAction,
+        navigateToSignInScreen = navigateToSignInScreen
     )
 }
 
 @Composable
 private fun SettingsScreen(
     modifier: Modifier = Modifier,
+    uiState: SettingsContract.UiState,
+    uiEffect: Flow<SettingsContract.UiEffect>,
+    onAction: (SettingsContract.UiAction) -> Unit,
+    navigateToSignInScreen: () -> Unit
 ) {
+
+
+    uiEffect.collectWithLifecycle { effect ->
+        when(effect){
+            SettingsContract.UiEffect.NavigateToSignInScreen -> {
+                navigateToSignInScreen()
+            }
+        }
+
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -124,6 +153,9 @@ private fun SettingsScreen(
 
         SettingsCardComp(
             cardText = "Exit",
+            onClick = {
+                onAction(SettingsContract.UiAction.Exit)
+            },
             secondContent = {
                 FastWordButtonComp(
                     modifier = Modifier
@@ -165,6 +197,11 @@ private fun SettingsScreen(
 @Composable
 private fun SettingsScreenPreview() {
     FastWordTheme {
-        SettingsScreen()
+        SettingsScreen(
+            uiState = SettingsContract.UiState(),
+            uiEffect = emptyFlow(),
+            onAction = {},
+            navigateToSignInScreen = {}
+        )
     }
 }
