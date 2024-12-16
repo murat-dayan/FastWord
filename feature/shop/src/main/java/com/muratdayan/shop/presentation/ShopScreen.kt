@@ -12,11 +12,14 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.muratdayan.core_ui.ui.theme.Dimensions
 import com.muratdayan.shop.R
 import com.muratdayan.shop.presentation.components.ShopCardComp
@@ -25,20 +28,38 @@ import com.muratdayan.ui.components.FastWordBarHeaderComp
 import com.muratdayan.ui.components.FastWordTextComp
 import com.muratdayan.ui.theme.FastWordTheme
 import com.muratdayan.ui.theme.extendedColors
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 
 @Composable
 fun ShopScreenRoot(
     modifier: Modifier = Modifier,
+    shopViewModel: ShopViewModel
 ){
+
+    val uiState = shopViewModel.uiState.collectAsStateWithLifecycle()
+    val uiEffect = shopViewModel.uiEffect
+
     ShopScreen(
-        modifier = modifier
+        modifier = modifier,
+        uiState = uiState.value,
+        uiEffect = uiEffect,
+        onAction = shopViewModel::onAction
     )
 }
 
 @Composable
 private fun ShopScreen(
     modifier: Modifier = Modifier,
+    uiState: ShopScreenContract.UiState,
+    uiEffect: Flow<ShopScreenContract.UiEffect>,
+    onAction: (ShopScreenContract.UiAction) -> Unit
 ){
+
+    LaunchedEffect(true) {
+        onAction(ShopScreenContract.UiAction.GetUserStats)
+    }
+
     Column (
         modifier = modifier
             .fillMaxSize()
@@ -63,10 +84,10 @@ private fun ShopScreen(
 
             Row {
                 FastWordBarHeaderComp(
-                    currentEnergy = 1,
+                    currentEnergy = uiState.userStats?.energy ?: 0,
                     maxEnergy = 10,
-                    coinValue = 0,
-                    emeraldValue = 0
+                    coinValue = uiState.userStats?.token ?: 0,
+                    emeraldValue = uiState.userStats?.emerald ?: 0,
                 )
             }
         }
@@ -184,6 +205,10 @@ private fun ShopScreen(
 @Composable
 private fun ShopScreenPreview() {
     FastWordTheme {
-        ShopScreen()
+        ShopScreen(
+            uiState = ShopScreenContract.UiState(),
+            uiEffect = emptyFlow(),
+            onAction = {}
+        )
     }
 }
