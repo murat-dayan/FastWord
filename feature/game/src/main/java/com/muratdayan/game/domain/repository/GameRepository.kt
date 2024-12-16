@@ -10,6 +10,4 @@ interface GameRepository {
 
     fun getUserStats(): Flow<Result<UserStatsModel, AppError>>
 
-    fun getFriends() : Flow<Result<List<FriendsDataModel>,AppError>>
-
 }

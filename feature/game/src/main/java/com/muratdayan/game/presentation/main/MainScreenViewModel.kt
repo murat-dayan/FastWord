@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.muratdayan.common.Result
-import com.muratdayan.game.domain.usecase.GetFriendsUseCase
+import com.muratdayan.domain.usecase.GetFriendsDomainUseCase
 import com.muratdayan.game.domain.usecase.GetUserStatsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -24,7 +24,7 @@ import javax.inject.Inject
 @HiltViewModel
 class MainScreenViewModel @Inject constructor(
     private val getUserStatsUseCase: GetUserStatsUseCase,
-    private val getFriendsUseCase: GetFriendsUseCase,
+    private val getFriendsDomainUseCase: GetFriendsDomainUseCase,
 ): ViewModel() {
 
     private val _uiState = MutableStateFlow(MainScreenContract.UiState())
@@ -82,7 +82,7 @@ class MainScreenViewModel @Inject constructor(
         viewModelScope.launch {
             updateUiState { copy(isLoading = true) }
 
-            getFriendsUseCase.invoke()
+            getFriendsDomainUseCase.invoke()
                 .onStart {
                     updateUiState { copy(isLoading = true) }
                 }
