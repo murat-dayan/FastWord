@@ -69,6 +69,7 @@ class GameRepositoryImpl @Inject constructor(
                     """.trimIndent())){
                         filter {
                             eq("user_id",user.id)
+                            eq("status","accepted")
                         }
                     }
 

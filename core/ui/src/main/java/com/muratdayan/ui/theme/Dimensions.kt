@@ -23,6 +23,8 @@ object Dimensions {
     val lineHeightXXLarge = 24.sp
 
     // Text Sizes
+    val textSizeXXSmall = 4.sp
+    val textSizeXSmall = 8.sp
     val textSizeSmall = 12.sp
     val textSizeMedium = 14.sp
     val textSizeLarge = 18.sp
