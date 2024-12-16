@@ -3,7 +3,9 @@ package com.muratdayan.shop.presentation
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.muratdayan.common.Result
+import com.muratdayan.common.StatType
 import com.muratdayan.domain.usecase.GetUserStatsDomainUseCase
+import com.muratdayan.domain.usecase.UpdateStatsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -19,7 +21,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ShopViewModel @Inject constructor(
-    private val getUserStatsDomainUseCase: GetUserStatsDomainUseCase
+    private val getUserStatsDomainUseCase: GetUserStatsDomainUseCase,
+    private val updateStatsUseCase: UpdateStatsUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ShopScreenContract.UiState())
     val uiState: StateFlow<ShopScreenContract.UiState> = _uiState.asStateFlow()
@@ -32,6 +35,58 @@ class ShopViewModel @Inject constructor(
             ShopScreenContract.UiAction.GetUserStats -> {
                 getUserStats()
             }
+
+            is ShopScreenContract.UiAction.BuyEnergy -> {
+                buyEnergy(
+                    changeEnergyValue = action.changeEnergyValue,
+                    changeEmeraldValue = action.changeEmeraldValue
+                )
+            }
+        }
+    }
+
+    private fun buyEnergy(changeEnergyValue:Int, changeEmeraldValue:Int) {
+        viewModelScope.launch {
+            val currentEnergy = uiState.value.userStats?.energy
+            currentEnergy?.let {
+                val newEnergyValue = currentEnergy + changeEnergyValue
+                updateStatsUseCase.updateStat(StatType.ENERGY,newEnergyValue)
+                    .collect{resultUpdateEnergy->
+                        when(resultUpdateEnergy){
+                            is Result.Success -> {
+                                getUserStats()
+                                updateEmerald(changeEmeraldValue)
+                            }
+                            is Result.Error -> {
+
+                            }
+                        }
+                    }
+            }
+
+
+        }
+    }
+
+    private fun updateEmerald(changeEmeraldValue:Int) {
+        viewModelScope.launch {
+            val currentEmeraldValue = uiState.value.userStats?.emerald
+            currentEmeraldValue?.let {
+                val newEmeraldValue = currentEmeraldValue + changeEmeraldValue
+                updateStatsUseCase.updateStat(StatType.EMERALD,newEmeraldValue)
+                    .collect { resultUpdateEmerald ->
+                        when (resultUpdateEmerald) {
+                            is Result.Success -> {
+                                getUserStats()
+                            }
+
+                            is Result.Error -> {
+
+                            }
+                        }
+                    }
+            }
+
         }
     }
 

@@ -112,10 +112,17 @@ private fun ShopScreen(
                         shopBuyIcon = com.muratdayan.ui.R.drawable.ic_emerald,
                         shopAmount = 10,
                         shopImageIcon = painterResource(com.muratdayan.ui.R.drawable.ic_flash),
-                        giftAmount = 10,
+                        giftAmount = 3,
                         giftIcon = painterResource(com.muratdayan.ui.R.drawable.ic_flash),
                         borderColor = MaterialTheme.extendedColors.customBlue.colorContainer,
-                        buttonOnClick = {}
+                        buttonOnClick = {
+                            onAction(
+                                ShopScreenContract.UiAction.BuyEnergy(
+                                    changeEnergyValue = 3,
+                                    changeEmeraldValue = -10
+                                )
+                            )
+                        }
                     )
                     ShopCardComp(
                         modifier=Modifier.weight(1f),
