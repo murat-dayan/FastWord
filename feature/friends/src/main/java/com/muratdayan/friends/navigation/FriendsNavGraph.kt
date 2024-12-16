@@ -13,8 +13,10 @@ fun NavGraphBuilder.friendsNavGraph(
     composable(
         route = Screen.FriendsScreenRoute.route
     ) {
+        val friendsViewModel = hiltViewModel<com.muratdayan.friends.presentation.FriendsViewModel>()
         FriendsScreenRoot(
             modifier = modifier,
+            friendsViewModel = friendsViewModel
         )
 
     }
