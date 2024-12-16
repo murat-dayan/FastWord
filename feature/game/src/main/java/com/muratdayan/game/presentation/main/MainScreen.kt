@@ -132,7 +132,7 @@ private fun MainScreen(
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Center
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     FastWordProfileImageComp(
                         imagePainter = painterResource(com.muratdayan.ui.R.drawable.avatar),
@@ -142,12 +142,23 @@ private fun MainScreen(
                         }
                     )
 
-                    FastWordBarHeaderComp(
-                        currentEnergy = uiState.userStats?.energy ?:0,
-                        maxEnergy = 10,
-                        coinValue = uiState.userStats?.token ?:0,
-                        emeraldValue = uiState.userStats?.emerald ?:0
-                    )
+                    Row {
+                        FastWordBarHeaderComp(
+                            currentEnergy = uiState.userStats?.energy ?:0,
+                            maxEnergy = 10,
+                            coinValue = uiState.userStats?.token ?:0,
+                            emeraldValue = uiState.userStats?.emerald ?:0,
+                            onEmeraldClick = {
+                                onAction(MainScreenContract.UiAction.GoToShop)
+                            },
+                            onEnergyClick = {
+                                onAction(MainScreenContract.UiAction.GoToShop)
+                            },
+                            onCoinClick = {
+                                onAction(MainScreenContract.UiAction.GoToShop)
+                            }
+                        )
+                    }
                 }
 
                 // Advert Header
@@ -189,9 +200,20 @@ private fun MainScreen(
                         items(friendsList){friend->
                             FriendCardComp(
                                 friendImagePainter = painterResource(com.muratdayan.ui.R.drawable.avatar),
-                                friendName = friend.user.user_name
+                                friendName = friend.user.user_name,
                             )
                         }
+                    }
+
+                    item {
+                        FriendCardComp(
+                            friendImagePainter = painterResource(com.muratdayan.ui.R.drawable.avatar),
+                            friendName = "Invite Friends",
+                            buttonTitle = "Invite",
+                            buttonIconVisible = false,
+                            iconTextVisible = false,
+                            buttonContainerColor = MaterialTheme.colorScheme.secondaryContainer
+                        )
                     }
                 }
             }

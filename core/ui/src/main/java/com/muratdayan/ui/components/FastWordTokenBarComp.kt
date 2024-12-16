@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -39,7 +40,7 @@ fun FastWordTokenBarComp(
 
     Box(
         modifier = modifier
-            .height(50.dp)
+            .height(40.dp)
             .width(80.dp)
             .clickable {
                 onClick()
@@ -51,8 +52,8 @@ fun FastWordTokenBarComp(
             modifier = modifier
                 .height(30.dp)
                 .wrapContentWidth()
+                .offset(x = (10).dp)
                 .clip(MaterialTheme.shapes.small)
-                .align(Alignment.CenterEnd)
                 .background(MaterialTheme.colorScheme.scrim)
         ) {
             Box(
@@ -71,20 +72,21 @@ fun FastWordTokenBarComp(
         ) {
             Box(
                 modifier = Modifier
-                    .fillMaxHeight()
-                    .align(Alignment.TopStart)
+                    .align(Alignment.Center)
             ) {
                 Icon(
                     painter = painterResource(icon),
                     contentDescription = null,
                     modifier = Modifier
-                        .fillMaxHeight(),
+                        .height(40.dp),
                     tint = Color.Unspecified
                 )
             }
             Box(
                 modifier = Modifier
+                    .offset(y = (5).dp)
                     .align(Alignment.BottomEnd)
+
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_add),

@@ -12,6 +12,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -23,12 +24,17 @@ import com.muratdayan.ui.components.FastWordButtonComp
 import com.muratdayan.ui.components.FastWordProfileImageComp
 import com.muratdayan.ui.components.FastWordTextComp
 import com.muratdayan.ui.theme.FastWordTheme
+import com.muratdayan.ui.theme.extendedColors
 
 @Composable
 internal fun FriendCardComp(
     modifier: Modifier= Modifier,
     friendImagePainter: Painter,
-    friendName: String
+    friendName: String,
+    buttonTitle: String = "Play",
+    buttonIconVisible: Boolean = true,
+    iconTextVisible: Boolean = true,
+    buttonContainerColor: Color = MaterialTheme.extendedColors.customBlue.colorContainer,
 ){
 
     Card (
@@ -55,16 +61,19 @@ internal fun FriendCardComp(
             FastWordTextComp(
                 text = friendName,
                 style = MaterialTheme.typography.bodyMedium,
-                fontSize = Dimensions.textSizeMedium,
+                fontSize = Dimensions.textSizeSmall,
                 fontWeight = FontWeight.Bold,
+                maxLines = 1,
             )
 
             FastWordButtonComp(
-                text = "Play",
+                text = buttonTitle,
                 onClick = {},
-                icon = com.muratdayan.ui.R.drawable.ic_flash,
+                icon = if(buttonIconVisible) com.muratdayan.ui.R.drawable.ic_flash else null,
                 iconTint = MaterialTheme.colorScheme.primary,
-                iconText = "3"
+                iconText = if(iconTextVisible) "3" else null,
+                containerColor = buttonContainerColor,
+                textSize = Dimensions.textSizeSmall
             )
 
         }
