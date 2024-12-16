@@ -4,7 +4,7 @@ import android.util.Log
 import com.muratdayan.common.DataError
 import com.muratdayan.common.Result
 import com.muratdayan.domain.model.FriendsDataModel
-import com.muratdayan.domain.repository.DomainRepository
+import com.muratdayan.domain.repository.FriendsDomainRepository
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.gotrue.auth
 import io.github.jan.supabase.postgrest.from
@@ -13,9 +13,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class DomainRepositoryImpl @Inject constructor(
+class FriendsDomainRepositoryImpl @Inject constructor(
     private val supabaseClient: SupabaseClient
-) : DomainRepository{
+) : FriendsDomainRepository{
     override fun getFriends(): Flow<Result<List<FriendsDataModel>, com.muratdayan.common.AppError>> = flow {
         try {
             val user = supabaseClient.auth.currentUserOrNull()

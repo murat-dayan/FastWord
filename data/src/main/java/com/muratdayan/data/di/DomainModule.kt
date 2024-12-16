@@ -1,7 +1,9 @@
 package com.muratdayan.data.di
 
-import com.muratdayan.data.repository.DomainRepositoryImpl
-import com.muratdayan.domain.repository.DomainRepository
+import com.muratdayan.data.repository.FriendsDomainRepositoryImpl
+import com.muratdayan.data.repository.UsersDomainRepositoryImpl
+import com.muratdayan.domain.repository.FriendsDomainRepository
+import com.muratdayan.domain.repository.UsersDomainRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -15,7 +17,13 @@ object DomainModule {
 
     @Provides
     @Singleton
-    fun provideDomainRepository(supabaseClient: SupabaseClient): DomainRepository {
-        return DomainRepositoryImpl(supabaseClient)
+    fun provideFriendsDomainRepository(supabaseClient: SupabaseClient): FriendsDomainRepository {
+        return FriendsDomainRepositoryImpl(supabaseClient)
+    }
+
+    @Provides
+    @Singleton
+    fun provideUsersDomainRepository(supabaseClient: SupabaseClient): UsersDomainRepository {
+        return UsersDomainRepositoryImpl(supabaseClient)
     }
 }
