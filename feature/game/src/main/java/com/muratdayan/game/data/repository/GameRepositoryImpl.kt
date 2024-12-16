@@ -53,41 +53,5 @@ class GameRepositoryImpl @Inject constructor(
 
     }
 
-    override fun getFriends(): Flow<Result<List<FriendsDataModel>, AppError>> = flow{
-        try {
-            val user = supabaseClient.auth.currentUserOrNull()
-
-            if (user == null){
-                emit(Result.Error(DataError.Remote.Unauthorized))
-                return@flow
-            }else{
-                val response = supabaseClient
-                    .from("friends")
-                    .select(Columns.raw("""
-                        friend_id,
-                        user:users!friend_id(id,user_name)
-                    """.trimIndent())){
-                        filter {
-                            eq("user_id",user.id)
-                            eq("status","accepted")
-                        }
-                    }
-
-
-                Log.d("GameRepositoryImpl", "getFriends: $response")
-                val decodeResponse = response.decodeList<FriendsDataModel>()
-
-                if (decodeResponse.isEmpty()){
-                    emit(Result.Error(DataError.Remote.ServerError))
-                }else{
-                    emit(Result.Success(decodeResponse))
-                }
-            }
-        }catch (e:Exception){
-            Log.e("GameRepositoryImpl", "getFriends: ${e.message}")
-            emit(Result.Error(DataError.Remote.ServerError))
-        }
-    }
-
 
 }
