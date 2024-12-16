@@ -13,8 +13,10 @@ fun NavGraphBuilder.shopNavGraph(
     composable(
         route = Screen.ShopScreenRoute.route
     ) {
+        val shopViewModel = hiltViewModel<com.muratdayan.shop.presentation.ShopViewModel>()
         ShopScreenRoot(
             modifier = modifier,
+            shopViewModel = shopViewModel
         )
 
     }
