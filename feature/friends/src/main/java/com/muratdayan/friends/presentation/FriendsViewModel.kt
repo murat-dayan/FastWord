@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.muratdayan.common.Result
 import com.muratdayan.domain.usecase.GetFriendsDomainUseCase
+import com.muratdayan.domain.usecase.GetUserStatsDomainUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -19,7 +20,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FriendsViewModel @Inject constructor(
-    private val getFriendsDomainUseCase: GetFriendsDomainUseCase
+    private val getFriendsDomainUseCase: GetFriendsDomainUseCase,
+    private val getUserStatsDomainUseCase: GetUserStatsDomainUseCase
 ) : ViewModel(){
 
 
@@ -34,11 +36,39 @@ class FriendsViewModel @Inject constructor(
             FriendsContract.UiAction.GetFriends -> {
                 getFriends()
             }
-            FriendsContract.UiAction.GetUserStats -> {}
+            FriendsContract.UiAction.GetUserStats -> {
+                getUserStats()
+            }
             FriendsContract.UiAction.GoToProfile -> {}
             FriendsContract.UiAction.GoToShop -> {}
             FriendsContract.UiAction.InviteFriends -> {}
         }
+    }
+
+    private fun getUserStats() {
+        viewModelScope.launch {
+            updateUiState { copy(isLoading = true) }
+            getUserStatsDomainUseCase.invoke()
+                .onStart {
+                    updateUiState { copy(isLoading = true) }
+                }
+                .catch {
+                    updateUiState { copy(isLoading = false, userStats = null) }
+                }
+                .collect { resultUserState ->
+                    when (resultUserState) {
+                        is Result.Success -> {
+                            updateUiState {
+                                copy(isLoading = false, userStats = resultUserState.data)
+                            }
+                        }
+                        is Result.Error -> {
+                            updateUiState { copy(isLoading = false, userStats = null) }
+                        }
+                    }
+                }
+        }
+
     }
 
     private fun getFriends(){
