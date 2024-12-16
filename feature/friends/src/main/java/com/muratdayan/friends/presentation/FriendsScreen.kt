@@ -77,6 +77,7 @@ private fun FriendsScreen(
     var selectedListTitleIndex by remember { mutableStateOf(FriendsListType.MY_FRIENDS) }
 
     LaunchedEffect(key1 = true) {
+        onAction(FriendsContract.UiAction.GetUserStats)
         onAction(FriendsContract.UiAction.GetFriends)
     }
 
@@ -104,10 +105,10 @@ private fun FriendsScreen(
 
             Row {
                 FastWordBarHeaderComp(
-                    currentEnergy = 1,
+                    currentEnergy = uiState.userStats?.energy ?:0,
                     maxEnergy = 10,
-                    coinValue = 0,
-                    emeraldValue = 0
+                    coinValue = uiState.userStats?.token ?: 0,
+                    emeraldValue = uiState.userStats?.emerald ?: 0,
                 )
             }
         }
@@ -121,7 +122,8 @@ private fun FriendsScreen(
             onClick = {},
             containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(0.7f),
             iconTint = MaterialTheme.colorScheme.primary,
-            textAlignment = TextAlign.Center
+            textAlignment = TextAlign.Center,
+            isLoading = uiState.isLoading
         )
 
         Row(
