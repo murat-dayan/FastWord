@@ -5,6 +5,6 @@ import com.muratdayan.common.Result
 import com.muratdayan.domain.model.FriendsDataModel
 import kotlinx.coroutines.flow.Flow
 
-interface DomainRepository {
+interface FriendsDomainRepository {
     fun getFriends() : Flow<Result<List<FriendsDataModel>, AppError>>
 }

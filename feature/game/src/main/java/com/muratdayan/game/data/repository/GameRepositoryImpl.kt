@@ -19,39 +19,6 @@ class GameRepositoryImpl @Inject constructor(
     private val supabaseClient: SupabaseClient
 ) : GameRepository{
 
-    override fun getUserStats(): Flow<Result<UserStatsModel, AppError>> = flow {
-
-        try {
-
-            val user = supabaseClient.auth.currentUserOrNull()
-            Log.d("GameRepositoryImpl", "getUserStats: $user")
-
-            if (user == null){
-                emit(Result.Error(DataError.Remote.Unauthorized))
-                return@flow
-            }else{
-
-                val response = supabaseClient
-                    .from("user_stats")
-                    .select {
-                        filter {
-                            eq("user_id",user.id)
-                        }
-                    }.decodeSingleOrNull<UserStatsModel>()
-
-                response?.let {
-                    it.getUpdatedAtAsInstant()
-                    emit(Result.Success(it))
-                }
-            }
-
-
-        }catch (e: Exception){
-            Log.e("GameRepositoryImpl", "getUserStats: ${e.message}")
-            emit(Result.Error(DataError.Remote.ServerError))
-        }
-
-    }
 
 
 }
