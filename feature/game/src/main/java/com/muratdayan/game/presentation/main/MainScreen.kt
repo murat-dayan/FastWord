@@ -204,6 +204,9 @@ private fun MainScreen(
                             FriendCardComp(
                                 friendImagePainter = painterResource(com.muratdayan.ui.R.drawable.avatar),
                                 friendName = friend.user.user_name,
+                                friendImageClick = {
+                                    onAction(MainScreenContract.UiAction.GoToProfile(friend.user.id))
+                                }
                             )
                         }
                     }
@@ -215,7 +218,9 @@ private fun MainScreen(
                             buttonTitle = "Invite",
                             buttonIconVisible = false,
                             iconTextVisible = false,
-                            buttonContainerColor = MaterialTheme.colorScheme.secondaryContainer
+                            buttonContainerColor = MaterialTheme.colorScheme.secondaryContainer,
+                            friendImageClick = {
+                            }
                         )
                     }
                 }
