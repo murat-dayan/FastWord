@@ -37,10 +37,19 @@ class LeaderBoardViewModel @Inject constructor(
                 getFriends()
             }
 
-            LeaderBoardContract.UiAction.GoToProfile -> {}
             LeaderBoardContract.UiAction.GetEveryone -> {
                 getEveryone()
             }
+
+            is LeaderBoardContract.UiAction.GoToProfile -> {
+                goToProfile(action.userId)
+            }
+        }
+    }
+
+    private fun goToProfile(userId: String) {
+        viewModelScope.launch {
+            emitUiEffect(LeaderBoardContract.UiEffect.NavigateToProfileScreen(userId))
         }
     }
 

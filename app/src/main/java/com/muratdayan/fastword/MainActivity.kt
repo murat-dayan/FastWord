@@ -77,7 +77,12 @@ class MainActivity : ComponentActivity() {
                                 shopNavGraph(modifier = it)
                             },
                             leaderBoardNavGraph = {
-                                leaderBoardNavGraph(modifier = it)
+                                leaderBoardNavGraph(
+                                    modifier = it,
+                                    navigateToProfile = {userId->
+                                        navController.navigate(Screen.ProfileScreenRoute.withUserId(userId))
+                                    }
+                                )
                             },
                             friendsNavGraph = {
                                 friendsNavGraph(modifier = it)

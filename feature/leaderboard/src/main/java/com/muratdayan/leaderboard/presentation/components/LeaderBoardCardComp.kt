@@ -34,6 +34,8 @@ fun LeaderBoardCardComp(
     userImagePainter: Painter = painterResource(com.muratdayan.ui.R.drawable.avatar),
     userName:String,
     iconOrderPainter: Painter?=null,
+    onClickCard:()->Unit = {},
+    onClickImage:()->Unit = {},
     iconTint: Color? = null,
     scoreText:String,
     orderText:String
@@ -42,6 +44,7 @@ fun LeaderBoardCardComp(
     FastWordBaseCardComp(
         modifier = modifier
             .fillMaxWidth(),
+        onClick = onClickCard,
         containerColor = MaterialTheme.colorScheme.surface
     ) {
         Row (
@@ -82,7 +85,8 @@ fun LeaderBoardCardComp(
 
                 FastWordProfileImageComp(
                     imagePainter = userImagePainter,
-                    size = 40
+                    size = 40,
+                    onClick = onClickImage
                 )
                 FastWordTextComp(
                     text = userName,
