@@ -5,6 +5,8 @@ import com.muratdayan.common.AppError
 import com.muratdayan.common.DataError
 import com.muratdayan.common.Result
 import com.muratdayan.domain.model.FriendsDataModel
+import com.muratdayan.domain.model.FriendsTableModel
+import com.muratdayan.domain.model.UserDataModel
 import com.muratdayan.profile.domain.repository.ProfileRepository
 import com.muratdayan.profile.presentation.profile.util.UserType
 import io.github.jan.supabase.SupabaseClient
@@ -36,23 +38,33 @@ class ProfileRepositoryImpl @Inject constructor(
                         .select(
                             Columns.raw("""
                         friend_id,
-                        user:users!friend_id(id,user_name)
+                        user:users!friend_id(id,user_name),
+                        status
                     """.trimIndent())){
                             filter {
                                 eq("user_id",user.id)
-                                eq("status","accepted")
+                                eq("friend_id",userId)
                             }
                         }
 
-                    val decodeResponse = response.decodeList<FriendsDataModel>()
+                    val decodeResponse = response.decodeSingleOrNull<FriendsDataModel>()
 
-                    if (decodeResponse.any { friend->
-                        friend.user.id == userId
-                    }){
-                        emit(Result.Success(UserType.FRIEND))
-                    }else{
+                    if (decodeResponse == null){
                         emit(Result.Success(UserType.OTHER))
+                        return@flow
+                    }else{
+                        val acceptedFriends = decodeResponse.status == "accepted"
+
+                        if (acceptedFriends){
+                            emit(Result.Success(UserType.FRIEND))
+                        }else{
+                            val pendingFriendRequest = decodeResponse.status == "pending"
+                            if (pendingFriendRequest) {
+                                emit(Result.Success(UserType.PENDING))
+                            }
+                        }
                     }
+
                 }
             }
 
@@ -61,6 +73,32 @@ class ProfileRepositoryImpl @Inject constructor(
             emit(Result.Error(DataError.Remote.ServerError))
         }
 
+    }
+
+    override fun sendFriendRequest(friendId: String): Flow<Result<Unit, AppError>> = flow {
+        try {
+            val user = supabaseClient.auth.currentUserOrNull()
+            Log.d("UserStatsDomainRepositoryImpl", "updateEnergy: $user")
+
+            if (user == null){
+                emit(Result.Error(DataError.Remote.Unauthorized))
+                return@flow
+            }else {
+
+                val friendsTableModel = FriendsTableModel(
+                    user_id = user.id,
+                    friend_id = friendId,
+                    status = "pending"
+                )
+                supabaseClient
+                    .from("friends")
+                    .insert(friendsTableModel)
+
+                emit(Result.Success(Unit))
+            }
+        }catch (e:Exception){
+            emit(Result.Error(DataError.Remote.ServerError))
+        }
     }
 
 

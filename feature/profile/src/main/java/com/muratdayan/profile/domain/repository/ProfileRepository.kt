@@ -8,4 +8,6 @@ import kotlinx.coroutines.flow.Flow
 interface ProfileRepository {
 
     fun checkUserType(userId:String): Flow<Result<UserType,AppError>>
+
+    fun sendFriendRequest(friendId:String): Flow<Result<Unit,AppError>>
 }

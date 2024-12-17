@@ -29,7 +29,8 @@ class FriendsDomainRepositoryImpl @Inject constructor(
                     .select(
                         Columns.raw("""
                         friend_id,
-                        user:users!friend_id(id,user_name)
+                        user:users!friend_id(id,user_name),
+                        status
                     """.trimIndent())){
                         filter {
                             eq("user_id",user.id)

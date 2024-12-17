@@ -48,7 +48,7 @@ import kotlinx.coroutines.flow.emptyFlow
 fun ProfileScreenRoot(
     modifier: Modifier = Modifier,
     profileViewModel: ProfileViewModel,
-    userId:String?=null
+    userId: String? = null
 ) {
     val uiState = profileViewModel.uiState.collectAsStateWithLifecycle()
     val uiEffect = profileViewModel.uiEffect
@@ -65,7 +65,7 @@ fun ProfileScreenRoot(
 @Composable
 private fun ProfileScreen(
     modifier: Modifier = Modifier,
-    userId:String,
+    userId: String,
     uiState: ProfileContract.UiState,
     uiEffect: Flow<ProfileContract.UiEffect>,
     onAction: (ProfileContract.UiAction) -> Unit
@@ -74,19 +74,19 @@ private fun ProfileScreen(
     Log.d("ProfileScreen", "ProfileScreen: $userId")
 
     LaunchedEffect(true) {
-        if (userId.isNotEmpty()){
+        if (userId.isNotEmpty()) {
             onAction(ProfileContract.UiAction.CheckUserType(userId))
         }
     }
 
-    Column (
+    Column(
         modifier = modifier
             .fillMaxSize()
             .background(MaterialTheme.colorScheme.primary)
             .padding(Dimensions.paddingSmall),
         verticalArrangement = Arrangement.spacedBy(Dimensions.spacingMedium),
         horizontalAlignment = Alignment.CenterHorizontally
-    ){
+    ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
@@ -102,8 +102,8 @@ private fun ProfileScreen(
                 )
             }
 
-            when(uiState.userType){
-                UserType.CURRENT ->{
+            when (uiState.userType) {
+                UserType.CURRENT -> {
                     Row {
                         FastWordBarHeaderComp(
                             currentEnergy = uiState.userStats?.energy ?: 0,
@@ -113,7 +113,8 @@ private fun ProfileScreen(
                         )
                     }
                 }
-                UserType.FRIEND, UserType.OTHER -> {
+
+                UserType.FRIEND, UserType.OTHER, UserType.PENDING -> {
                     IconButton(
                         onClick = {}
                     ) {
@@ -124,19 +125,22 @@ private fun ProfileScreen(
                         )
                     }
                 }
+
                 null -> {}
             }
         }
 
-        when(uiState.userType){
+        when (uiState.userType) {
             UserType.CURRENT -> {
                 ProfileImageWithQuestionMark()
             }
-            UserType.FRIEND,UserType.OTHER  -> {
+
+            UserType.FRIEND, UserType.OTHER, UserType.PENDING -> {
                 FastWordProfileImageComp(
                     imagePainter = painterResource(com.muratdayan.ui.R.drawable.avatar)
                 )
             }
+
             null -> {}
 
         }
@@ -146,19 +150,20 @@ private fun ProfileScreen(
             fontWeight = FontWeight.Bold
         )
 
-        when(uiState.userType){
+        when (uiState.userType) {
             UserType.CURRENT -> {
-                FastWordBaseCardComp (
+                FastWordBaseCardComp(
                     containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(0.8f),
                     height = 50,
 
-                ){
+                    ) {
                     FastWordTextComp(
                         text = "Invite Friends",
                         fontWeight = FontWeight.Bold
                     )
                 }
             }
+
             UserType.FRIEND -> {
                 FastWordButtonComp(
                     modifier = Modifier
@@ -168,21 +173,26 @@ private fun ProfileScreen(
                     icon = com.muratdayan.ui.R.drawable.ic_flash,
                 )
             }
+
             UserType.OTHER -> {
-                Row (
+                Row(
                     modifier = Modifier
                         .padding(horizontal = Dimensions.paddingMedium),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(Dimensions.spacingMedium)
-                ){
+                ) {
                     FastWordButtonComp(
                         modifier = Modifier
                             .weight(1f),
                         text = "Add Friend",
+                        onClick = {
+                            onAction(ProfileContract.UiAction.SendFriendRequest(userId))
+                        },
                         containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.8f),
                         textColor = MaterialTheme.colorScheme.background,
                         textAlignment = TextAlign.Center
                     )
+
                     FastWordButtonComp(
                         modifier = Modifier
                             .weight(1f),
@@ -192,8 +202,27 @@ private fun ProfileScreen(
                     )
                 }
             }
+
+            UserType.PENDING -> {
+                FastWordButtonComp(
+                    modifier = Modifier
+                        .width(200.dp),
+                    text = "Play Now",
+                    iconText = "3",
+                    icon = com.muratdayan.ui.R.drawable.ic_flash,
+                )
+
+                FastWordTextComp(
+                    text = "Friend Request Sent",
+                    fontWeight = FontWeight.Bold
+                )
+
+            }
+
             null -> {}
+
         }
+
 
         ProfileStatsTitleComp(
             iconPainter = painterResource(com.muratdayan.ui.R.drawable.ic_crown),
@@ -252,7 +281,7 @@ private fun ProfileScreenPreview() {
     FastWordTheme {
         ProfileScreen(
             uiState = ProfileContract.UiState(
-                userType = UserType.CURRENT
+                userType = UserType.PENDING,
             ),
             uiEffect = emptyFlow(),
             onAction = {},
