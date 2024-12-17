@@ -55,7 +55,7 @@ internal fun MainScreenRoot(
     navigateToSettings: () -> Unit,
     navigateToFriends: () -> Unit,
     navigateToLeaderBoard: () -> Unit,
-    navigateToProfile: () -> Unit,
+    navigateToProfile: (String) -> Unit,
 ){
 
     val uiState = mainScreenViewModel.uiState.collectAsStateWithLifecycle()
@@ -84,7 +84,7 @@ private fun MainScreen(
     navigateToSettings: () -> Unit,
     navigateToFriends: () -> Unit,
     navigateToLeaderBoard: () -> Unit,
-    navigateToProfile: () -> Unit,
+    navigateToProfile: (String) -> Unit,
 ){
 
     LaunchedEffect(true) {
@@ -110,8 +110,8 @@ private fun MainScreen(
                 navigateToShop()
             }
 
-            MainScreenContract.UiEffect.NavigateToProfileScreen ->{
-                navigateToProfile()
+            is MainScreenContract.UiEffect.NavigateToProfileScreen -> {
+                navigateToProfile(effect.userId)
             }
         }
     }
@@ -138,7 +138,10 @@ private fun MainScreen(
                         imagePainter = painterResource(com.muratdayan.ui.R.drawable.avatar),
                         size = 50,
                         onClick = {
-                            onAction(MainScreenContract.UiAction.GoToProfile)
+                            uiState.userStats?.let {
+                                MainScreenContract.UiAction.GoToProfile(
+                                    it.user_id)
+                            }?.let { onAction(it) }
                         }
                     )
 

@@ -8,6 +8,8 @@ sealed class Screen(val route:String) {
     data object LeaderBoardScreenRoute: Screen("leaderboard_screen")
     data object FriendsScreenRoute: Screen("friends_screen")
     data object SettingsScreenRoute: Screen("settings_screen")
-    data object ProfileScreenRoute: Screen("profile_screen")
+    data object ProfileScreenRoute: Screen("profile_screen/{userId}"){
+        fun withUserId(userId:String) = "profile_screen/$userId"
+    }
 
 }

@@ -68,8 +68,8 @@ class MainActivity : ComponentActivity() {
                                     navigateToLeaderBoard = {
                                         navController.navigate(Screen.LeaderBoardScreenRoute.route)
                                     },
-                                    navigateToProfile = {
-                                        navController.navigate(Screen.ProfileScreenRoute.route)
+                                    navigateToProfile = {userId->
+                                        navController.navigate(Screen.ProfileScreenRoute.withUserId(userId))
                                     }
                                 )
                             },
