@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.muratdayan.common.Result
 import com.muratdayan.domain.usecase.GetUserStatsDomainUseCase
 import com.muratdayan.profile.domain.usecase.CheckUserTypeUseCase
+import com.muratdayan.profile.domain.usecase.SendFriendRequestUseCase
 import com.muratdayan.profile.presentation.profile.util.UserType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -20,7 +21,8 @@ import javax.inject.Inject
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val getUserStatsDomainUseCase: GetUserStatsDomainUseCase,
-    private val checkUserTypeUseCase: CheckUserTypeUseCase
+    private val checkUserTypeUseCase: CheckUserTypeUseCase,
+    private val sendFriendRequestUseCase: SendFriendRequestUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProfileContract.UiState())
@@ -38,6 +40,29 @@ class ProfileViewModel @Inject constructor(
             is ProfileContract.UiAction.CheckUserType -> {
                 checkUserType(action.userId)
             }
+
+            is ProfileContract.UiAction.SendFriendRequest -> {
+                sendFriendRequest(action.friendId)
+            }
+        }
+    }
+
+    private fun sendFriendRequest(friendId: String) {
+        viewModelScope.launch {
+            updateUiState { copy(isLoading = true) }
+            sendFriendRequestUseCase.invoke(friendId)
+                .collect { sendFriendRequestResult ->
+                    when (sendFriendRequestResult) {
+                        is Result.Error -> {
+                            updateUiState { copy(isLoading = false) }
+                        }
+
+                        is Result.Success -> {
+                            updateUiState { copy(isLoading = false) }
+                            checkUserType(friendId)
+                        }
+                    }
+                }
         }
     }
 
@@ -78,8 +103,7 @@ class ProfileViewModel @Inject constructor(
                             updateUiState {
                                 copy(
                                     isLoading = false,
-                                    userType = checkUserTypeResult.data
-
+                                    userType = checkUserTypeResult.data,
                                 )
                             }
                             if (checkUserTypeResult.data == UserType.CURRENT) {
