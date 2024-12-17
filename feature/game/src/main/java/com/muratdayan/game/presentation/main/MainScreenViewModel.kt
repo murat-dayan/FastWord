@@ -63,15 +63,19 @@ class MainScreenViewModel @Inject constructor(
                 }
             }
 
-            MainScreenContract.UiAction.GoToProfile -> {
-                viewModelScope.launch {
-                    emitUiEffect(MainScreenContract.UiEffect.NavigateToProfileScreen)
-                }
+            is MainScreenContract.UiAction.GoToProfile -> {
+                goToProfile(action.userId)
             }
 
             MainScreenContract.UiAction.GetFriends -> {
                 getFriends()
             }
+        }
+    }
+
+    private fun goToProfile(userId:String) {
+        viewModelScope.launch {
+            emitUiEffect(MainScreenContract.UiEffect.NavigateToProfileScreen(userId))
         }
     }
 

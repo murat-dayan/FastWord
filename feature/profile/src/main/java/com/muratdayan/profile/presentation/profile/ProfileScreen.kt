@@ -1,5 +1,6 @@
 package com.muratdayan.profile.presentation.profile
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -44,7 +45,8 @@ import kotlinx.coroutines.flow.emptyFlow
 @Composable
 fun ProfileScreenRoot(
     modifier: Modifier = Modifier,
-    profileViewModel: ProfileViewModel
+    profileViewModel: ProfileViewModel,
+    userId:String?=null
 ) {
     val uiState = profileViewModel.uiState.collectAsStateWithLifecycle()
     val uiEffect = profileViewModel.uiEffect
@@ -53,17 +55,21 @@ fun ProfileScreenRoot(
         modifier = modifier,
         uiState = uiState.value,
         uiEffect = uiEffect,
-        onAction = profileViewModel::onAction
+        onAction = profileViewModel::onAction,
+        userId = userId ?: ""
     )
 }
 
 @Composable
 private fun ProfileScreen(
     modifier: Modifier = Modifier,
+    userId:String,
     uiState: ProfileContract.UiState,
     uiEffect: Flow<ProfileContract.UiEffect>,
     onAction: (ProfileContract.UiAction) -> Unit
 ) {
+
+    Log.d("ProfileScreen", "ProfileScreen: $userId")
 
     var userType by remember { mutableStateOf(UserType.CURRENT) }
 
@@ -215,8 +221,8 @@ private fun ProfileScreenPreview() {
         ProfileScreen(
             uiState = ProfileContract.UiState(),
             uiEffect = emptyFlow(),
-            onAction = {}
-        
+            onAction = {},
+            userId = ""
         )
     }
 }
