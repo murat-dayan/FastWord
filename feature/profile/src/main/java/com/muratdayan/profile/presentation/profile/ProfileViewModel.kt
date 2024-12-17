@@ -1,7 +1,10 @@
 package com.muratdayan.profile.presentation.profile
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.muratdayan.common.Result
 import com.muratdayan.domain.usecase.GetUserStatsDomainUseCase
+import com.muratdayan.profile.domain.usecase.CheckUserTypeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -10,11 +13,13 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
-    private val getUserStatsDomainUseCase: GetUserStatsDomainUseCase
+    private val getUserStatsDomainUseCase: GetUserStatsDomainUseCase,
+    private val checkUserTypeUseCase: CheckUserTypeUseCase
 ) : ViewModel(){
 
     private val _uiState = MutableStateFlow(ProfileContract.UiState())
@@ -28,7 +33,29 @@ class ProfileViewModel @Inject constructor(
             ProfileContract.UiAction.GetUserStats -> {
 
             }
+
+            is ProfileContract.UiAction.CheckUserType -> {
+                checkUserType(action.userId)
+            }
         }
+    }
+
+    private fun checkUserType(userId: String) {
+        viewModelScope.launch {
+            updateUiState { copy(isLoading = true) }
+            checkUserTypeUseCase.invoke(userId)
+                .collect{checkUserTypeResult->
+                    when(checkUserTypeResult){
+                        is Result.Error -> {
+                            updateUiState { copy(isLoading = false) }
+                        }
+                        is Result.Success -> {
+                            updateUiState { copy(isLoading = false, userType = checkUserTypeResult.data) }
+                        }
+                    }
+                }
+        }
+
     }
 
     private fun updateUiState(block: ProfileContract.UiState.() -> ProfileContract.UiState){

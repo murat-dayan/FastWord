@@ -15,6 +15,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -71,7 +72,11 @@ private fun ProfileScreen(
 
     Log.d("ProfileScreen", "ProfileScreen: $userId")
 
-    var userType by remember { mutableStateOf(UserType.CURRENT) }
+    LaunchedEffect(true) {
+        if (userId.isNotEmpty()){
+            onAction(ProfileContract.UiAction.CheckUserType(userId))
+        }
+    }
 
     Column (
         modifier = modifier
@@ -96,7 +101,7 @@ private fun ProfileScreen(
                 )
             }
 
-            when(userType){
+            when(uiState.userType){
                 UserType.CURRENT ->{
                     Row {
                         FastWordBarHeaderComp(
@@ -119,10 +124,11 @@ private fun ProfileScreen(
                     }
                 }
                 UserType.OTHER -> {}
+                null -> {}
             }
         }
 
-        when(userType){
+        when(uiState.userType){
             UserType.CURRENT -> {
                 ProfileImageWithQuestionMark()
             }
@@ -132,6 +138,8 @@ private fun ProfileScreen(
                 )
             }
             UserType.OTHER -> {}
+            null -> {}
+
         }
 
         FastWordTextComp(
@@ -139,7 +147,7 @@ private fun ProfileScreen(
             fontWeight = FontWeight.Bold
         )
 
-        when(userType){
+        when(uiState.userType){
             UserType.CURRENT -> {
                 FastWordBaseCardComp (
                     containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(0.8f),
@@ -161,6 +169,7 @@ private fun ProfileScreen(
                 )
             }
             UserType.OTHER -> {}
+            null -> {}
         }
 
         ProfileStatsTitleComp(
