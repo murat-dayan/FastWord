@@ -30,6 +30,7 @@ import com.muratdayan.profile.R
 import com.muratdayan.profile.presentation.profile.components.CircularProgressComp
 import com.muratdayan.profile.presentation.profile.components.ProfileImageWithQuestionMark
 import com.muratdayan.profile.presentation.profile.components.ProfileStatsTitleComp
+import com.muratdayan.profile.presentation.profile.util.UserType
 import com.muratdayan.ui.components.FastWordBarHeaderComp
 import com.muratdayan.ui.components.FastWordBaseCardComp
 import com.muratdayan.ui.components.FastWordButtonComp
@@ -51,7 +52,7 @@ private fun ProfileScreen(
     modifier: Modifier = Modifier,
 ) {
 
-    var isCurrentUser by remember { mutableStateOf(false) }
+    var userType by remember { mutableStateOf(UserType.CURRENT) }
 
     Column (
         modifier = modifier
@@ -76,34 +77,42 @@ private fun ProfileScreen(
                 )
             }
 
-            if (isCurrentUser){
-                Row {
-                    FastWordBarHeaderComp(
-                        currentEnergy = 1,
-                        maxEnergy = 10,
-                        coinValue = 0,
-                        emeraldValue = 0
-                    )
+            when(userType){
+                UserType.CURRENT ->{
+                    Row {
+                        FastWordBarHeaderComp(
+                            currentEnergy = 1,
+                            maxEnergy = 10,
+                            coinValue = 0,
+                            emeraldValue = 0
+                        )
+                    }
                 }
-            }else{
-                IconButton(
-                    onClick = {}
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.MoreVert,
-                        contentDescription = "More",
-                        tint = MaterialTheme.colorScheme.background
-                    )
+                UserType.FRIEND -> {
+                    IconButton(
+                        onClick = {}
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.MoreVert,
+                            contentDescription = "More",
+                            tint = MaterialTheme.colorScheme.background
+                        )
+                    }
                 }
+                UserType.OTHER -> {}
             }
         }
 
-        if (isCurrentUser){
-            ProfileImageWithQuestionMark()
-        }else{
-            FastWordProfileImageComp(
-                imagePainter = painterResource(com.muratdayan.ui.R.drawable.avatar)
-            )
+        when(userType){
+            UserType.CURRENT -> {
+                ProfileImageWithQuestionMark()
+            }
+            UserType.FRIEND -> {
+                FastWordProfileImageComp(
+                    imagePainter = painterResource(com.muratdayan.ui.R.drawable.avatar)
+                )
+            }
+            UserType.OTHER -> {}
         }
 
         FastWordTextComp(
@@ -111,24 +120,28 @@ private fun ProfileScreen(
             fontWeight = FontWeight.Bold
         )
 
-        if (isCurrentUser){
-            FastWordBaseCardComp (
-                containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(0.8f),
-                height = 50
-            ){
-                FastWordTextComp(
-                    text = "Invite Friends",
-                    fontWeight = FontWeight.Bold
+        when(userType){
+            UserType.CURRENT -> {
+                FastWordBaseCardComp (
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(0.8f),
+                    height = 50
+                ){
+                    FastWordTextComp(
+                        text = "Invite Friends",
+                        fontWeight = FontWeight.Bold
+                    )
+                }
+            }
+            UserType.FRIEND -> {
+                FastWordButtonComp(
+                    modifier = Modifier
+                        .width(200.dp),
+                    text = "Play Now",
+                    iconText = "3",
+                    icon = com.muratdayan.ui.R.drawable.ic_flash,
                 )
             }
-        }else{
-            FastWordButtonComp(
-                modifier = Modifier
-                    .width(200.dp),
-                text = "Play Now",
-                iconText = "3",
-                icon = com.muratdayan.ui.R.drawable.ic_flash,
-            )
+            UserType.OTHER -> {}
         }
 
         ProfileStatsTitleComp(
