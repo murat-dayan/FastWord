@@ -25,6 +25,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.muratdayan.core_ui.ui.theme.Dimensions
 import com.muratdayan.profile.R
 import com.muratdayan.profile.presentation.profile.components.CircularProgressComp
@@ -37,19 +38,31 @@ import com.muratdayan.ui.components.FastWordButtonComp
 import com.muratdayan.ui.components.FastWordProfileImageComp
 import com.muratdayan.ui.components.FastWordTextComp
 import com.muratdayan.ui.theme.FastWordTheme
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 
 @Composable
 fun ProfileScreenRoot(
     modifier: Modifier = Modifier,
+    profileViewModel: ProfileViewModel
 ) {
+    val uiState = profileViewModel.uiState.collectAsStateWithLifecycle()
+    val uiEffect = profileViewModel.uiEffect
+
     ProfileScreen(
-        modifier = modifier
+        modifier = modifier,
+        uiState = uiState.value,
+        uiEffect = uiEffect,
+        onAction = profileViewModel::onAction
     )
 }
 
 @Composable
 private fun ProfileScreen(
     modifier: Modifier = Modifier,
+    uiState: ProfileContract.UiState,
+    uiEffect: Flow<ProfileContract.UiEffect>,
+    onAction: (ProfileContract.UiAction) -> Unit
 ) {
 
     var userType by remember { mutableStateOf(UserType.CURRENT) }
@@ -199,6 +212,11 @@ private fun ProfileScreen(
 @Composable
 private fun ProfileScreenPreview() {
     FastWordTheme {
-        ProfileScreen()
+        ProfileScreen(
+            uiState = ProfileContract.UiState(),
+            uiEffect = emptyFlow(),
+            onAction = {}
+        
+        )
     }
 }
