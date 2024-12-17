@@ -153,18 +153,25 @@ private fun ShopScreen(
                     ShopCardComp(
                         modifier=Modifier.weight(1f),
                         shopBuyIcon = com.muratdayan.ui.R.drawable.ic_emerald,
-                        shopAmount = 10,
+                        shopAmount = 20,
                         shopImageIcon = painterResource(com.muratdayan.ui.R.drawable.ic_flash),
-                        giftAmount = 10,
+                        giftAmount = 120,
                         borderColor = MaterialTheme.colorScheme.secondaryContainer,
-                        buttonOnClick = {}
+                        buttonOnClick = {
+                            onAction(
+                                ShopScreenContract.UiAction.BuyToken(
+                                    changeTokenValue = 120,
+                                    changeEmeraldValue = -20
+                                )
+                            )
+                        }
                     )
                     ShopCardComp(
                         modifier=Modifier.weight(1f),
                         shopBuyIcon = com.muratdayan.ui.R.drawable.ic_emerald,
-                        shopAmount = 10,
+                        shopAmount = 40,
                         shopImageIcon = painterResource(com.muratdayan.ui.R.drawable.ic_flash),
-                        giftAmount = 10,
+                        giftAmount = 280,
                         borderColor = MaterialTheme.colorScheme.secondaryContainer,
                         buttonOnClick = {}
                     )
