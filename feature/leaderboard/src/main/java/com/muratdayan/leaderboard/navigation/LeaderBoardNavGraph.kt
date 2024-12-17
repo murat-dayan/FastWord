@@ -10,6 +10,7 @@ import com.muratdayan.navigation.Screen
 
 fun NavGraphBuilder.leaderBoardNavGraph(
     modifier: Modifier = Modifier,
+    navigateToProfile: (String) -> Unit,
 ) {
     composable(
         route = Screen.LeaderBoardScreenRoute.route
@@ -17,7 +18,8 @@ fun NavGraphBuilder.leaderBoardNavGraph(
         val leaderBoardViewModel = hiltViewModel<LeaderBoardViewModel>()
         LeaderBoardScreenRoot(
             modifier = modifier,
-            leaderBoardViewModel = leaderBoardViewModel
+            leaderBoardViewModel = leaderBoardViewModel,
+            navigateToProfile = navigateToProfile
         )
 
     }

@@ -11,10 +11,10 @@ object LeaderBoardContract {
     sealed interface UiAction{
         data object GetFriends: UiAction
         data object GetEveryone: UiAction
-        data object GoToProfile: UiAction
+        data class GoToProfile(val userId: String): UiAction
     }
 
     sealed class UiEffect(){
-        data object NavigateToProfileScreen: UiEffect()
+        data class NavigateToProfileScreen(val userId:String): UiEffect()
     }
 }

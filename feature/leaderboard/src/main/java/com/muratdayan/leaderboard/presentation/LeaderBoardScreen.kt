@@ -45,7 +45,8 @@ import kotlinx.coroutines.flow.flowOf
 @Composable
 fun LeaderBoardScreenRoot(
     modifier: Modifier = Modifier,
-    leaderBoardViewModel: LeaderBoardViewModel
+    leaderBoardViewModel: LeaderBoardViewModel,
+    navigateToProfile: (String) -> Unit,
 ) {
 
     val uiState = leaderBoardViewModel.uiState.collectAsStateWithLifecycle()
@@ -55,7 +56,8 @@ fun LeaderBoardScreenRoot(
         modifier = modifier,
         uiState = uiState.value,
         uiEffect = uiEffect,
-        onAction = leaderBoardViewModel::onAction
+        onAction = leaderBoardViewModel::onAction,
+        navigateToProfile = navigateToProfile
     )
 }
 
@@ -64,12 +66,15 @@ private fun LeaderBoardScreen(
     modifier: Modifier = Modifier,
     uiState: LeaderBoardContract.UiState,
     uiEffect : Flow<LeaderBoardContract.UiEffect>,
-    onAction: (LeaderBoardContract.UiAction) -> Unit
+    onAction: (LeaderBoardContract.UiAction) -> Unit,
+    navigateToProfile: (String) -> Unit,
 ) {
 
     uiEffect.collectWithLifecycle { effect->
         when(effect){
-            LeaderBoardContract.UiEffect.NavigateToProfileScreen -> {}
+            is LeaderBoardContract.UiEffect.NavigateToProfileScreen -> {
+                navigateToProfile(effect.userId)
+            }
         }
     }
 
@@ -160,6 +165,12 @@ private fun LeaderBoardScreen(
                     itemsIndexed(uiState.friends){index,friend->
                         LeaderBoardCardComp(
                             userName = friend.user.user_name,
+                            onClickCard = {
+                                onAction(LeaderBoardContract.UiAction.GoToProfile(friend.user.id))
+                            },
+                            onClickImage = {
+                                onAction(LeaderBoardContract.UiAction.GoToProfile(friend.user.id))
+                            },
                             scoreText = "100",
                             orderText = "${index + 1}",
                             iconOrderPainter = when (index) {
@@ -183,6 +194,12 @@ private fun LeaderBoardScreen(
                         LeaderBoardCardComp(
                             userName = user.user_name,
                             scoreText = "100",
+                            onClickCard = {
+                                onAction(LeaderBoardContract.UiAction.GoToProfile(user.id))
+                            },
+                            onClickImage = {
+                                onAction(LeaderBoardContract.UiAction.GoToProfile(user.id))
+                            },
                             orderText = "${index + 1}",
                             iconOrderPainter = when (index) {
                                 0 -> painterResource(com.muratdayan.ui.R.drawable.ic_crown)
@@ -211,7 +228,8 @@ private fun LeaderBoardScreenPreview() {
         LeaderBoardScreen(
             uiState = LeaderBoardContract.UiState(),
             onAction = {},
-            uiEffect = emptyFlow()
+            uiEffect = emptyFlow(),
+            navigateToProfile = {}
         )
     }
 }
