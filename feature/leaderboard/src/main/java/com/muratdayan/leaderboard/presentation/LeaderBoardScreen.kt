@@ -10,10 +10,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -26,28 +29,53 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.muratdayan.core_ui.ui.theme.Dimensions
+import com.muratdayan.foodrecipecomposemvi.common.collectWithLifecycle
 import com.muratdayan.leaderboard.R
 import com.muratdayan.leaderboard.presentation.components.LeaderBoardCardComp
 import com.muratdayan.leaderboard.util.ListType
 import com.muratdayan.ui.components.FastWordBaseCardComp
 import com.muratdayan.ui.components.FastWordTextComp
 import com.muratdayan.ui.theme.FastWordTheme
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flowOf
 
 @Composable
 fun LeaderBoardScreenRoot(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    leaderBoardViewModel: LeaderBoardViewModel
 ) {
+
+    val uiState = leaderBoardViewModel.uiState.collectAsStateWithLifecycle()
+    val uiEffect = leaderBoardViewModel.uiEffect
+
     LeaderBoardScreen(
-        modifier = modifier
+        modifier = modifier,
+        uiState = uiState.value,
+        uiEffect = uiEffect,
+        onAction = leaderBoardViewModel::onAction
     )
 }
 
 @Composable
 private fun LeaderBoardScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    uiState: LeaderBoardContract.UiState,
+    uiEffect : Flow<LeaderBoardContract.UiEffect>,
+    onAction: (LeaderBoardContract.UiAction) -> Unit
 ) {
 
+    uiEffect.collectWithLifecycle { effect->
+        when(effect){
+            LeaderBoardContract.UiEffect.NavigateToProfileScreen -> {}
+        }
+    }
+
+    LaunchedEffect(true) {
+        onAction(LeaderBoardContract.UiAction.GetFriends)
+    }
 
     var selectedListTitleIndex by remember { mutableStateOf(ListType.MY_FRIENDS) }
 
@@ -97,6 +125,7 @@ private fun LeaderBoardScreen(
                     .weight(1f),
                 onClick = {
                     selectedListTitleIndex = ListType.MY_FRIENDS
+                    onAction(LeaderBoardContract.UiAction.GetFriends)
                 },
                 containerColor = if (selectedListTitleIndex == ListType.MY_FRIENDS)
                     MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.8f)
@@ -112,6 +141,7 @@ private fun LeaderBoardScreen(
                     .weight(1f),
                 onClick = {
                     selectedListTitleIndex = ListType.EVERYONE
+                    onAction(LeaderBoardContract.UiAction.GetEveryone)
                 },
                 containerColor = if (selectedListTitleIndex == ListType.EVERYONE)
                     MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.8f)
@@ -125,24 +155,50 @@ private fun LeaderBoardScreen(
         }
 
         LazyColumn {
-            items(20) { index ->
-                LeaderBoardCardComp(
-                    userName = "Murat",
-                    scoreText = "100",
-                    orderText = "${index + 1}",
-                    iconOrderPainter = when (index) {
-                        0 -> painterResource(com.muratdayan.ui.R.drawable.ic_crown)
-                        1 -> painterResource(com.muratdayan.ui.R.drawable.ic_crown)
-                        2 -> painterResource(com.muratdayan.ui.R.drawable.ic_crown)
-                        else -> null
-                    },
-                    iconTint = when (index) {
-                        0 -> MaterialTheme.colorScheme.secondaryContainer
-                        1 -> MaterialTheme.colorScheme.background
-                        2 -> MaterialTheme.colorScheme.secondaryContainer.copy(0.7f)
-                        else -> null
+            if (selectedListTitleIndex == ListType.MY_FRIENDS) {
+                uiState.friends?.let {
+                    itemsIndexed(uiState.friends){index,friend->
+                        LeaderBoardCardComp(
+                            userName = friend.user.user_name,
+                            scoreText = "100",
+                            orderText = "${index + 1}",
+                            iconOrderPainter = when (index) {
+                                0 -> painterResource(com.muratdayan.ui.R.drawable.ic_crown)
+                                1 -> painterResource(com.muratdayan.ui.R.drawable.ic_crown)
+                                2 -> painterResource(com.muratdayan.ui.R.drawable.ic_crown)
+                                else -> null
+                            },
+                            iconTint = when (index) {
+                                0 -> MaterialTheme.colorScheme.secondaryContainer
+                                1 -> MaterialTheme.colorScheme.background
+                                2 -> MaterialTheme.colorScheme.secondaryContainer.copy(0.7f)
+                                else -> null
+                            }
+                        )
                     }
-                )
+                }
+            }else{
+                uiState.everyoneList?.let {
+                    itemsIndexed(uiState.everyoneList){index,user->
+                        LeaderBoardCardComp(
+                            userName = user.user_name,
+                            scoreText = "100",
+                            orderText = "${index + 1}",
+                            iconOrderPainter = when (index) {
+                                0 -> painterResource(com.muratdayan.ui.R.drawable.ic_crown)
+                                1 -> painterResource(com.muratdayan.ui.R.drawable.ic_crown)
+                                2 -> painterResource(com.muratdayan.ui.R.drawable.ic_crown)
+                                else -> null
+                            },
+                            iconTint = when (index) {
+                                0 -> MaterialTheme.colorScheme.secondaryContainer
+                                1 -> MaterialTheme.colorScheme.background
+                                2 -> MaterialTheme.colorScheme.secondaryContainer.copy(0.7f)
+                                else -> null
+                            }
+                        )
+                    }
+                }
             }
         }
     }
@@ -152,6 +208,10 @@ private fun LeaderBoardScreen(
 @Composable
 private fun LeaderBoardScreenPreview() {
     FastWordTheme {
-        LeaderBoardScreen()
+        LeaderBoardScreen(
+            uiState = LeaderBoardContract.UiState(),
+            onAction = {},
+            uiEffect = emptyFlow()
+        )
     }
 }
