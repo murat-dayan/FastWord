@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.muratdayan.common.Result
 import com.muratdayan.domain.usecase.GetUserStatsDomainUseCase
 import com.muratdayan.profile.domain.usecase.CheckUserTypeUseCase
+import com.muratdayan.profile.presentation.profile.util.UserType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -20,18 +21,18 @@ import javax.inject.Inject
 class ProfileViewModel @Inject constructor(
     private val getUserStatsDomainUseCase: GetUserStatsDomainUseCase,
     private val checkUserTypeUseCase: CheckUserTypeUseCase
-) : ViewModel(){
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProfileContract.UiState())
     val uiState: StateFlow<ProfileContract.UiState> = _uiState.asStateFlow()
 
     private val _uiEffect by lazy { Channel<ProfileContract.UiEffect>() }
-    val uiEffect: Flow<ProfileContract.UiEffect> by  lazy { _uiEffect.receiveAsFlow() }
+    val uiEffect: Flow<ProfileContract.UiEffect> by lazy { _uiEffect.receiveAsFlow() }
 
-    fun onAction(action: ProfileContract.UiAction){
-        when(action){
+    fun onAction(action: ProfileContract.UiAction) {
+        when (action) {
             ProfileContract.UiAction.GetUserStats -> {
-
+                getUserStats()
             }
 
             is ProfileContract.UiAction.CheckUserType -> {
@@ -40,17 +41,50 @@ class ProfileViewModel @Inject constructor(
         }
     }
 
+    private fun getUserStats() {
+        viewModelScope.launch {
+            updateUiState { copy(isLoading = true) }
+            getUserStatsDomainUseCase.invoke()
+                .collect { userStatsResult ->
+                    when (userStatsResult) {
+                        is Result.Error -> {
+                            updateUiState { copy(isLoading = false) }
+                        }
+
+                        is Result.Success -> {
+                            updateUiState {
+                                copy(
+                                    isLoading = false,
+                                    userStats = userStatsResult.data
+                                )
+                            }
+                        }
+                    }
+                }
+        }
+    }
+
     private fun checkUserType(userId: String) {
         viewModelScope.launch {
             updateUiState { copy(isLoading = true) }
             checkUserTypeUseCase.invoke(userId)
-                .collect{checkUserTypeResult->
-                    when(checkUserTypeResult){
+                .collect { checkUserTypeResult ->
+                    when (checkUserTypeResult) {
                         is Result.Error -> {
                             updateUiState { copy(isLoading = false) }
                         }
+
                         is Result.Success -> {
-                            updateUiState { copy(isLoading = false, userType = checkUserTypeResult.data) }
+                            updateUiState {
+                                copy(
+                                    isLoading = false,
+                                    userType = checkUserTypeResult.data
+
+                                )
+                            }
+                            if (checkUserTypeResult.data == UserType.CURRENT) {
+                                getUserStats()
+                            }
                         }
                     }
                 }
@@ -58,11 +92,11 @@ class ProfileViewModel @Inject constructor(
 
     }
 
-    private fun updateUiState(block: ProfileContract.UiState.() -> ProfileContract.UiState){
+    private fun updateUiState(block: ProfileContract.UiState.() -> ProfileContract.UiState) {
         _uiState.update(block)
     }
 
-    private suspend fun emitUiEffect(uiEffect: ProfileContract.UiEffect){
+    private suspend fun emitUiEffect(uiEffect: ProfileContract.UiEffect) {
         _uiEffect.send(uiEffect)
     }
 

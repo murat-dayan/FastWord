@@ -106,10 +106,10 @@ private fun ProfileScreen(
                 UserType.CURRENT ->{
                     Row {
                         FastWordBarHeaderComp(
-                            currentEnergy = 1,
+                            currentEnergy = uiState.userStats?.energy ?: 0,
                             maxEnergy = 10,
-                            coinValue = 0,
-                            emeraldValue = 0
+                            coinValue = uiState.userStats?.token ?: 0,
+                            emeraldValue = uiState.userStats?.emerald ?: 0
                         )
                     }
                 }
@@ -150,7 +150,8 @@ private fun ProfileScreen(
             UserType.CURRENT -> {
                 FastWordBaseCardComp (
                     containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(0.8f),
-                    height = 50
+                    height = 50,
+
                 ){
                     FastWordTextComp(
                         text = "Invite Friends",
