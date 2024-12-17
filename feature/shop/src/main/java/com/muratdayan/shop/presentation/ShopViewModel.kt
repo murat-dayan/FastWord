@@ -17,6 +17,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.lang.Math.abs
 import javax.inject.Inject
 
 @HiltViewModel
@@ -42,7 +43,39 @@ class ShopViewModel @Inject constructor(
                     changeEmeraldValue = action.changeEmeraldValue
                 )
             }
+
+            is ShopScreenContract.UiAction.BuyToken -> {
+                buyToken(
+                    changeTokenValue = action.changeTokenValue,
+                    changeEmeraldValue = action.changeEmeraldValue
+                )
+            }
         }
+    }
+
+    private fun buyToken(changeTokenValue:Int,changeEmeraldValue: Int){
+            val currentToken = uiState.value.userStats?.token
+            val currentEmerald = uiState.value.userStats?.emerald
+            if (currentToken != null && currentEmerald != null) {
+                if (kotlin.math.abs(currentEmerald) >= kotlin.math.abs(changeEmeraldValue) ){
+                    val newTokenValue = currentToken + changeTokenValue
+                    viewModelScope.launch {
+                        updateStatsUseCase.updateStat(StatType.TOKEN,newTokenValue)
+                            .collect{resultUpdateToken->
+                                when(resultUpdateToken){
+                                    is Result.Success -> {
+                                        getUserStats()
+                                        updateEmerald(changeEmeraldValue)
+                                    }
+                                    is Result.Error -> {
+
+                                    }
+                                }
+                            }
+                    }
+                }
+            }
+
     }
 
     private fun buyEnergy(changeEnergyValue:Int, changeEmeraldValue:Int) {
@@ -63,8 +96,6 @@ class ShopViewModel @Inject constructor(
                         }
                     }
             }
-
-
         }
     }
 
@@ -89,6 +120,8 @@ class ShopViewModel @Inject constructor(
 
         }
     }
+
+
 
     private fun getUserStats() {
         viewModelScope.launch {
