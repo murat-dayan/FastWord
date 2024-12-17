@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -112,7 +113,7 @@ private fun ProfileScreen(
                         )
                     }
                 }
-                UserType.FRIEND -> {
+                UserType.FRIEND, UserType.OTHER -> {
                     IconButton(
                         onClick = {}
                     ) {
@@ -123,7 +124,6 @@ private fun ProfileScreen(
                         )
                     }
                 }
-                UserType.OTHER -> {}
                 null -> {}
             }
         }
@@ -132,12 +132,11 @@ private fun ProfileScreen(
             UserType.CURRENT -> {
                 ProfileImageWithQuestionMark()
             }
-            UserType.FRIEND -> {
+            UserType.FRIEND,UserType.OTHER  -> {
                 FastWordProfileImageComp(
                     imagePainter = painterResource(com.muratdayan.ui.R.drawable.avatar)
                 )
             }
-            UserType.OTHER -> {}
             null -> {}
 
         }
@@ -168,7 +167,30 @@ private fun ProfileScreen(
                     icon = com.muratdayan.ui.R.drawable.ic_flash,
                 )
             }
-            UserType.OTHER -> {}
+            UserType.OTHER -> {
+                Row (
+                    modifier = Modifier
+                        .padding(horizontal = Dimensions.paddingMedium),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(Dimensions.spacingMedium)
+                ){
+                    FastWordButtonComp(
+                        modifier = Modifier
+                            .weight(1f),
+                        text = "Add Friend",
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.8f),
+                        textColor = MaterialTheme.colorScheme.background,
+                        textAlignment = TextAlign.Center
+                    )
+                    FastWordButtonComp(
+                        modifier = Modifier
+                            .weight(1f),
+                        text = "Play Now",
+                        iconText = "3",
+                        icon = com.muratdayan.ui.R.drawable.ic_flash,
+                    )
+                }
+            }
             null -> {}
         }
 
@@ -228,7 +250,9 @@ private fun ProfileScreen(
 private fun ProfileScreenPreview() {
     FastWordTheme {
         ProfileScreen(
-            uiState = ProfileContract.UiState(),
+            uiState = ProfileContract.UiState(
+                userType = UserType.CURRENT
+            ),
             uiEffect = emptyFlow(),
             onAction = {},
             userId = ""
