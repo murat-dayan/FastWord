@@ -17,20 +17,19 @@ import javax.inject.Inject
 class UserDomainRepositoryImpl @Inject constructor(
     private val supabaseClient: SupabaseClient
 ) : UserDomainRepository{
-    override fun getUser(): Flow<Result<UserDataModel, AppError>> = flow {
+    override fun getUser(userId: String?): Flow<Result<UserDataModel, AppError>> = flow {
         try {
-            val user = supabaseClient.auth.currentUserOrNull()
-            Log.d("UserDomainRepositoryImpl", "updateToken: $user")
+            val id = userId ?: supabaseClient.auth.currentUserOrNull()
 
-            if (user == null){
-                emit(Result.Error(DataError.Remote.Unauthorized))
+            if (id == null){
+                emit(Result.Error(DataError.Remote.ServerError))
                 return@flow
             }else {
                 val response = supabaseClient
                     .from("users")
                     .select {
                         filter {
-                            eq("id",user.id)
+                            eq("id",id)
                         }
                     }.decodeSingleOrNull<UserDataModel>()
 

@@ -79,6 +79,7 @@ private fun ProfileScreen(
     LaunchedEffect(true) {
         if (userId.isNotEmpty()) {
             onAction(ProfileContract.UiAction.CheckUserType(userId))
+            onAction(ProfileContract.UiAction.GetUserInfo(userId))
         }
     }
 
@@ -144,13 +145,13 @@ private fun ProfileScreen(
                         showProfileDialog = true
 
                     },
-                    profileImagePainter = painterResource(com.muratdayan.ui.R.drawable.avatar)
+                    profileImageUri = uiState.userInfo?.avataruri ?: ""
                 )
             }
 
             UserType.FRIEND, UserType.OTHER, UserType.PENDING -> {
                 FastWordProfileImageComp(
-                    imagePainter = painterResource(com.muratdayan.ui.R.drawable.avatar)
+                    imageUri = uiState.userInfo?.avataruri ?: "",
                 )
             }
 
@@ -159,7 +160,7 @@ private fun ProfileScreen(
         }
 
         FastWordTextComp(
-            text = "Murat",
+            text = uiState.userInfo?.user_name ?: "User",
             fontWeight = FontWeight.Bold
         )
 

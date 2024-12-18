@@ -6,5 +6,5 @@ import javax.inject.Inject
 class GetUserInfoDomainUseCase @Inject constructor(
     private val userDomainRepository: UserDomainRepository
 ) {
-    operator fun invoke() = userDomainRepository.getUser()
+    operator fun invoke(userId:String?=null) = userDomainRepository.getUser(userId)
 }
