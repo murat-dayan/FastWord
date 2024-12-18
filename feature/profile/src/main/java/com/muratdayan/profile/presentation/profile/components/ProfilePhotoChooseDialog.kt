@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -72,11 +73,13 @@ fun ProfilePhotoChooseDialog(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.spacedBy(Dimensions.spacingMedium)
                         ) {
-                            items(15) {
-                                FastWordProfileImageComp(
-                                    imagePainter = painterResource(com.muratdayan.ui.R.drawable.avatar),
-                                    size = 60
-                                )
+                            girlsPhotos?.let {
+                                items(girlsPhotos){photo->
+                                    FastWordProfileImageComp(
+                                        imageUri = photo,
+                                        size = 60
+                                    )
+                                }
                             }
                         }
 
@@ -86,11 +89,13 @@ fun ProfilePhotoChooseDialog(
                             horizontalAlignment = Alignment.CenterHorizontally,
                             verticalArrangement = Arrangement.spacedBy(Dimensions.spacingMedium)
                         ) {
-                            items(15) {
-                                FastWordProfileImageComp(
-                                    imagePainter = painterResource(com.muratdayan.ui.R.drawable.avatar),
-                                    size = 60
-                                )
+                            mansPhotos?.let {
+                                items(mansPhotos){photo->
+                                    FastWordProfileImageComp(
+                                        imageUri = photo,
+                                        size = 60
+                                    )
+                                }
                             }
                         }
                     }
