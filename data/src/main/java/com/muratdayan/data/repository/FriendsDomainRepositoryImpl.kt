@@ -1,6 +1,7 @@
 package com.muratdayan.data.repository
 
 import android.util.Log
+import com.muratdayan.common.AppError
 import com.muratdayan.common.DataError
 import com.muratdayan.common.Result
 import com.muratdayan.domain.model.FriendsDataModel
@@ -49,7 +50,37 @@ class FriendsDomainRepositoryImpl @Inject constructor(
                 }
             }
         }catch (e:Exception){
-            Log.e("GameRepositoryImpl", "getFriends: ${e.message}")
+            Log.e("FriendsDomainRepositoryImpl", "getFriends: ${e.message}")
+            emit(Result.Error(DataError.Remote.ServerError))
+        }
+    }
+
+    override fun updateFriendStatus(
+        statusValue: String,
+        friendId: String
+    ): Flow<Result<Unit, AppError>> = flow {
+        try {
+            val user = supabaseClient.auth.currentUserOrNull()
+
+            if (user == null){
+                emit(Result.Error(DataError.Remote.Unauthorized))
+                return@flow
+            }else{
+                supabaseClient
+                    .from("friends")
+                    .update({
+                        set("status",statusValue)
+                    }){
+                        filter {
+                            eq("user_id",user.id)
+                            eq("friend_id",friendId)
+                        }
+                    }
+
+                emit(Result.Success(Unit))
+            }
+        }catch (e:Exception){
+            Log.e("FriendsDomainRepositoryImpl", "getFriends: ${e.message}")
             emit(Result.Error(DataError.Remote.ServerError))
         }
     }
