@@ -64,4 +64,10 @@ dependencies {
     implementation(libs.hilt.android)
     ksp(libs.hilt.compiler)
     implementation (libs.androidx.hilt.navigation.compose)
+
+    implementation (platform (libs.supabase.bom))
+    implementation (libs.realtime.kt)
+    implementation (libs.postgrest.kt)
+    implementation (libs.ktor.client.android)
+    implementation (libs.kotlinx.serialization.json)
 }
