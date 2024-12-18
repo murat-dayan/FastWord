@@ -17,6 +17,7 @@ import javax.inject.Inject
 class FriendsDomainRepositoryImpl @Inject constructor(
     private val supabaseClient: SupabaseClient
 ) : FriendsDomainRepository{
+
     override fun getFriends(): Flow<Result<List<FriendsDataModel>, com.muratdayan.common.AppError>> = flow {
         try {
             val user = supabaseClient.auth.currentUserOrNull()
@@ -30,11 +31,14 @@ class FriendsDomainRepositoryImpl @Inject constructor(
                     .select(
                         Columns.raw("""
                         friend_id,
-                        user:users!friend_id(id,user_name),
+                        user:users!${if (user.id == "user_id") "friend_id" else "user_id"}(id,user_name),
                         status
                     """.trimIndent())){
                         filter {
-                            eq("user_id",user.id)
+                            or {
+                                eq("user_id",user.id)
+                                eq("friend_id",user.id)
+                            }
                             eq("status","accepted")
                         }
                     }
