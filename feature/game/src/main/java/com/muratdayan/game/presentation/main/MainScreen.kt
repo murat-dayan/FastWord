@@ -90,6 +90,7 @@ private fun MainScreen(
     LaunchedEffect(true) {
         onAction(MainScreenContract.UiAction.GetUserStats)
         onAction(MainScreenContract.UiAction.GetFriends)
+        onAction(MainScreenContract.UiAction.GetUserInfo)
     }
 
     uiEffect.collectWithLifecycle { effect->
@@ -134,16 +135,15 @@ private fun MainScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    FastWordProfileImageComp(
-                        imagePainter = painterResource(com.muratdayan.ui.R.drawable.avatar),
-                        size = 50,
-                        onClick = {
-                            uiState.userStats?.let {
-                                MainScreenContract.UiAction.GoToProfile(
-                                    it.user_id)
-                            }?.let { onAction(it) }
-                        }
-                    )
+                    uiState.userInfo?.let {
+                        FastWordProfileImageComp(
+                            imageUri = uiState.userInfo.avataruri,
+                            size = 50,
+                            onClick = {
+                                onAction(MainScreenContract.UiAction.GoToProfile(uiState.userInfo.id))
+                            }
+                        )
+                    }
 
                     Row {
                         FastWordBarHeaderComp(

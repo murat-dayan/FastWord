@@ -1,12 +1,14 @@
 package com.muratdayan.game.presentation.main
 
+import com.muratdayan.domain.model.UserDataModel
 import com.muratdayan.domain.model.UserStatsModel
 
 object MainScreenContract {
 
     data class UiState(
-        val userStats: com.muratdayan.domain.model.UserStatsModel? = null,
+        val userStats: UserStatsModel? = null,
         val friends: List<com.muratdayan.domain.model.FriendsDataModel>? = null,
+        val userInfo: UserDataModel? = null,
         val isLoading: Boolean = false,
     )
 
@@ -14,6 +16,7 @@ object MainScreenContract {
         data object PlayNow:UiAction
         data object GetUserStats: UiAction
         data object GetFriends: UiAction
+        data object GetUserInfo: UiAction
         data object GoToShop: UiAction
         data object GoToSettings: UiAction
         data object GoToFriends: UiAction

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.muratdayan.common.Result
 import com.muratdayan.domain.usecase.GetFriendsDomainUseCase
+import com.muratdayan.domain.usecase.GetUserInfoDomainUseCase
 import com.muratdayan.domain.usecase.GetUserStatsDomainUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -21,7 +22,8 @@ import javax.inject.Inject
 @HiltViewModel
 class MainScreenViewModel @Inject constructor(
     private val getFriendsDomainUseCase: GetFriendsDomainUseCase,
-    private val getUserStatsDomainUseCase: GetUserStatsDomainUseCase
+    private val getUserStatsDomainUseCase: GetUserStatsDomainUseCase,
+    private val getUserInfoDomainUseCase: GetUserInfoDomainUseCase
 ): ViewModel() {
 
     private val _uiState = MutableStateFlow(MainScreenContract.UiState())
@@ -70,6 +72,29 @@ class MainScreenViewModel @Inject constructor(
             MainScreenContract.UiAction.GetFriends -> {
                 getFriends()
             }
+
+            MainScreenContract.UiAction.GetUserInfo -> {
+                getUserInfo()
+            }
+        }
+    }
+
+    private fun getUserInfo() {
+        viewModelScope.launch {
+            updateUiState { copy(isLoading = true) }
+            getUserInfoDomainUseCase.invoke()
+                .collect{getUserInfoResult->
+                    when(getUserInfoResult){
+                        is Result.Success -> {
+                            updateUiState {
+                                copy(isLoading = false, userInfo = getUserInfoResult.data)
+                            }
+                        }
+                        is Result.Error -> {
+                            updateUiState { copy(isLoading = false, userInfo = null) }
+                        }
+                    }
+                }
         }
     }
 
