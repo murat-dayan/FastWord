@@ -7,7 +7,7 @@ import com.muratdayan.domain.repository.UserStatsDomainRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class UpdateStatsUseCase @Inject constructor(
+class UpdateStatsDomainUseCase @Inject constructor(
     private val userStatsDomainRepository: UserStatsDomainRepository
 ) {
     fun updateStat(statType: StatType, newValue:Int) : Flow<Result<Unit, AppError>> =
