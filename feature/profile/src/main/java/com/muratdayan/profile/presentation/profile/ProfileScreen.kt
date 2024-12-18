@@ -33,6 +33,7 @@ import com.muratdayan.core_ui.ui.theme.Dimensions
 import com.muratdayan.profile.R
 import com.muratdayan.profile.presentation.profile.components.CircularProgressComp
 import com.muratdayan.profile.presentation.profile.components.ProfileImageWithQuestionMark
+import com.muratdayan.profile.presentation.profile.components.ProfilePhotoChooseDialog
 import com.muratdayan.profile.presentation.profile.components.ProfileStatsTitleComp
 import com.muratdayan.profile.presentation.profile.util.UserType
 import com.muratdayan.ui.components.FastWordBarHeaderComp
@@ -72,6 +73,8 @@ private fun ProfileScreen(
 ) {
 
     Log.d("ProfileScreen", "ProfileScreen: $userId")
+
+    var showProfileDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(true) {
         if (userId.isNotEmpty()) {
@@ -130,9 +133,19 @@ private fun ProfileScreen(
             }
         }
 
+
+
         when (uiState.userType) {
             UserType.CURRENT -> {
-                ProfileImageWithQuestionMark()
+                ProfileImageWithQuestionMark(
+                    onClickQuestionMark = {
+                        onAction(ProfileContract.UiAction.GetAvatars("mans"))
+                        onAction(ProfileContract.UiAction.GetAvatars("girls"))
+                        showProfileDialog = true
+
+                    },
+                    profileImagePainter = painterResource(com.muratdayan.ui.R.drawable.avatar)
+                )
             }
 
             UserType.FRIEND, UserType.OTHER, UserType.PENDING -> {
@@ -221,6 +234,17 @@ private fun ProfileScreen(
 
             null -> {}
 
+        }
+
+        if (uiState.avatarManList != null && uiState.avatarGirlList != null) {
+            ProfilePhotoChooseDialog(
+                showDialog = showProfileDialog,
+                onDismiss = {
+                    showProfileDialog = false
+                },
+                mansPhotos = uiState.avatarManList,
+                girlsPhotos = uiState.avatarGirlList
+            )
         }
 
 

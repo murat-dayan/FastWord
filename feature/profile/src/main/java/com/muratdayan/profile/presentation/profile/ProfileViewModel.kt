@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.muratdayan.common.Result
 import com.muratdayan.domain.usecase.GetUserStatsDomainUseCase
 import com.muratdayan.profile.domain.usecase.CheckUserTypeUseCase
+import com.muratdayan.profile.domain.usecase.GetAvatarsUseCase
 import com.muratdayan.profile.domain.usecase.SendFriendRequestUseCase
 import com.muratdayan.profile.presentation.profile.util.UserType
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,6 +24,7 @@ class ProfileViewModel @Inject constructor(
     private val getUserStatsDomainUseCase: GetUserStatsDomainUseCase,
     private val checkUserTypeUseCase: CheckUserTypeUseCase,
     private val sendFriendRequestUseCase: SendFriendRequestUseCase,
+    private val getAvatarsUseCase: GetAvatarsUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProfileContract.UiState())
@@ -44,6 +46,34 @@ class ProfileViewModel @Inject constructor(
             is ProfileContract.UiAction.SendFriendRequest -> {
                 sendFriendRequest(action.friendId)
             }
+
+            is ProfileContract.UiAction.GetAvatars -> {
+                getAvatars(action.folderName)
+            }
+        }
+    }
+
+    private fun getAvatars(folderName: String) {
+        viewModelScope.launch {
+            updateUiState { copy(isLoading = true) }
+            getAvatarsUseCase.invoke(folderName)
+                .collect{ getAvatarsResult ->
+                    when(getAvatarsResult){
+                        is Result.Error -> {
+                            updateUiState { copy(isLoading = false) }
+                        }
+                        is Result.Success -> {
+                            when(folderName){
+                                "mans" ->{
+                                    updateUiState { copy(isLoading = false, avatarManList = getAvatarsResult.data) }
+                                }
+                                "girls" ->{
+                                    updateUiState { copy(isLoading = false, avatarGirlList = getAvatarsResult.data) }
+                                }
+                            }
+                        }
+                    }
+                }
         }
     }
 

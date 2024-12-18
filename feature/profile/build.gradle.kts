@@ -68,7 +68,10 @@ dependencies {
 
     implementation (platform (libs.supabase.bom))
     implementation (libs.realtime.kt)
+    implementation (libs.storage.kt)
     implementation (libs.postgrest.kt)
     implementation (libs.ktor.client.android)
     implementation (libs.kotlinx.serialization.json)
+
+
 }

@@ -10,4 +10,6 @@ interface ProfileRepository {
     fun checkUserType(userId:String): Flow<Result<UserType,AppError>>
 
     fun sendFriendRequest(friendId:String): Flow<Result<Unit,AppError>>
+
+    fun getAvatars(folderName:String): Flow<Result<List<String>,AppError>>
 }
