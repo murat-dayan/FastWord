@@ -6,5 +6,5 @@ import com.muratdayan.domain.model.UserDataModel
 import kotlinx.coroutines.flow.Flow
 
 interface UserDomainRepository {
-    fun getUser(): Flow<Result<UserDataModel,AppError>>
+    fun getUser(userId:String?=null): Flow<Result<UserDataModel,AppError>>
 }

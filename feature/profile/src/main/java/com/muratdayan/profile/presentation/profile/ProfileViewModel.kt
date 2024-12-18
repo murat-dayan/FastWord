@@ -3,6 +3,7 @@ package com.muratdayan.profile.presentation.profile
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.muratdayan.common.Result
+import com.muratdayan.domain.usecase.GetUserInfoDomainUseCase
 import com.muratdayan.domain.usecase.GetUserStatsDomainUseCase
 import com.muratdayan.profile.domain.usecase.CheckUserTypeUseCase
 import com.muratdayan.profile.domain.usecase.GetAvatarsUseCase
@@ -24,7 +25,8 @@ class ProfileViewModel @Inject constructor(
     private val getUserStatsDomainUseCase: GetUserStatsDomainUseCase,
     private val checkUserTypeUseCase: CheckUserTypeUseCase,
     private val sendFriendRequestUseCase: SendFriendRequestUseCase,
-    private val getAvatarsUseCase: GetAvatarsUseCase
+    private val getAvatarsUseCase: GetAvatarsUseCase,
+    private val getUserInfoDomainUseCase: GetUserInfoDomainUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProfileContract.UiState())
@@ -50,6 +52,28 @@ class ProfileViewModel @Inject constructor(
             is ProfileContract.UiAction.GetAvatars -> {
                 getAvatars(action.folderName)
             }
+
+            is ProfileContract.UiAction.GetUserInfo -> {
+                getUserInfo(action.userId)
+            }
+        }
+    }
+
+    private fun getUserInfo( userId: String) {
+        updateUiState { copy(isLoading = true) }
+
+        viewModelScope.launch {
+            getUserInfoDomainUseCase.invoke(userId)
+                .collect{getUserInfoResult ->
+                    when(getUserInfoResult){
+                        is Result.Error -> {
+                            updateUiState { copy(isLoading = false) }
+                        }
+                        is Result.Success -> {
+                            updateUiState { copy(isLoading = false, userInfo = getUserInfoResult.data) }
+                        }
+                    }
+                }
         }
     }
 

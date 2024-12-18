@@ -24,7 +24,7 @@ import com.muratdayan.ui.theme.FastWordTheme
 fun ProfileImageWithQuestionMark(
     modifier: Modifier = Modifier,
     onClickQuestionMark: () -> Unit = {},
-    profileImagePainter: Painter?= painterResource(com.muratdayan.ui.R.drawable.avatar)
+    profileImageUri:String
 ){
     Box(
         contentAlignment = Alignment.Center,
@@ -32,7 +32,7 @@ fun ProfileImageWithQuestionMark(
     ) {
 
         FastWordProfileImageComp(
-            imagePainter = profileImagePainter?: painterResource(com.muratdayan.ui.R.drawable.avatar),
+            imageUri = profileImageUri
         )
 
 
@@ -60,7 +60,8 @@ fun ProfileImageWithQuestionMark(
 private fun ProfileImageWithQuestionMarkPreview(){
     FastWordTheme {
         ProfileImageWithQuestionMark(
-            profileImagePainter = painterResource(com.muratdayan.ui.R.drawable.avatar)
+            profileImageUri = ""
+
         )
     }
 }
