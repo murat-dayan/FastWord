@@ -7,8 +7,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -29,13 +32,13 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.muratdayan.core_ui.ui.theme.Dimensions
 import com.muratdayan.foodrecipecomposemvi.common.collectWithLifecycle
 import com.muratdayan.friends.R
+import com.muratdayan.friends.presentation.components.RequestCardComp
 import com.muratdayan.friends.util.FriendsListType
 import com.muratdayan.ui.components.FastWordAdvertHeaderComp
 import com.muratdayan.ui.components.FastWordBarHeaderComp
 import com.muratdayan.ui.components.FastWordBaseCardComp
 import com.muratdayan.ui.components.FastWordButtonComp
 import com.muratdayan.ui.components.FastWordGameCardComp
-import com.muratdayan.ui.components.FastWordProfileImageComp
 import com.muratdayan.ui.components.FastWordTextComp
 import com.muratdayan.ui.theme.FastWordTheme
 import com.muratdayan.ui.theme.extendedColors
@@ -79,6 +82,7 @@ private fun FriendsScreen(
     LaunchedEffect(key1 = true) {
         onAction(FriendsContract.UiAction.GetUserStats)
         onAction(FriendsContract.UiAction.GetFriends)
+        onAction(FriendsContract.UiAction.GetPendingFriends)
     }
 
     Column(
@@ -105,7 +109,7 @@ private fun FriendsScreen(
 
             Row {
                 FastWordBarHeaderComp(
-                    currentEnergy = uiState.userStats?.energy ?:0,
+                    currentEnergy = uiState.userStats?.energy ?: 0,
                     maxEnergy = 10,
                     coinValue = uiState.userStats?.token ?: 0,
                     emeraldValue = uiState.userStats?.emerald ?: 0,
@@ -152,33 +156,74 @@ private fun FriendsScreen(
                     else MaterialTheme.colorScheme.background
                 )
             }
-            FastWordBaseCardComp(
+            BadgedBox(
                 modifier = Modifier
                     .weight(1f),
-                height = 50,
-                onClick = {
-                    selectedListTitleIndex = FriendsListType.REQUESTS
-                },
-                containerColor = if (selectedListTitleIndex == FriendsListType.REQUESTS)
-                    MaterialTheme.colorScheme.background
-                else MaterialTheme.extendedColors.customBlue.colorContainer.copy(0.8f)
+                badge = {
+                    Badge(
+                        containerColor = MaterialTheme.colorScheme.error,
+                        contentColor = MaterialTheme.colorScheme.background,
+                        modifier = Modifier
+                            .size(20.dp)
+                            .align(Alignment.TopEnd)
+                    ) {
+                        if (uiState.pendingFriends.isNotEmpty()) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_alarm),
+                                contentDescription = "Request Icon",
+                                tint = MaterialTheme.colorScheme.background
+                            )
+                        }
+                    }
+                }
             ) {
-                FastWordTextComp(
-                    text = "Everyone",
-                    fontWeight = FontWeight.Bold,
-                    color = if (selectedListTitleIndex == FriendsListType.REQUESTS)
-                        MaterialTheme.colorScheme.primary
-                    else MaterialTheme.colorScheme.background
-                )
+                FastWordBaseCardComp(
+                    modifier = Modifier,
+                    height = 50,
+                    onClick = {
+                        selectedListTitleIndex = FriendsListType.REQUESTS
+                        onAction(FriendsContract.UiAction.GetPendingFriends)
+                    },
+                    containerColor = if (selectedListTitleIndex == FriendsListType.REQUESTS)
+                        MaterialTheme.colorScheme.background
+                    else MaterialTheme.extendedColors.customBlue.colorContainer.copy(0.8f)
+                ) {
+                    FastWordTextComp(
+                        text = "Requests",
+                        fontWeight = FontWeight.Bold,
+                        color = if (selectedListTitleIndex == FriendsListType.REQUESTS)
+                            MaterialTheme.colorScheme.primary
+                        else MaterialTheme.colorScheme.background
+                    )
+                }
+
+
             }
         }
         LazyColumn {
-            uiState.friends?.let { friendsList->
-                items(friendsList){friend->
-                    FastWordGameCardComp(
-                        name = friend.user.user_name,
-                        imagePainter = painterResource(com.muratdayan.ui.R.drawable.avatar),
-                    )
+            if (selectedListTitleIndex == FriendsListType.MY_FRIENDS) {
+                uiState.friends?.let { friendsList ->
+                    items(friendsList) { friend ->
+                        FastWordGameCardComp(
+                            name = friend.user.user_name,
+                            imagePainter = painterResource(com.muratdayan.ui.R.drawable.avatar),
+                        )
+                    }
+                }
+            }else{
+                if (uiState.pendingFriends.isNotEmpty()){
+                    items(uiState.pendingFriends) { pendingFriend ->
+                        RequestCardComp(
+                            userName = pendingFriend.user.user_name,
+                            imagePainter = painterResource(com.muratdayan.ui.R.drawable.avatar),
+                            onClickAccept = {
+
+                            },
+                            onClickReject = {
+
+                            },
+                        )
+                    }
                 }
             }
         }
