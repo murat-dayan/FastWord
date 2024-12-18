@@ -1,8 +1,10 @@
 package com.muratdayan.data.di
 
 import com.muratdayan.data.repository.FriendsDomainRepositoryImpl
+import com.muratdayan.data.repository.UserDomainRepositoryImpl
 import com.muratdayan.data.repository.UserStatsDomainRepositoryImpl
 import com.muratdayan.domain.repository.FriendsDomainRepository
+import com.muratdayan.domain.repository.UserDomainRepository
 import com.muratdayan.domain.repository.UserStatsDomainRepository
 import dagger.Module
 import dagger.Provides
@@ -26,4 +28,11 @@ object DomainModule {
     fun provideUserStatsDomainRepository(supabaseClient: SupabaseClient): UserStatsDomainRepository {
         return UserStatsDomainRepositoryImpl(supabaseClient)
     }
+
+    @Provides
+    @Singleton
+    fun provideUserDomainRepository(supabaseClient: SupabaseClient): UserDomainRepository {
+        return UserDomainRepositoryImpl(supabaseClient)
+    }
+
 }

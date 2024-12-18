@@ -29,7 +29,7 @@ import com.muratdayan.ui.theme.extendedColors
 @Composable
 internal fun FriendCardComp(
     modifier: Modifier= Modifier,
-    friendImagePainter: Painter,
+    friendImageUri:String,
     friendImageClick: () -> Unit,
     friendName: String,
     buttonTitle: String = "Play",
@@ -55,7 +55,7 @@ internal fun FriendCardComp(
         ) {
 
             FastWordProfileImageComp(
-                imagePainter = friendImagePainter,
+                imageUri = friendImageUri,
                 size = 60,
                 onClick = {
                     friendImageClick()
@@ -90,7 +90,7 @@ internal fun FriendCardComp(
 private fun FriendCardCompPreview(){
     FastWordTheme {
         FriendCardComp(
-            friendImagePainter = painterResource(com.muratdayan.ui.R.drawable.avatar),
+            friendImageUri = "",
             friendName = "Murat",
             friendImageClick = {}
         )
