@@ -50,6 +50,7 @@ fun FastWordProfileImageComp(
                     .decoderFactory(SvgDecoder.Factory())
                     .build(),
                 contentDescription = contentDescription,
+
                 contentScale = contentScale,
                 modifier = Modifier
                     .matchParentSize()

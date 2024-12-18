@@ -6,5 +6,5 @@ import kotlinx.serialization.Serializable
 data class FriendsDataModel(
     val friend_id:String,
     val user:UserDataModel,
-    val status:String
+    val status:String,
 )

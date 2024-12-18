@@ -31,7 +31,7 @@ class FriendsDomainRepositoryImpl @Inject constructor(
                     .select(
                         Columns.raw("""
                         friend_id,
-                        user:users!${if (user.id == "user_id") "friend_id" else "user_id"}(id,user_name),
+                        user:users!${if (user.id == "user_id") "friend_id" else "user_id"}(id,user_name,avataruri),
                         status
                     """.trimIndent())){
                         filter {
