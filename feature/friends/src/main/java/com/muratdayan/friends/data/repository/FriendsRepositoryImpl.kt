@@ -17,6 +17,7 @@ import javax.inject.Inject
 class FriendsRepositoryImpl @Inject constructor(
     private val supabaseClient:SupabaseClient
 ) : FriendsRepository {
+
     override fun getPendingFriends(): Flow<Result<List<FriendsDataModel>, AppError>>  = flow {
         try {
             val user = supabaseClient.auth.currentUserOrNull()
@@ -31,13 +32,13 @@ class FriendsRepositoryImpl @Inject constructor(
                         Columns.raw(
                             """
                         friend_id,
-                        user:users!friend_id(id,user_name),
+                        user:users!user_id(id,user_name),
                         status
                     """.trimIndent()
                         )
                     ) {
                         filter {
-                            eq("user_id", user.id)
+                            eq("friend_id", user.id)
                             eq("status", "pending")
                         }
                     }
