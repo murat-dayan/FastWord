@@ -51,15 +51,15 @@ class FriendsViewModel @Inject constructor(
             }
 
             is FriendsContract.UiAction.UpdateFriendStatus -> {
-                updateFriendStatus(action.friendId,action.status)
+                updateFriendStatus(action.senderId,action.status)
             }
         }
     }
 
-    private fun updateFriendStatus(friendId: String, status: String) {
+    private fun updateFriendStatus(senderId: String, status: String) {
         viewModelScope.launch {
             updateUiState { copy(isLoading = true) }
-            updateFriendStatusDomainUseCase.invoke(friendId = friendId, statusValue = status)
+            updateFriendStatusDomainUseCase.invoke(senderId = senderId, statusValue = status)
                 .collect{resultUpdateFriendStatus->
                     when(resultUpdateFriendStatus){
                         is Result.Error -> {

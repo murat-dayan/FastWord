@@ -16,7 +16,7 @@ object FriendsContract {
         data object GetFriends: UiAction
         data object GoToShop: UiAction
         data object GoToProfile: UiAction
-        data class UpdateFriendStatus(val friendId: String,val status: String): UiAction
+        data class UpdateFriendStatus(val senderId: String,val status: String): UiAction
     }
 
     sealed class UiEffect(){

@@ -220,13 +220,13 @@ private fun FriendsScreen(
                             imagePainter = painterResource(com.muratdayan.ui.R.drawable.avatar),
                             onClickAccept = {
                                 onAction(FriendsContract.UiAction.UpdateFriendStatus(
-                                    friendId = pendingFriend.friend_id,
+                                    senderId = pendingFriend.user.id,
                                     status = "accepted"
                                 ))
                             },
                             onClickReject = {
                                 onAction(FriendsContract.UiAction.UpdateFriendStatus(
-                                    friendId = pendingFriend.friend_id,
+                                    senderId = pendingFriend.user.id,
                                     status = "rejected"
                                 ))
                             },
