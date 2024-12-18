@@ -256,7 +256,7 @@ private fun ProfileScreen(
         }
 
         ProfileStatsTitleComp(
-            iconPainter = painterResource(R.drawable.ic_correct),
+            iconPainter = painterResource(com.muratdayan.ui.R.drawable.ic_tick_yes),
             statTitleText = "Correct Answers",
             iconTint = Color.Unspecified
         )
