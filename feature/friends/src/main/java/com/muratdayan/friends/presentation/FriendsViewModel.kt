@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.muratdayan.common.Result
 import com.muratdayan.domain.usecase.GetFriendsDomainUseCase
 import com.muratdayan.domain.usecase.GetUserStatsDomainUseCase
+import com.muratdayan.friends.domain.usecase.GetPendingFriendsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -21,7 +22,8 @@ import javax.inject.Inject
 @HiltViewModel
 class FriendsViewModel @Inject constructor(
     private val getFriendsDomainUseCase: GetFriendsDomainUseCase,
-    private val getUserStatsDomainUseCase: GetUserStatsDomainUseCase
+    private val getUserStatsDomainUseCase: GetUserStatsDomainUseCase,
+    private val getPendingFriendsUseCase: GetPendingFriendsUseCase
 ) : ViewModel(){
 
 
@@ -42,6 +44,28 @@ class FriendsViewModel @Inject constructor(
             FriendsContract.UiAction.GoToProfile -> {}
             FriendsContract.UiAction.GoToShop -> {}
             FriendsContract.UiAction.InviteFriends -> {}
+            FriendsContract.UiAction.GetPendingFriends -> {
+                getPendingFriends()
+            }
+        }
+    }
+
+    private fun getPendingFriends() {
+        viewModelScope.launch {
+            updateUiState { copy(isLoading = true) }
+            getPendingFriendsUseCase.invoke()
+                .collect{resultPendingFriendsState->
+                    when(resultPendingFriendsState){
+                        is Result.Error -> {
+                            updateUiState { copy(isLoading = false, pendingFriends = emptyList()) }
+                        }
+                        is Result.Success -> {
+                            updateUiState {
+                                copy(isLoading = false, pendingFriends = resultPendingFriendsState.data)
+                            }
+                        }
+                    }
+                }
         }
     }
 
