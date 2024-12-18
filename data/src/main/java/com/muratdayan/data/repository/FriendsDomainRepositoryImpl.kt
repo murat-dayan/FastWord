@@ -57,7 +57,7 @@ class FriendsDomainRepositoryImpl @Inject constructor(
 
     override fun updateFriendStatus(
         statusValue: String,
-        friendId: String
+        senderId: String
     ): Flow<Result<Unit, AppError>> = flow {
         try {
             val user = supabaseClient.auth.currentUserOrNull()
@@ -72,8 +72,8 @@ class FriendsDomainRepositoryImpl @Inject constructor(
                         set("status",statusValue)
                     }){
                         filter {
-                            eq("user_id",user.id)
-                            eq("friend_id",friendId)
+                            eq("user_id",senderId)
+                            eq("friend_id",user.id)
                         }
                     }
 

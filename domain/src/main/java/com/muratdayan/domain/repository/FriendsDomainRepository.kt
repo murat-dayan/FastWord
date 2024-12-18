@@ -8,5 +8,5 @@ import kotlinx.coroutines.flow.Flow
 interface FriendsDomainRepository {
     fun getFriends() : Flow<Result<List<FriendsDataModel>, AppError>>
 
-    fun updateFriendStatus(statusValue:String, friendId:String): Flow<Result<Unit, AppError>>
+    fun updateFriendStatus(statusValue:String, senderId:String): Flow<Result<Unit, AppError>>
 }
