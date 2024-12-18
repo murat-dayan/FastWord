@@ -5,7 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.muratdayan.common.Result
 import com.muratdayan.common.StatType
 import com.muratdayan.domain.usecase.GetUserStatsDomainUseCase
-import com.muratdayan.domain.usecase.UpdateStatsUseCase
+import com.muratdayan.domain.usecase.UpdateStatsDomainUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -17,13 +17,12 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.lang.Math.abs
 import javax.inject.Inject
 
 @HiltViewModel
 class ShopViewModel @Inject constructor(
     private val getUserStatsDomainUseCase: GetUserStatsDomainUseCase,
-    private val updateStatsUseCase: UpdateStatsUseCase
+    private val updateStatsUseCase: UpdateStatsDomainUseCase
 ) : ViewModel() {
     private val _uiState = MutableStateFlow(ShopScreenContract.UiState())
     val uiState: StateFlow<ShopScreenContract.UiState> = _uiState.asStateFlow()

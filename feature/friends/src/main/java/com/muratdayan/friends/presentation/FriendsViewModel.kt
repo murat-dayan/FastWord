@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.muratdayan.common.Result
 import com.muratdayan.domain.usecase.GetFriendsDomainUseCase
 import com.muratdayan.domain.usecase.GetUserStatsDomainUseCase
+import com.muratdayan.domain.usecase.UpdateFriendStatusDomainUseCase
 import com.muratdayan.friends.domain.usecase.GetPendingFriendsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -23,7 +24,8 @@ import javax.inject.Inject
 class FriendsViewModel @Inject constructor(
     private val getFriendsDomainUseCase: GetFriendsDomainUseCase,
     private val getUserStatsDomainUseCase: GetUserStatsDomainUseCase,
-    private val getPendingFriendsUseCase: GetPendingFriendsUseCase
+    private val getPendingFriendsUseCase: GetPendingFriendsUseCase,
+    private val updateFriendStatusDomainUseCase: UpdateFriendStatusDomainUseCase
 ) : ViewModel(){
 
 
@@ -47,6 +49,29 @@ class FriendsViewModel @Inject constructor(
             FriendsContract.UiAction.GetPendingFriends -> {
                 getPendingFriends()
             }
+
+            is FriendsContract.UiAction.UpdateFriendStatus -> {
+                updateFriendStatus(action.friendId,action.status)
+            }
+        }
+    }
+
+    private fun updateFriendStatus(friendId: String, status: String) {
+        viewModelScope.launch {
+            updateUiState { copy(isLoading = true) }
+            updateFriendStatusDomainUseCase.invoke(friendId = friendId, statusValue = status)
+                .collect{resultUpdateFriendStatus->
+                    when(resultUpdateFriendStatus){
+                        is Result.Error -> {
+                            updateUiState { copy(isLoading = false) }
+                        }
+                        is Result.Success -> {
+                            updateUiState { copy(isLoading = false) }
+                            getPendingFriends()
+                            getFriends()
+                        }
+                    }
+                }
         }
     }
 
