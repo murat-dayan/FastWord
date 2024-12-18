@@ -139,7 +139,10 @@ private fun ProfileScreen(
             UserType.CURRENT -> {
                 ProfileImageWithQuestionMark(
                     onClickQuestionMark = {
+                        onAction(ProfileContract.UiAction.GetAvatars("mans"))
+                        onAction(ProfileContract.UiAction.GetAvatars("girls"))
                         showProfileDialog = true
+
                     },
                     profileImagePainter = painterResource(com.muratdayan.ui.R.drawable.avatar)
                 )
@@ -233,14 +236,16 @@ private fun ProfileScreen(
 
         }
 
-        ProfilePhotoChooseDialog(
-            showDialog = showProfileDialog,
-            onDismiss = {
-                showProfileDialog = false
-            },
-            mansPhotos = null,
-            girlsPhotos = null
-        )
+        if (uiState.avatarManList != null && uiState.avatarGirlList != null) {
+            ProfilePhotoChooseDialog(
+                showDialog = showProfileDialog,
+                onDismiss = {
+                    showProfileDialog = false
+                },
+                mansPhotos = uiState.avatarManList,
+                girlsPhotos = uiState.avatarGirlList
+            )
+        }
 
 
         ProfileStatsTitleComp(
