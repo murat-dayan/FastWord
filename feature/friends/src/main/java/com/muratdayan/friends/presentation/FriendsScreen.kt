@@ -159,15 +159,15 @@ private fun FriendsScreen(
             BadgedBox(
                 modifier = Modifier
                     .weight(1f),
-                badge = {
-                    Badge(
-                        containerColor = MaterialTheme.colorScheme.error,
-                        contentColor = MaterialTheme.colorScheme.background,
-                        modifier = Modifier
-                            .size(20.dp)
-                            .align(Alignment.TopEnd)
-                    ) {
-                        if (uiState.pendingFriends.isNotEmpty()) {
+                badge = if (uiState.pendingFriends.isNotEmpty()) {
+                    {
+                        Badge(
+                            containerColor = MaterialTheme.colorScheme.error,
+                            contentColor = MaterialTheme.colorScheme.background,
+                            modifier = Modifier
+                                .size(20.dp)
+                                .align(Alignment.TopEnd)
+                        ) {
                             Icon(
                                 painter = painterResource(R.drawable.ic_alarm),
                                 contentDescription = "Request Icon",
@@ -175,6 +175,8 @@ private fun FriendsScreen(
                             )
                         }
                     }
+                } else {
+                    {}
                 }
             ) {
                 FastWordBaseCardComp(
@@ -217,10 +219,16 @@ private fun FriendsScreen(
                             userName = pendingFriend.user.user_name,
                             imagePainter = painterResource(com.muratdayan.ui.R.drawable.avatar),
                             onClickAccept = {
-
+                                onAction(FriendsContract.UiAction.UpdateFriendStatus(
+                                    friendId = pendingFriend.friend_id,
+                                    status = "accepted"
+                                ))
                             },
                             onClickReject = {
-
+                                onAction(FriendsContract.UiAction.UpdateFriendStatus(
+                                    friendId = pendingFriend.friend_id,
+                                    status = "rejected"
+                                ))
                             },
                         )
                     }
