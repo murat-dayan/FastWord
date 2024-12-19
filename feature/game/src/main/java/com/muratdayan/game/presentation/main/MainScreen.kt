@@ -137,7 +137,7 @@ private fun MainScreen(
                 ) {
                     uiState.userInfo?.let {
                         FastWordProfileImageComp(
-                            imageUri = uiState.userInfo.avataruri,
+                            imageUri = uiState.userInfo.avatar_uri,
                             size = 50,
                             onClick = {
                                 onAction(MainScreenContract.UiAction.GoToProfile(uiState.userInfo.id))
@@ -207,10 +207,10 @@ private fun MainScreen(
                     uiState.friends?.let {friendsList->
                         items(friendsList){friend->
                             FriendCardComp(
-                                friendImageUri = friend.user.avataruri!!,
-                                friendName = friend.user.user_name,
+                                friendImageUri = friend.avatar_uri,
+                                friendName = friend.user_name,
                                 friendImageClick = {
-                                    onAction(MainScreenContract.UiAction.GoToProfile(friend.user.id))
+                                    onAction(MainScreenContract.UiAction.GoToProfile(friend.friend_id))
                                 }
                             )
                         }
@@ -218,7 +218,7 @@ private fun MainScreen(
 
                     item {
                         FriendCardComp(
-                            friendImageUri = uiState.userInfo?.avataruri ?: "",
+                            friendImageUri = uiState.userInfo?.avatar_uri ?: "",
                             friendName = "Invite Friends",
                             buttonTitle = "Invite",
                             buttonIconVisible = false,

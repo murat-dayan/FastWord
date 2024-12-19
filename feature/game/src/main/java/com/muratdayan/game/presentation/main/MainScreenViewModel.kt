@@ -130,8 +130,6 @@ class MainScreenViewModel @Inject constructor(
         }
     }
 
-
-
     private fun getUserStats() {
         viewModelScope.launch {
             updateUiState { copy(isLoading = true) }

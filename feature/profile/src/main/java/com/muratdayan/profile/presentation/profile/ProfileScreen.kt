@@ -145,13 +145,13 @@ private fun ProfileScreen(
                         showProfileDialog = true
 
                     },
-                    profileImageUri = uiState.userInfo?.avataruri ?: ""
+                    profileImageUri = uiState.userInfo?.avatar_uri ?: ""
                 )
             }
 
             UserType.FRIEND, UserType.OTHER, UserType.PENDING -> {
                 FastWordProfileImageComp(
-                    imageUri = uiState.userInfo?.avataruri ?: "",
+                    imageUri = uiState.userInfo?.avatar_uri ?: "",
                 )
             }
 

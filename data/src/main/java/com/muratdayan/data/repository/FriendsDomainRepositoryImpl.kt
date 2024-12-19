@@ -5,6 +5,7 @@ import com.muratdayan.common.AppError
 import com.muratdayan.common.DataError
 import com.muratdayan.common.Result
 import com.muratdayan.domain.model.FriendsDataModel
+import com.muratdayan.domain.model.FriendsViewModel
 import com.muratdayan.domain.repository.FriendsDomainRepository
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.gotrue.auth
@@ -18,7 +19,7 @@ class FriendsDomainRepositoryImpl @Inject constructor(
     private val supabaseClient: SupabaseClient
 ) : FriendsDomainRepository{
 
-    override fun getFriends(): Flow<Result<List<FriendsDataModel>, com.muratdayan.common.AppError>> = flow {
+    override fun getFriends(): Flow<Result<List<FriendsViewModel>, AppError>> = flow {
         try {
             val user = supabaseClient.auth.currentUserOrNull()
 
@@ -26,31 +27,29 @@ class FriendsDomainRepositoryImpl @Inject constructor(
                 emit(Result.Error(DataError.Remote.Unauthorized))
                 return@flow
             }else{
+
                 val response = supabaseClient
-                    .from("friends")
-                    .select(
-                        Columns.raw("""
-                        friend_id,
-                        user:users!${if (user.id == "user_id") "friend_id" else "user_id"}(id,user_name,avataruri),
-                        status
-                    """.trimIndent())){
+                    .from("friends_view")
+                    .select (Columns.raw("*")){
                         filter {
-                            or {
-                                eq("user_id",user.id)
-                                eq("friend_id",user.id)
-                            }
-                            eq("status","accepted")
+                            eq("user_id",user.id)
                         }
-                    }
+                    }.decodeList<FriendsViewModel>()
 
+                Log.d("FriendsDomainRepositoryImpl", "getFriends: $response")
 
-                Log.d("GameRepositoryImpl", "getFriends: $response")
-                val decodeResponse = response.decodeList<FriendsDataModel>()
-
-                if (decodeResponse.isEmpty()){
+                if (response.isEmpty()){
                     emit(Result.Error(DataError.Remote.ServerError))
                 }else{
-                    emit(Result.Success(decodeResponse))
+                    val friendsList = response.map { friend ->
+
+                        if (friend.user_id == user.id) {
+                            friend.copy(user_id = user.id, friend_id = friend.friend_id)
+                        } else {
+                            friend.copy(user_id = user.id, friend_id = friend.user_id)
+                        }
+                    }
+                    emit(Result.Success(friendsList))
                 }
             }
         }catch (e:Exception){

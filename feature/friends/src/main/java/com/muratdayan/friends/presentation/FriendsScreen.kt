@@ -207,7 +207,7 @@ private fun FriendsScreen(
                 uiState.friends?.let { friendsList ->
                     items(friendsList) { friend ->
                         FastWordGameCardComp(
-                            name = friend.user.user_name,
+                            name = friend.user_name,
                             imagePainter = painterResource(com.muratdayan.ui.R.drawable.avatar),
                         )
                     }
