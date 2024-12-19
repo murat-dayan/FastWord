@@ -1,5 +1,6 @@
 package com.muratdayan.game.presentation.main
 
+import com.muratdayan.domain.model.FriendsViewModel
 import com.muratdayan.domain.model.UserDataModel
 import com.muratdayan.domain.model.UserStatsModel
 
@@ -7,7 +8,8 @@ object MainScreenContract {
 
     data class UiState(
         val userStats: UserStatsModel? = null,
-        val friends: List<com.muratdayan.domain.model.FriendsDataModel>? = null,
+        val friends: List<FriendsViewModel>? = null,
+        val friendId: String? = null,
         val userInfo: UserDataModel? = null,
         val isLoading: Boolean = false,
     )

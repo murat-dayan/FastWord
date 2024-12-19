@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class FriendsDataModel(
-    val friend_id:String,
+    val id:String,
     val user:UserDataModel,
     val status:String,
 )
