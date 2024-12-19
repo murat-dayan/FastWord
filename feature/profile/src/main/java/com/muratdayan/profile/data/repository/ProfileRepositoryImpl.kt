@@ -4,8 +4,10 @@ import android.util.Log
 import com.muratdayan.common.AppError
 import com.muratdayan.common.DataError
 import com.muratdayan.common.Result
+import com.muratdayan.domain.model.AcceptedFriendsModel
 import com.muratdayan.domain.model.FriendsDataModel
 import com.muratdayan.domain.model.FriendsTableModel
+import com.muratdayan.domain.model.RequestedFriendsModel
 import com.muratdayan.profile.domain.repository.ProfileRepository
 import com.muratdayan.profile.presentation.profile.util.UserType
 import io.github.jan.supabase.SupabaseClient
@@ -20,59 +22,71 @@ import javax.inject.Inject
 class ProfileRepositoryImpl @Inject constructor(
     private val supabaseClient: SupabaseClient
 ) : ProfileRepository {
+
     override fun checkUserType(userId: String): Flow<Result<UserType, AppError>> = flow {
         try {
-            val user = supabaseClient.auth.currentUserOrNull()
-            Log.d("UserStatsDomainRepositoryImpl", "updateEnergy: $user")
+            val currentUser = supabaseClient.auth.currentUserOrNull()
+            Log.d("ProfileRepositoryImpl", "updateEnergy: $currentUser")
 
-            if (user == null) {
+            if (currentUser == null) {
                 emit(Result.Error(DataError.Remote.Unauthorized))
                 return@flow
-            } else {
-                if (userId == user.id) {
-                    emit(Result.Success(UserType.CURRENT))
-                    return@flow
-                } else {
-                    val response = supabaseClient
-                        .from("friends")
-                        .select(
-                            Columns.raw(
-                                """
-                        friend_id,
-                        user:users!friend_id(id,user_name),
-                        status
-                    """.trimIndent()
-                            )
-                        ) {
-                            filter {
-                                eq("user_id", user.id)
-                                eq("friend_id", userId)
-                            }
-                        }
-
-                    val decodeResponse = response.decodeSingleOrNull<FriendsDataModel>()
-
-                    if (decodeResponse == null) {
-                        emit(Result.Success(UserType.OTHER))
-                        return@flow
-                    } else {
-                        val acceptedFriends = decodeResponse.status == "accepted"
-
-                        if (acceptedFriends) {
-                            emit(Result.Success(UserType.FRIEND))
-                        } else {
-                            val pendingFriendRequest = decodeResponse.status == "pending"
-                            if (pendingFriendRequest) {
-                                emit(Result.Success(UserType.PENDING))
-                            }
-                        }
-                    }
-
-                }
             }
+
+            if (userId == currentUser.id) {
+                emit(Result.Success(UserType.CURRENT))
+                return@flow
+            }
+
+            val requestedFriendResponse = supabaseClient
+                .from("friends")
+                .select(
+                    Columns.raw(
+                        """
+                    friend_id,
+                    user:users!friend_id(id,user_name,avatar_uri),
+                    status
+                    """.trimIndent()
+                    )
+                ) {
+                    filter {
+                        eq("user_id", currentUser.id)
+                        eq("friend_id", userId)
+                    }
+                }.decodeSingleOrNull<RequestedFriendsModel>()
+
+            // İstek alınan arkadaşlık durumu
+            val acceptedFriendResponse = supabaseClient
+                .from("friends")
+                .select(
+                    Columns.raw(
+                        """
+                    user_id,
+                    user:users!user_id(id,user_name,avatar_uri),
+                    status
+                    """.trimIndent()
+                    )
+                ) {
+                    filter {
+                        eq("friend_id", currentUser.id)
+                        eq("user_id", userId)
+                    }
+                }.decodeSingleOrNull<AcceptedFriendsModel>()
+
+
+            val userType = when {
+                requestedFriendResponse?.status == "accepted" -> UserType.FRIEND
+                acceptedFriendResponse?.status == "accepted" -> UserType.FRIEND
+                requestedFriendResponse?.status == "pending" -> UserType.PENDING
+                acceptedFriendResponse?.status == "pending" -> UserType.PENDING
+                else -> UserType.OTHER
+            }
+
+            emit(Result.Success(userType))
 
 
         } catch (e: Exception) {
+            Log.e("ProfileRepositoryImpl", "updateEnergy: ${e.message}")
             emit(Result.Error(DataError.Remote.ServerError))
         }
 
@@ -81,7 +95,7 @@ class ProfileRepositoryImpl @Inject constructor(
     override fun sendFriendRequest(friendId: String): Flow<Result<Unit, AppError>> = flow {
         try {
             val user = supabaseClient.auth.currentUserOrNull()
-            Log.d("UserStatsDomainRepositoryImpl", "updateEnergy: $user")
+            Log.d("ProfileRepositoryImpl", "updateEnergy: $user")
 
             if (user == null) {
                 emit(Result.Error(DataError.Remote.Unauthorized))
@@ -112,7 +126,7 @@ class ProfileRepositoryImpl @Inject constructor(
             val list = bucket.list(folderName)
             Log.d("ProfileRepositoryImpl", "getAvatars: $list")
 
-            val photoUrlList =  list.map {
+            val photoUrlList = list.map {
                 bucket.publicUrl("$folderName/${it.name}")
             }
             Log.d("ProfileRepositoryImpl", "getAvatars: $photoUrlList")
