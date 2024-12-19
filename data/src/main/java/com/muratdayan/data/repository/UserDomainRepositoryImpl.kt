@@ -19,10 +19,10 @@ class UserDomainRepositoryImpl @Inject constructor(
 ) : UserDomainRepository{
     override fun getUser(userId: String?): Flow<Result<UserDataModel, AppError>> = flow {
         try {
-            val id = userId ?: supabaseClient.auth.currentUserOrNull()
+            val id = userId ?: supabaseClient.auth.currentUserOrNull()?.id
 
-            if (id == null){
-                emit(Result.Error(DataError.Remote.ServerError))
+            if (id.isNullOrEmpty()){
+                emit(Result.Error(DataError.Remote.Unauthorized))
                 return@flow
             }else {
                 val response = supabaseClient

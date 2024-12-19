@@ -143,9 +143,14 @@ private fun MainScreen(
                                 onAction(MainScreenContract.UiAction.GoToProfile(uiState.userInfo.id))
                             }
                         )
+                        FastWordTextComp(
+                            text = uiState.userInfo.user_name
+                        )
                     }
 
-                    Row {
+
+
+                    Row{
                         FastWordBarHeaderComp(
                             currentEnergy = uiState.userStats?.energy ?:0,
                             maxEnergy = 10,
