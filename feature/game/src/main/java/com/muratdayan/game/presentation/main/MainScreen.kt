@@ -206,13 +206,15 @@ private fun MainScreen(
                 LazyRow {
                     uiState.friends?.let {friendsList->
                         items(friendsList){friend->
-                            FriendCardComp(
-                                friendImageUri = friend.avatar_uri,
-                                friendName = friend.user_name,
-                                friendImageClick = {
-                                    onAction(MainScreenContract.UiAction.GoToProfile(friend.friend_id))
-                                }
-                            )
+                            friend.user.avatar_uri?.let {
+                                FriendCardComp(
+                                    friendImageUri = it,
+                                    friendName = friend.user.user_name,
+                                    friendImageClick = {
+                                        onAction(MainScreenContract.UiAction.GoToProfile(friend.id))
+                                    }
+                                )
+                            }
                         }
                     }
 

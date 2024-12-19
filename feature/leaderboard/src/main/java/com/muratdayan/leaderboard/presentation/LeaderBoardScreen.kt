@@ -164,12 +164,12 @@ private fun LeaderBoardScreen(
                 uiState.friends?.let {
                     itemsIndexed(uiState.friends){index,friend->
                         LeaderBoardCardComp(
-                            userName = friend.user_name,
+                            userName = friend.user.user_name,
                             onClickCard = {
-                                onAction(LeaderBoardContract.UiAction.GoToProfile(friend.friend_id))
+                                onAction(LeaderBoardContract.UiAction.GoToProfile(friend.id))
                             },
                             onClickImage = {
-                                onAction(LeaderBoardContract.UiAction.GoToProfile(friend.friend_id))
+                                onAction(LeaderBoardContract.UiAction.GoToProfile(friend.id))
                             },
                             scoreText = "100",
                             orderText = "${index + 1}",
