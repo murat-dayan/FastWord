@@ -5,7 +5,7 @@ object FriendsContract {
     data class UiState(
         val userStats: com.muratdayan.domain.model.UserStatsModel? = null,
         val friends: List<com.muratdayan.domain.model.FriendsDataModel>? = null,
-        val pendingFriends: List<com.muratdayan.domain.model.FriendsDataModel> = emptyList(),
+        val pendingFriends: List<com.muratdayan.domain.model.RequestedFriendsModel> = emptyList(),
         val isLoading: Boolean = false,
     )
 

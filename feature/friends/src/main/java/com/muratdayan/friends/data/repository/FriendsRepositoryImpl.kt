@@ -1,9 +1,11 @@
 package com.muratdayan.friends.data.repository
 
+import android.util.Log
 import com.muratdayan.common.AppError
 import com.muratdayan.common.DataError
 import com.muratdayan.common.Result
 import com.muratdayan.domain.model.FriendsDataModel
+import com.muratdayan.domain.model.RequestedFriendsModel
 import com.muratdayan.friends.domain.repository.FriendsRepository
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.gotrue.auth
@@ -18,7 +20,7 @@ class FriendsRepositoryImpl @Inject constructor(
     private val supabaseClient:SupabaseClient
 ) : FriendsRepository {
 
-    override fun getPendingFriends(): Flow<Result<List<FriendsDataModel>, AppError>>  = flow {
+    override fun getPendingFriends(): Flow<Result<List<RequestedFriendsModel>, AppError>> = flow {
         try {
             val user = supabaseClient.auth.currentUserOrNull()
 
@@ -43,7 +45,7 @@ class FriendsRepositoryImpl @Inject constructor(
                         }
                     }
 
-                val decodeResponse = response.decodeList<FriendsDataModel>()
+                val decodeResponse = response.decodeList<RequestedFriendsModel>()
 
                 if (decodeResponse.isEmpty()){
                     emit(Result.Error(DataError.Remote.ServerError))
@@ -52,6 +54,7 @@ class FriendsRepositoryImpl @Inject constructor(
                 }
             }
         }catch (e:Exception){
+            Log.e("FriendsRepositoryImpl","getPendingFriends: ${e.message}")
             emit(Result.Error(DataError.Remote.ServerError))
         }
     }
