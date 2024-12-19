@@ -4,8 +4,10 @@ import android.util.Log
 import com.muratdayan.common.AppError
 import com.muratdayan.common.DataError
 import com.muratdayan.common.Result
+import com.muratdayan.domain.mapper.toFriendsDataModel
+import com.muratdayan.domain.model.AcceptedFriendsModel
 import com.muratdayan.domain.model.FriendsDataModel
-import com.muratdayan.domain.model.FriendsViewModel
+import com.muratdayan.domain.model.RequestedFriendsModel
 import com.muratdayan.domain.repository.FriendsDomainRepository
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.gotrue.auth
@@ -19,7 +21,7 @@ class FriendsDomainRepositoryImpl @Inject constructor(
     private val supabaseClient: SupabaseClient
 ) : FriendsDomainRepository{
 
-    override fun getFriends(): Flow<Result<List<FriendsViewModel>, AppError>> = flow {
+    override fun getFriends(): Flow<Result<List<FriendsDataModel>, AppError>> = flow {
         try {
             val user = supabaseClient.auth.currentUserOrNull()
 
@@ -28,28 +30,45 @@ class FriendsDomainRepositoryImpl @Inject constructor(
                 return@flow
             }else{
 
-                val response = supabaseClient
-                    .from("friends_view")
-                    .select (Columns.raw("*")){
+                val requestedFriendsResponse = supabaseClient
+                    .from("friends")
+                    .select (
+                        Columns.raw("""
+                            friend_id,
+                            user:users!friend_id(id,user_name,avatar_uri),
+                            status
+                        """.trimIndent())
+                    ){
                         filter {
                             eq("user_id",user.id)
+                            eq("status","accepted")
                         }
-                    }.decodeList<FriendsViewModel>()
+                    }.decodeList<RequestedFriendsModel>()
 
-                Log.d("FriendsDomainRepositoryImpl", "getFriends: $response")
+                val acceptedFriendsResponse = supabaseClient
+                    .from("friends")
+                    .select (
+                        Columns.raw("""
+                            user_id,
+                            user:users!user_id(id,user_name,avatar_uri),
+                            status
+                        """.trimIndent())
+                    ){
+                        filter {
+                            eq("friend_id",user.id)
+                            eq("status","accepted")
+                        }
+                    }.decodeList<AcceptedFriendsModel>()
 
-                if (response.isEmpty()){
-                    emit(Result.Error(DataError.Remote.ServerError))
+                val requestedFriends = requestedFriendsResponse.map { it.toFriendsDataModel() }
+                val acceptedFriends = acceptedFriendsResponse.map { it.toFriendsDataModel() }
+
+                val allFriends : List<FriendsDataModel> = requestedFriends + acceptedFriends
+
+                if (allFriends.isEmpty()){
+                    emit(Result.Success(emptyList()))
                 }else{
-                    val friendsList = response.map { friend ->
-
-                        if (friend.user_id == user.id) {
-                            friend.copy(user_id = user.id, friend_id = friend.friend_id)
-                        } else {
-                            friend.copy(user_id = user.id, friend_id = friend.user_id)
-                        }
-                    }
-                    emit(Result.Success(friendsList))
+                    emit(Result.Success(allFriends))
                 }
             }
         }catch (e:Exception){
