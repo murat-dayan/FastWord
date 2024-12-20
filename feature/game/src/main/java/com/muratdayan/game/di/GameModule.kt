@@ -1,7 +1,9 @@
 package com.muratdayan.game.di
 
 import com.muratdayan.game.data.repository.GameRepositoryImpl
+import com.muratdayan.game.data.repository.MatchRepositoryImpl
 import com.muratdayan.game.domain.repository.GameRepository
+import com.muratdayan.game.domain.repository.MatchRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,4 +19,8 @@ object GameModule {
         return GameRepositoryImpl(supabaseClient)
     }
 
+    @Provides
+    fun provideMatchRepository(supabaseClient: SupabaseClient): MatchRepository {
+        return MatchRepositoryImpl(supabaseClient)
+    }
 }

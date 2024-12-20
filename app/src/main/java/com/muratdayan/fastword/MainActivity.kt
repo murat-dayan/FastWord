@@ -56,21 +56,7 @@ class MainActivity : ComponentActivity() {
                             gameNavGraph = {
                                 gameNavGraph(
                                     modifier = it,
-                                    navigateToShop = {
-                                        navController.navigate(Screen.ShopScreenRoute.route)
-                                    },
-                                    navigateToSettings = {
-                                        navController.navigate(Screen.SettingsScreenRoute.route)
-                                    },
-                                    navigateToFriends = {
-                                        navController.navigate(Screen.FriendsScreenRoute.route)
-                                    },
-                                    navigateToLeaderBoard = {
-                                        navController.navigate(Screen.LeaderBoardScreenRoute.route)
-                                    },
-                                    navigateToProfile = {userId->
-                                        navController.navigate(Screen.ProfileScreenRoute.withUserId(userId))
-                                    }
+                                    navHostController = navController
                                 )
                             },
                             shopNavGraph = {

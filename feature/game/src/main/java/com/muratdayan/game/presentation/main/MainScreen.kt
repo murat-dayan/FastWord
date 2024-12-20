@@ -26,6 +26,7 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -34,6 +35,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.muratdayan.core_ui.ui.theme.Dimensions
+import com.muratdayan.domain.model.UserDataModel
 import com.muratdayan.foodrecipecomposemvi.common.collectWithLifecycle
 import com.muratdayan.game.presentation.main.component.FriendCardComp
 import com.muratdayan.ui.components.FastWordAdvertHeaderComp
@@ -56,8 +58,8 @@ internal fun MainScreenRoot(
     navigateToFriends: () -> Unit,
     navigateToLeaderBoard: () -> Unit,
     navigateToProfile: (String) -> Unit,
+    navigateToMatch: () -> Unit,
 ){
-
     val uiState = mainScreenViewModel.uiState.collectAsStateWithLifecycle()
     val uiEffect = mainScreenViewModel.uiEffect
 
@@ -70,7 +72,8 @@ internal fun MainScreenRoot(
         navigateToSettings = navigateToSettings,
         navigateToFriends = navigateToFriends,
         navigateToLeaderBoard = navigateToLeaderBoard,
-        navigateToProfile = navigateToProfile
+        navigateToProfile = navigateToProfile,
+        navigateToMatch = navigateToMatch
     )
 }
 
@@ -85,6 +88,7 @@ private fun MainScreen(
     navigateToFriends: () -> Unit,
     navigateToLeaderBoard: () -> Unit,
     navigateToProfile: (String) -> Unit,
+    navigateToMatch: () -> Unit,
 ){
 
     LaunchedEffect(true) {
@@ -95,8 +99,8 @@ private fun MainScreen(
 
     uiEffect.collectWithLifecycle { effect->
         when(effect){
-            MainScreenContract.UiEffect.NavigateToPlayScreen -> {
-                //TODO Navigate to play screen
+            MainScreenContract.UiEffect.NavigateToMatchScreen -> {
+                navigateToMatch()
             }
             MainScreenContract.UiEffect.NavigateToFriendsScreen -> {
                 navigateToFriends()
@@ -176,7 +180,9 @@ private fun MainScreen(
                     text = "Play Now",
                     isLoading = uiState.isLoading,
                     iconText = "3",
-                    onClick = {},
+                    onClick = {
+                        onAction.invoke(MainScreenContract.UiAction.PlayNow)
+                    },
                     icon = com.muratdayan.ui.R.drawable.ic_flash,
                     containerColor = MaterialTheme.colorScheme.secondaryContainer,
                     iconTint = MaterialTheme.colorScheme.primary
@@ -348,7 +354,8 @@ fun MainScreenPreview(){
             navigateToSettings = {},
             navigateToFriends = {},
             navigateToLeaderBoard = {},
-            navigateToProfile = {}
+            navigateToProfile = {},
+            navigateToMatch = {},
         )
     }
 }

@@ -11,7 +11,8 @@ data class UserStatsModel(
     val energy: Int?=10,
     val token: Int?=50,
     val emerald: Int?=50,
-    val updated_at: String? = null
+    val updated_at: String? = null,
+    val score:Int?=0
 ){
 
     fun getUpdatedAtAsInstant(): Instant? {
