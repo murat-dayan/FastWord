@@ -9,6 +9,7 @@ import com.muratdayan.game.presentation.main.MainScreenRoot
 import com.muratdayan.game.presentation.main.MainScreenViewModel
 import com.muratdayan.game.presentation.match.MatchScreenRoot
 import com.muratdayan.game.presentation.match.MatchViewModel
+import com.muratdayan.game.presentation.start.StartScreenRoot
 import com.muratdayan.navigation.Screen
 
 fun NavGraphBuilder.gameNavGraph(
@@ -50,7 +51,21 @@ fun NavGraphBuilder.gameNavGraph(
         val matchViewModel = hiltViewModel<MatchViewModel>()
         MatchScreenRoot(
             modifier = modifier,
-            matchViewModel = matchViewModel
+            matchViewModel = matchViewModel,
+            navigateToStartScreen = {
+                navHostController.navigate(Screen.StartScreenRoute.route)
+            }
         )
     }
+
+    composable(
+        route = Screen.StartScreenRoute.route
+    ){
+
+        StartScreenRoot(
+            modifier = modifier,
+        )
+    }
+
+
 }

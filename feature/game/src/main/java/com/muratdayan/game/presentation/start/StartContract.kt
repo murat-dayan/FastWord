@@ -1,22 +1,22 @@
-package com.muratdayan.game.presentation.match
+package com.muratdayan.game.presentation.start
 
 import com.muratdayan.domain.model.UserDataModel
 import com.muratdayan.game.domain.model.RoomModel
 
-object MatchContract {
+object StartContract {
 
     data class UiState(
-        val userInfo: UserDataModel? = null,
-        val room: RoomModel? = null,
         val isLoading: Boolean = false,
+        val userInfo: UserDataModel? = null,
+        val room: RoomModel? = null
     )
 
     sealed interface UiAction{
         data object GetUserInfo: UiAction
-        data class FindOrCreateRoom(val userId:String): UiAction
     }
 
+
     sealed class UiEffect(){
-        data object NavigateToStartScreen: UiEffect()
+        data object NavigateToPlayScreen: UiEffect()
     }
 }
