@@ -108,10 +108,20 @@ private fun StartScreen(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            FastWordProfileImageComp(
-                imagePainter = painterResource(com.muratdayan.ui.R.drawable.avatar),
-                size = 60
-            )
+            Column (
+                modifier= Modifier
+                    .wrapContentSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(Dimensions.spacingMedium)
+            ){
+                FastWordProfileImageComp(
+                    imagePainter = painterResource(com.muratdayan.ui.R.drawable.avatar),
+                    size = 60
+                )
+                FastWordTextComp(
+                    text = "Murat"
+                )
+            }
 
             FastWordTextComp(
                 text = "0",
@@ -131,10 +141,20 @@ private fun StartScreen(
                 fontSize = Dimensions.textSizeTitle
             )
 
-            FastWordProfileImageComp(
-                imagePainter = painterResource(com.muratdayan.ui.R.drawable.avatar),
-                size = 60
-            )
+            Column (
+                modifier= Modifier
+                    .wrapContentSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.spacedBy(Dimensions.spacingMedium)
+            ){
+                FastWordProfileImageComp(
+                    imagePainter = painterResource(com.muratdayan.ui.R.drawable.avatar),
+                    size = 60
+                )
+                FastWordTextComp(
+                    text = "Murat"
+                )
+            }
         }
 
         CircularCountDownComp(
@@ -186,7 +206,7 @@ private fun StartScreen(
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
                         FastWordTextComp(
-                            text = "Change \n Question",
+                            text = "Change\nQuestion",
                             color = MaterialTheme.colorScheme.primary,
                             fontSize = Dimensions.textSizeSmall,
                             fontWeight = FontWeight.Bold

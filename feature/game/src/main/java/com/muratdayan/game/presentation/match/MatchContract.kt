@@ -17,6 +17,6 @@ object MatchContract {
     }
 
     sealed class UiEffect(){
-        data object NavigateToPlayScreen: UiEffect()
+        data object NavigateToStartScreen: UiEffect()
     }
 }

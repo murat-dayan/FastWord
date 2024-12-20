@@ -20,6 +20,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.muratdayan.core_ui.ui.theme.Dimensions
+import com.muratdayan.foodrecipecomposemvi.common.collectWithLifecycle
 import com.muratdayan.game.R
 import com.muratdayan.ui.components.FastWordProfileImageComp
 import com.muratdayan.ui.components.FastWordTextComp
@@ -30,7 +31,8 @@ import kotlinx.coroutines.flow.emptyFlow
 @Composable
 fun MatchScreenRoot(
     modifier: Modifier = Modifier,
-    matchViewModel: MatchViewModel
+    matchViewModel: MatchViewModel,
+    navigateToStartScreen: () -> Unit
 ) {
     val uiState = matchViewModel.uiState.collectAsStateWithLifecycle()
     val uiEffect = matchViewModel.uiEffect
@@ -39,7 +41,8 @@ fun MatchScreenRoot(
         modifier = modifier,
         uiState = uiState.value,
         uiEffect = uiEffect,
-        onAction = matchViewModel::onAction
+        onAction = matchViewModel::onAction,
+        navigateToStartScreen = navigateToStartScreen
     )
 }
 
@@ -48,8 +51,17 @@ private fun MatchScreen(
     modifier: Modifier = Modifier,
     uiState: MatchContract.UiState,
     uiEffect: Flow<MatchContract.UiEffect>,
-    onAction: (MatchContract.UiAction) -> Unit
+    onAction: (MatchContract.UiAction) -> Unit,
+    navigateToStartScreen: () -> Unit
 ) {
+
+    uiEffect.collectWithLifecycle { effect ->
+        when (effect) {
+            MatchContract.UiEffect.NavigateToStartScreen -> {
+                navigateToStartScreen()
+            }
+        }
+    }
 
     LaunchedEffect(true) {
         // İlk olarak userInfo'yu al
@@ -131,7 +143,8 @@ private fun MatchScreenPreview() {
             modifier = Modifier,
             onAction = {},
             uiState = MatchContract.UiState(),
-            uiEffect = emptyFlow()
+            uiEffect = emptyFlow(),
+            navigateToStartScreen = {}
         )
     }
 }

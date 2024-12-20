@@ -51,7 +51,10 @@ fun NavGraphBuilder.gameNavGraph(
         val matchViewModel = hiltViewModel<MatchViewModel>()
         MatchScreenRoot(
             modifier = modifier,
-            matchViewModel = matchViewModel
+            matchViewModel = matchViewModel,
+            navigateToStartScreen = {
+                navHostController.navigate(Screen.StartScreenRoute.route)
+            }
         )
     }
 
