@@ -26,7 +26,7 @@ object MainScreenContract {
     }
 
     sealed class UiEffect(){
-        data object NavigateToPlayScreen: UiEffect()
+        data object NavigateToMatchScreen: UiEffect()
         data object NavigateToShopScreen: UiEffect()
         data object NavigateToSettingsScreen: UiEffect()
         data object NavigateToFriendsScreen: UiEffect()

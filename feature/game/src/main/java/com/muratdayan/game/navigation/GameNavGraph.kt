@@ -3,18 +3,17 @@ package com.muratdayan.game.navigation
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import com.muratdayan.game.presentation.main.MainScreenRoot
 import com.muratdayan.game.presentation.main.MainScreenViewModel
+import com.muratdayan.game.presentation.match.MatchScreenRoot
+import com.muratdayan.game.presentation.match.MatchViewModel
 import com.muratdayan.navigation.Screen
 
 fun NavGraphBuilder.gameNavGraph(
     modifier: Modifier = Modifier,
-    navigateToShop: () -> Unit,
-    navigateToSettings: () -> Unit,
-    navigateToFriends: () -> Unit,
-    navigateToLeaderBoard: () -> Unit,
-    navigateToProfile: (String) -> Unit,
+    navHostController: NavHostController,
 ) {
     composable(
         route = Screen.MainScreenRoute.route
@@ -23,13 +22,35 @@ fun NavGraphBuilder.gameNavGraph(
         MainScreenRoot(
             modifier = modifier,
             mainScreenViewModel = mainScreenViewModel,
-            navigateToShop = navigateToShop,
-            navigateToSettings = navigateToSettings,
-            navigateToFriends = navigateToFriends,
-            navigateToLeaderBoard = navigateToLeaderBoard,
-            navigateToProfile = navigateToProfile
-
+            navigateToShop = {
+                navHostController.navigate(Screen.ShopScreenRoute.route)
+            },
+            navigateToSettings = {
+                navHostController.navigate(Screen.SettingsScreenRoute.route)
+            },
+            navigateToFriends = {
+                navHostController.navigate(Screen.FriendsScreenRoute.route)
+            },
+            navigateToLeaderBoard = {
+                navHostController.navigate(Screen.LeaderBoardScreenRoute.route)
+            },
+            navigateToProfile = {
+                navHostController.navigate(Screen.ProfileScreenRoute.withUserId(it))
+            },
+            navigateToMatch = {
+                navHostController.navigate(Screen.MatchScreenRoute.route)
+            }
         )
 
+    }
+
+    composable(
+        route = Screen.MatchScreenRoute.route
+    ){
+        val matchViewModel = hiltViewModel<MatchViewModel>()
+        MatchScreenRoot(
+            modifier = modifier,
+            matchViewModel = matchViewModel
+        )
     }
 }

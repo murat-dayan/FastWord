@@ -6,6 +6,7 @@ import com.muratdayan.common.Result
 import com.muratdayan.domain.usecase.GetFriendsDomainUseCase
 import com.muratdayan.domain.usecase.GetUserInfoDomainUseCase
 import com.muratdayan.domain.usecase.GetUserStatsDomainUseCase
+import com.muratdayan.game.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -23,25 +24,30 @@ import javax.inject.Inject
 class MainScreenViewModel @Inject constructor(
     private val getFriendsDomainUseCase: GetFriendsDomainUseCase,
     private val getUserStatsDomainUseCase: GetUserStatsDomainUseCase,
-    private val getUserInfoDomainUseCase: GetUserInfoDomainUseCase
-): ViewModel() {
+    getUserInfoDomainUseCase: GetUserInfoDomainUseCase
+) : BaseViewModel(getUserInfoDomainUseCase) {
 
     private val _uiState = MutableStateFlow(MainScreenContract.UiState())
     val uiState: StateFlow<MainScreenContract.UiState> = _uiState.asStateFlow()
 
     private val _uiEffect by lazy { Channel<MainScreenContract.UiEffect>() }
-    val uiEffect: Flow<MainScreenContract.UiEffect> by  lazy { _uiEffect.receiveAsFlow() }
+    val uiEffect: Flow<MainScreenContract.UiEffect> by lazy { _uiEffect.receiveAsFlow() }
 
 
-
-    fun onAction(action: MainScreenContract.UiAction){
-        when(action){
+    fun onAction(action: MainScreenContract.UiAction) {
+        when (action) {
             MainScreenContract.UiAction.PlayNow -> {
-
+                viewModelScope.launch {
+                    emitUiEffect(MainScreenContract.UiEffect.NavigateToMatchScreen)
+                }
             }
 
             MainScreenContract.UiAction.GetUserStats -> {
                 getUserStats()
+            }
+
+            MainScreenContract.UiAction.GetUserInfo -> {
+                getUserInfo()
             }
 
             MainScreenContract.UiAction.GoToFriends -> {
@@ -49,16 +55,19 @@ class MainScreenViewModel @Inject constructor(
                     emitUiEffect(MainScreenContract.UiEffect.NavigateToFriendsScreen)
                 }
             }
+
             MainScreenContract.UiAction.GoToLeaderBoard -> {
                 viewModelScope.launch {
                     emitUiEffect(MainScreenContract.UiEffect.NavigateToLeaderBoardScreen)
                 }
             }
+
             MainScreenContract.UiAction.GoToSettings -> {
                 viewModelScope.launch {
                     emitUiEffect(MainScreenContract.UiEffect.NavigateToSettingsScreen)
                 }
             }
+
             MainScreenContract.UiAction.GoToShop -> {
                 viewModelScope.launch {
                     emitUiEffect(MainScreenContract.UiEffect.NavigateToShopScreen)
@@ -73,38 +82,29 @@ class MainScreenViewModel @Inject constructor(
                 getFriends()
             }
 
-            MainScreenContract.UiAction.GetUserInfo -> {
-                getUserInfo()
+
+        }
+    }
+
+
+    private fun getUserInfo(){
+        viewModelScope.launch {
+            val userInfo = fetchUserInfo()
+
+            // userInfo null değilse, FindOrCreateRoom aksiyonunu başlatıyoruz
+            if (userInfo != null) {
+                updateUiState { copy(userInfo = userInfo) }
             }
         }
     }
 
-    private fun getUserInfo() {
-        viewModelScope.launch {
-            updateUiState { copy(isLoading = true) }
-            getUserInfoDomainUseCase.invoke()
-                .collect{getUserInfoResult->
-                    when(getUserInfoResult){
-                        is Result.Success -> {
-                            updateUiState {
-                                copy(isLoading = false, userInfo = getUserInfoResult.data)
-                            }
-                        }
-                        is Result.Error -> {
-                            updateUiState { copy(isLoading = false, userInfo = null) }
-                        }
-                    }
-                }
-        }
-    }
-
-    private fun goToProfile(userId:String) {
+    private fun goToProfile(userId: String) {
         viewModelScope.launch {
             emitUiEffect(MainScreenContract.UiEffect.NavigateToProfileScreen(userId))
         }
     }
 
-    private fun getFriends(){
+    private fun getFriends() {
         viewModelScope.launch {
             updateUiState { copy(isLoading = true) }
 
@@ -115,11 +115,12 @@ class MainScreenViewModel @Inject constructor(
                 .catch {
                     updateUiState { copy(isLoading = false, userStats = null) }
                 }
-                .collect{resultFriendsState->
-                    when(resultFriendsState){
+                .collect { resultFriendsState ->
+                    when (resultFriendsState) {
                         is Result.Error -> {
                             updateUiState { copy(isLoading = false, friends = null) }
                         }
+
                         is Result.Success -> {
                             updateUiState {
                                 copy(isLoading = false, friends = resultFriendsState.data)
@@ -147,6 +148,7 @@ class MainScreenViewModel @Inject constructor(
                                 copy(isLoading = false, userStats = resultUserState.data)
                             }
                         }
+
                         is Result.Error -> {
                             updateUiState { copy(isLoading = false, userStats = null) }
                         }
@@ -157,11 +159,11 @@ class MainScreenViewModel @Inject constructor(
     }
 
 
-    private fun updateUiState(block: MainScreenContract.UiState.() -> MainScreenContract.UiState){
+    private fun updateUiState(block: MainScreenContract.UiState.() -> MainScreenContract.UiState) {
         _uiState.update(block)
     }
 
-    private suspend fun emitUiEffect(uiEffect: MainScreenContract.UiEffect){
+    private suspend fun emitUiEffect(uiEffect: MainScreenContract.UiEffect) {
         _uiEffect.send(uiEffect)
     }
 
