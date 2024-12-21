@@ -63,7 +63,7 @@ private fun MatchScreen(
     uiEffect.collectWithLifecycle { effect ->
         when (effect) {
             is MatchContract.UiEffect.NavigateToStartScreen -> {
-                navigateToStartScreen(effect.opponentUserId)
+                navigateToStartScreen(effect.roomId)
             }
 
             MatchContract.UiEffect.NavigateToBack -> {
@@ -99,15 +99,8 @@ private fun MatchScreen(
 
     LaunchedEffect(uiState.room){
         if (uiState.room?.status == "playing"){
-            uiState.userInfo?.let {user->
-                if (user.id == uiState.room.player_one_id){
-                    val opponentId = uiState.room.player_two_id
-                    onAction(MatchContract.UiAction.GoToStartScreen(opponentId!!))
-                }else{
-                    val opponentId = uiState.room.player_one_id
-                    onAction(MatchContract.UiAction.GoToStartScreen(opponentId!!))
-                }
-            }
+            uiState.room.id?.let { MatchContract.UiAction.GoToStartScreen(it) }
+                ?.let { onAction.invoke(it) }
         }
     }
 

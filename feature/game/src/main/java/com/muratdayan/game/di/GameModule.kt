@@ -2,8 +2,10 @@ package com.muratdayan.game.di
 
 import com.muratdayan.game.data.repository.GameRepositoryImpl
 import com.muratdayan.game.data.repository.MatchRepositoryImpl
+import com.muratdayan.game.data.repository.StartRepositoryImpl
 import com.muratdayan.game.domain.repository.GameRepository
 import com.muratdayan.game.domain.repository.MatchRepository
+import com.muratdayan.game.domain.repository.StartRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -22,5 +24,10 @@ object GameModule {
     @Provides
     fun provideMatchRepository(supabaseClient: SupabaseClient): MatchRepository {
         return MatchRepositoryImpl(supabaseClient)
+    }
+
+    @Provides
+    fun provideStartRepository(supabaseClient: SupabaseClient): StartRepository {
+        return StartRepositoryImpl(supabaseClient)
     }
 }

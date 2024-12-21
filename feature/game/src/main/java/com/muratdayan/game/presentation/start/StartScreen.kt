@@ -17,6 +17,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -27,6 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.muratdayan.core_ui.ui.theme.Dimensions
 import com.muratdayan.game.R
 import com.muratdayan.game.presentation.start.components.CircularCountDownComp
@@ -36,32 +38,71 @@ import com.muratdayan.ui.components.FastWordProfileImageComp
 import com.muratdayan.ui.components.FastWordTextComp
 import com.muratdayan.ui.theme.FastWordTheme
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
+import kotlinx.coroutines.flow.flowOf
 
 @Composable
 fun StartScreenRoot(
     modifier: Modifier = Modifier,
-    opponentUserId: String?=null
-    ) {
+    roomId: String? = null,
+    startViewModel: StartViewModel
+) {
+
+    val uiState = startViewModel.uiState.collectAsStateWithLifecycle()
+    val uiEffect = startViewModel.uiEffect
+
     StartScreen(
         modifier = modifier,
-        opponentUserId = opponentUserId ?: ""
+        roomId = roomId ?: "",
+        uiState = uiState.value,
+        uiEffect = uiEffect,
+        onAction = startViewModel::onAction
     )
 }
 
 @Composable
 private fun StartScreen(
     modifier: Modifier = Modifier,
-    opponentUserId: String
+    roomId: String,
+    uiState: StartContract.UiState,
+    uiEffect: Flow<StartContract.UiEffect>,
+    onAction: (StartContract.UiAction) -> Unit
 ) {
 
-    var count by remember { mutableStateOf(10) }
+    var count by remember { mutableIntStateOf(10) }
 
-    LaunchedEffect(key1 = count) {
-        if (count > 0) {
-            delay(1000)
-            count--
+    LaunchedEffect(key1 = uiState.userInfo, key2 = uiState.opponentInfo) {
+        if (uiState.userInfo != null && uiState.opponentInfo != null) {
+            while (count > 0) {
+                delay(1000)
+                count--
+            }
         }
     }
+
+    LaunchedEffect(true) {
+        onAction(StartContract.UiAction.GetUserInfo)
+        if (roomId.isNotEmpty()) {
+            onAction(StartContract.UiAction.GetRoom(roomId))
+        }
+    }
+
+    LaunchedEffect(key1 = uiState.room , key2 = uiState.userInfo) {
+        if (uiState.room != null && uiState.userInfo != null) {
+            when(uiState.userInfo.id){
+                uiState.room.player_one_id ->{
+                    onAction(StartContract.UiAction.GetOpponentInfo(uiState.room.player_two_id!!))
+                }
+                uiState.room.player_two_id ->{
+                    onAction(StartContract.UiAction.GetOpponentInfo(uiState.room.player_one_id!!))
+                }
+                else -> {}
+            }
+        }
+    }
+
+
 
     Column(
         modifier = modifier
@@ -110,18 +151,18 @@ private fun StartScreen(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            Column (
-                modifier= Modifier
+            Column(
+                modifier = Modifier
                     .wrapContentSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(Dimensions.spacingMedium)
-            ){
+            ) {
                 FastWordProfileImageComp(
-                    imagePainter = painterResource(com.muratdayan.ui.R.drawable.avatar),
+                    imageUri = uiState.userInfo?.avatar_uri,
                     size = 60
                 )
                 FastWordTextComp(
-                    text = "Murat"
+                    text = uiState.userInfo?.user_name ?: ""
                 )
             }
 
@@ -143,18 +184,18 @@ private fun StartScreen(
                 fontSize = Dimensions.textSizeTitle
             )
 
-            Column (
-                modifier= Modifier
+            Column(
+                modifier = Modifier
                     .wrapContentSize(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(Dimensions.spacingMedium)
-            ){
+            ) {
                 FastWordProfileImageComp(
-                    imagePainter = painterResource(com.muratdayan.ui.R.drawable.avatar),
+                    imageUri = uiState.opponentInfo?.avatar_uri,
                     size = 60
                 )
                 FastWordTextComp(
-                    text = "Murat"
+                    text = uiState.opponentInfo?.user_name ?: ""
                 )
             }
         }
@@ -166,13 +207,13 @@ private fun StartScreen(
                 .padding(Dimensions.paddingSmall)
         )
 
-        Column (
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f),
             verticalArrangement = Arrangement.spacedBy(Dimensions.spacingSmall),
             horizontalAlignment = Alignment.CenterHorizontally
-        ){
+        ) {
             FastWordTextComp(
                 text = "Next Question",
                 modifier = Modifier
@@ -265,7 +306,10 @@ private fun StartScreen(
 private fun StartScreenPreview() {
     FastWordTheme {
         StartScreen(
-            opponentUserId = ""
+            roomId = "",
+            uiState = StartContract.UiState(),
+            uiEffect = emptyFlow(),
+            onAction = {}
         )
     }
 }

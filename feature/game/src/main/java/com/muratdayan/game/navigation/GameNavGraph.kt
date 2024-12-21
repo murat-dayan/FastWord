@@ -52,8 +52,8 @@ fun NavGraphBuilder.gameNavGraph(
         MatchScreenRoot(
             modifier = modifier,
             matchViewModel = matchViewModel,
-            navigateToStartScreen = {
-                navHostController.navigate(Screen.StartScreenRoute.withOpponentUserId())
+            navigateToStartScreen = {roomId ->
+                navHostController.navigate(Screen.StartScreenRoute.withroomId(roomId))
             },
             navigateToBack = {
                 navHostController.popBackStack()
@@ -63,10 +63,13 @@ fun NavGraphBuilder.gameNavGraph(
 
     composable(
         route = Screen.StartScreenRoute.route
-    ){
-
+    ){backStackEntry ->
+        val startViewModel = hiltViewModel<com.muratdayan.game.presentation.start.StartViewModel>()
+        val roomId = backStackEntry.arguments?.getString("roomId")
         StartScreenRoot(
             modifier = modifier,
+            startViewModel = startViewModel,
+            roomId = roomId
         )
     }
 

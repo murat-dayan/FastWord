@@ -15,9 +15,7 @@ abstract class BaseViewModel(
 
     protected suspend fun fetchUserInfo(): UserDataModel? {
         return try {
-            // getUserInfoDomainUseCase.invoke() asenkron bir işlem yapıyor ve sonucu döndürüyor
-            val result = getUserInfoDomainUseCase.invoke().single()
-            when (result) {
+            when (val result = getUserInfoDomainUseCase.invoke().single()) {
                 is com.muratdayan.common.Result.Success -> result.data
                 is com.muratdayan.common.Result.Error -> null
             }
@@ -25,4 +23,18 @@ abstract class BaseViewModel(
             null
         }
     }
+
+    protected suspend fun fetchOpponentInfo(opponentUserId: String): UserDataModel? {
+        return try {
+            // getUserInfoDomainUseCase.invoke() asenkron bir işlem yapıyor ve sonucu döndürüyor
+            when (val result = getUserInfoDomainUseCase.invoke(opponentUserId).single()) {
+                is com.muratdayan.common.Result.Success -> result.data
+                is com.muratdayan.common.Result.Error -> null
+            }
+        } catch (e: Exception) {
+            null
+        }
+    }
+
+
 }
