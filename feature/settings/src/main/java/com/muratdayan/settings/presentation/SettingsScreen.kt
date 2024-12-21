@@ -40,7 +40,8 @@ import kotlinx.coroutines.flow.emptyFlow
 fun SettingsScreenRoot(
     modifier: Modifier = Modifier,
     viewModel: SettingsViewModel,
-    navigateToSignInScreen: () -> Unit
+    navigateToSignInScreen: () -> Unit,
+    navigateToBack: () -> Unit
 ) {
 
     val uiState = viewModel.uiState.collectAsStateWithLifecycle()
@@ -50,7 +51,8 @@ fun SettingsScreenRoot(
         uiState = uiState.value,
         uiEffect = viewModel.uiEffect,
         onAction = viewModel::onAction,
-        navigateToSignInScreen = navigateToSignInScreen
+        navigateToSignInScreen = navigateToSignInScreen,
+        navigateToBack = navigateToBack
     )
 }
 
@@ -60,7 +62,8 @@ private fun SettingsScreen(
     uiState: SettingsContract.UiState,
     uiEffect: Flow<SettingsContract.UiEffect>,
     onAction: (SettingsContract.UiAction) -> Unit,
-    navigateToSignInScreen: () -> Unit
+    navigateToSignInScreen: () -> Unit,
+    navigateToBack: () -> Unit
 ) {
 
 
@@ -68,6 +71,10 @@ private fun SettingsScreen(
         when(effect){
             SettingsContract.UiEffect.NavigateToSignInScreen -> {
                 navigateToSignInScreen()
+            }
+
+            SettingsContract.UiEffect.NavigateToBack -> {
+                navigateToBack()
             }
         }
 
@@ -82,7 +89,9 @@ private fun SettingsScreen(
 
     ) {
         IconButton(
-            onClick = {}
+            onClick = {
+                onAction(SettingsContract.UiAction.NavigateToBack)
+            }
         ) {
             Icon(
                 painter = painterResource(com.muratdayan.ui.R.drawable.ic_back),
@@ -201,7 +210,8 @@ private fun SettingsScreenPreview() {
             uiState = SettingsContract.UiState(),
             uiEffect = emptyFlow(),
             onAction = {},
-            navigateToSignInScreen = {}
+            navigateToSignInScreen = {},
+            navigateToBack = {}
         )
     }
 }

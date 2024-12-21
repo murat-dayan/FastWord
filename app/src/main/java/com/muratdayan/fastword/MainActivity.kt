@@ -60,30 +60,27 @@ class MainActivity : ComponentActivity() {
                                 )
                             },
                             shopNavGraph = {
-                                shopNavGraph(modifier = it)
+                                shopNavGraph(
+                                    modifier = it,
+                                    navHostController = navController
+                                )
                             },
                             leaderBoardNavGraph = {
                                 leaderBoardNavGraph(
                                     modifier = it,
-                                    navigateToProfile = {userId->
-                                        navController.navigate(Screen.ProfileScreenRoute.withUserId(userId))
-                                    }
+                                    navHostController = navController
                                 )
                             },
                             friendsNavGraph = {
-                                friendsNavGraph(modifier = it)
+                                friendsNavGraph(
+                                    modifier = it,
+                                    navHostController = navController
+                                )
                             },
                             settingsNavGraph = {
                                 settingsNavGraph(
                                     modifier = it,
-                                    navigateToSignInScreen = {
-                                        navController.navigate(Screen.SignInScreenRoute.route) {
-                                            popUpTo(navController.graph.startDestinationId) {
-                                                inclusive = true
-                                            }
-                                            launchSingleTop = true
-                                        }
-                                    }
+                                    navHostController = navController
                                 )
                             },
                             profileNavGraph = {

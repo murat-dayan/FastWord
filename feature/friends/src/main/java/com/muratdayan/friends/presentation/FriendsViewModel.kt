@@ -53,6 +53,12 @@ class FriendsViewModel @Inject constructor(
             is FriendsContract.UiAction.UpdateFriendStatus -> {
                 updateFriendStatus(action.senderId,action.status)
             }
+
+            FriendsContract.UiAction.NavigateToBack -> {
+                viewModelScope.launch {
+                    emitUiEffect(FriendsContract.UiEffect.NavigateToBack)
+                }
+            }
         }
     }
 

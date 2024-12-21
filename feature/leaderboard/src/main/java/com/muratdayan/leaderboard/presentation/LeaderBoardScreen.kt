@@ -47,6 +47,7 @@ fun LeaderBoardScreenRoot(
     modifier: Modifier = Modifier,
     leaderBoardViewModel: LeaderBoardViewModel,
     navigateToProfile: (String) -> Unit,
+    navigateToBack: () -> Unit
 ) {
 
     val uiState = leaderBoardViewModel.uiState.collectAsStateWithLifecycle()
@@ -57,7 +58,8 @@ fun LeaderBoardScreenRoot(
         uiState = uiState.value,
         uiEffect = uiEffect,
         onAction = leaderBoardViewModel::onAction,
-        navigateToProfile = navigateToProfile
+        navigateToProfile = navigateToProfile,
+        navigateToBack = navigateToBack
     )
 }
 
@@ -68,12 +70,17 @@ private fun LeaderBoardScreen(
     uiEffect : Flow<LeaderBoardContract.UiEffect>,
     onAction: (LeaderBoardContract.UiAction) -> Unit,
     navigateToProfile: (String) -> Unit,
+    navigateToBack: () -> Unit
 ) {
 
     uiEffect.collectWithLifecycle { effect->
         when(effect){
             is LeaderBoardContract.UiEffect.NavigateToProfileScreen -> {
                 navigateToProfile(effect.userId)
+            }
+
+            LeaderBoardContract.UiEffect.NavigateToBack -> {
+                navigateToBack()
             }
         }
     }
@@ -99,7 +106,9 @@ private fun LeaderBoardScreen(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             IconButton(
-                onClick = {}
+                onClick = {
+                    onAction(LeaderBoardContract.UiAction.NavigateToBack)
+                }
             ) {
                 Icon(
                     painter = painterResource(com.muratdayan.ui.R.drawable.ic_back),
@@ -229,7 +238,8 @@ private fun LeaderBoardScreenPreview() {
             uiState = LeaderBoardContract.UiState(),
             onAction = {},
             uiEffect = emptyFlow(),
-            navigateToProfile = {}
+            navigateToProfile = {},
+            navigateToBack = {}
         )
     }
 }

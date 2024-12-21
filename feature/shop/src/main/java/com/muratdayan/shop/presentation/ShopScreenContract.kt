@@ -9,10 +9,12 @@ object ShopScreenContract {
 
     sealed interface UiAction{
         data object GetUserStats: UiAction
+        data object NavigateToBack: UiAction
         data class BuyEnergy(val changeEnergyValue:Int,val changeEmeraldValue:Int): UiAction
         data class BuyToken(val changeTokenValue:Int,val changeEmeraldValue:Int): UiAction
     }
 
     sealed class UiEffect(){
+        data object NavigateToBack: UiEffect()
     }
 }

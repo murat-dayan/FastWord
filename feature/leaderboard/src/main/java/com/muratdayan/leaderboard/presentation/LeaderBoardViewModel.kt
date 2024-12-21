@@ -44,6 +44,12 @@ class LeaderBoardViewModel @Inject constructor(
             is LeaderBoardContract.UiAction.GoToProfile -> {
                 goToProfile(action.userId)
             }
+
+            LeaderBoardContract.UiAction.NavigateToBack -> {
+                viewModelScope.launch {
+                    emitUiEffect(LeaderBoardContract.UiEffect.NavigateToBack)
+                }
+            }
         }
     }
 

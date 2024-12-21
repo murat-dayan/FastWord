@@ -49,6 +49,12 @@ class ShopViewModel @Inject constructor(
                     changeEmeraldValue = action.changeEmeraldValue
                 )
             }
+
+            ShopScreenContract.UiAction.NavigateToBack -> {
+                viewModelScope.launch {
+                    emitUiEffect(ShopScreenContract.UiEffect.NavigateToBack)
+                }
+            }
         }
     }
 

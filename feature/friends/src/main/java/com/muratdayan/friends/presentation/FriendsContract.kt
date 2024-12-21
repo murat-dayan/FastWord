@@ -17,10 +17,13 @@ object FriendsContract {
         data object GoToShop: UiAction
         data object GoToProfile: UiAction
         data class UpdateFriendStatus(val senderId: String,val status: String): UiAction
+        data object NavigateToBack: UiAction
     }
 
     sealed class UiEffect(){
         data object NavigateToShopScreen: UiEffect()
         data object NavigateToProfileScreen: UiEffect()
+        data object NavigateToBack: UiEffect()
+
     }
 }
