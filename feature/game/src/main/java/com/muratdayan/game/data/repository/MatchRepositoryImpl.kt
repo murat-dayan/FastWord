@@ -148,5 +148,23 @@ class MatchRepositoryImpl @Inject constructor(
         throw cause
     }
 
+    override fun deleteRoomUseCase(roomId: String): Flow<Result<Unit, AppError>> = flow {
+        try {
+            supabaseClient
+                .from("rooms")
+                .delete{
+                    filter {
+                        eq("id",roomId)
+                    }
+                }
+
+            emit(Result.Success(Unit))
+
+        }catch (e:Exception){
+            Log.d("MatchRepositoryImpl", "deleteRoomUseCase: ${e.message}")
+            emit(Result.Error(DataError.Remote.ServerError))
+        }
+    }
+
 
 }
