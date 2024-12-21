@@ -84,7 +84,10 @@ class MainActivity : ComponentActivity() {
                                 )
                             },
                             profileNavGraph = {
-                                profileNavGraph(modifier = it)
+                                profileNavGraph(
+                                    modifier = it,
+                                    navHostController = navController
+                                )
                             }
                         )
                     )

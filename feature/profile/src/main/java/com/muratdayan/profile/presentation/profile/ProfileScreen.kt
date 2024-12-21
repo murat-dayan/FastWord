@@ -30,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.muratdayan.core_ui.ui.theme.Dimensions
+import com.muratdayan.foodrecipecomposemvi.common.collectWithLifecycle
 import com.muratdayan.profile.R
 import com.muratdayan.profile.presentation.profile.components.CircularProgressComp
 import com.muratdayan.profile.presentation.profile.components.ProfileImageWithQuestionMark
@@ -49,7 +50,8 @@ import kotlinx.coroutines.flow.emptyFlow
 fun ProfileScreenRoot(
     modifier: Modifier = Modifier,
     profileViewModel: ProfileViewModel,
-    userId: String? = null
+    userId: String? = null,
+    navigateToBack: () -> Unit
 ) {
     val uiState = profileViewModel.uiState.collectAsStateWithLifecycle()
     val uiEffect = profileViewModel.uiEffect
@@ -59,7 +61,8 @@ fun ProfileScreenRoot(
         uiState = uiState.value,
         uiEffect = uiEffect,
         onAction = profileViewModel::onAction,
-        userId = userId ?: ""
+        userId = userId ?: "",
+        navigateToBack = navigateToBack
     )
 }
 
@@ -69,10 +72,20 @@ private fun ProfileScreen(
     userId: String,
     uiState: ProfileContract.UiState,
     uiEffect: Flow<ProfileContract.UiEffect>,
-    onAction: (ProfileContract.UiAction) -> Unit
+    onAction: (ProfileContract.UiAction) -> Unit,
+    navigateToBack: () -> Unit
 ) {
 
     Log.d("ProfileScreen", "ProfileScreen: $userId")
+
+    uiEffect.collectWithLifecycle { effect ->
+        when (effect) {
+            ProfileContract.UiEffect.NavigateToBack -> {
+                navigateToBack()
+            }
+        }
+    }
+
 
     var showProfileDialog by remember { mutableStateOf(false) }
 
@@ -97,7 +110,9 @@ private fun ProfileScreen(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             IconButton(
-                onClick = {}
+                onClick = {
+                    onAction(ProfileContract.UiAction.NavigateToBack)
+                }
             ) {
                 Icon(
                     painter = painterResource(com.muratdayan.ui.R.drawable.ic_back),
@@ -314,7 +329,8 @@ private fun ProfileScreenPreview() {
             ),
             uiEffect = emptyFlow(),
             onAction = {},
-            userId = ""
+            userId = "",
+            navigateToBack = {}
         )
     }
 }

@@ -3,6 +3,7 @@ package com.muratdayan.profile.navigation
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
@@ -12,6 +13,7 @@ import com.muratdayan.profile.presentation.profile.ProfileViewModel
 
 fun NavGraphBuilder.profileNavGraph(
     modifier: Modifier = Modifier,
+    navHostController: NavHostController
 ) {
     composable(
         route = Screen.ProfileScreenRoute.route,
@@ -22,7 +24,10 @@ fun NavGraphBuilder.profileNavGraph(
         ProfileScreenRoot(
             modifier = modifier,
             profileViewModel = profileViewModel,
-            userId = userId
+            userId = userId,
+            navigateToBack = {
+                navHostController.popBackStack()
+            }
         )
 
     }

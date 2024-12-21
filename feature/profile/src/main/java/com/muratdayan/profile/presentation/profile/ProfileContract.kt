@@ -24,9 +24,12 @@ object ProfileContract {
         data class GetAvatars(val folderName:String): UiAction
         data class GetUserInfo(val userId:String): UiAction
         data class UpdateProfileImage(val imageUri:String): UiAction
+        data object NavigateToBack: UiAction
 
     }
 
     sealed class UiEffect(){
+        data object NavigateToBack: UiEffect()
+
     }
 }
