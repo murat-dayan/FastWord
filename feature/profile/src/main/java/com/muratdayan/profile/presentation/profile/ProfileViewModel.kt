@@ -1,5 +1,6 @@
 package com.muratdayan.profile.presentation.profile
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.muratdayan.common.Result
@@ -8,6 +9,7 @@ import com.muratdayan.domain.usecase.GetUserStatsDomainUseCase
 import com.muratdayan.profile.domain.usecase.CheckUserTypeUseCase
 import com.muratdayan.profile.domain.usecase.GetAvatarsUseCase
 import com.muratdayan.profile.domain.usecase.SendFriendRequestUseCase
+import com.muratdayan.profile.domain.usecase.UpdateProfileImageUseCase
 import com.muratdayan.profile.presentation.profile.util.UserType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
@@ -26,7 +28,8 @@ class ProfileViewModel @Inject constructor(
     private val checkUserTypeUseCase: CheckUserTypeUseCase,
     private val sendFriendRequestUseCase: SendFriendRequestUseCase,
     private val getAvatarsUseCase: GetAvatarsUseCase,
-    private val getUserInfoDomainUseCase: GetUserInfoDomainUseCase
+    private val getUserInfoDomainUseCase: GetUserInfoDomainUseCase,
+    private val updateProfileImageUseCase: UpdateProfileImageUseCase
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProfileContract.UiState())
@@ -56,6 +59,30 @@ class ProfileViewModel @Inject constructor(
             is ProfileContract.UiAction.GetUserInfo -> {
                 getUserInfo(action.userId)
             }
+
+            is ProfileContract.UiAction.UpdateProfileImage -> {
+                updateProfileImage(action.imageUri)
+            }
+        }
+    }
+
+    private fun updateProfileImage(imageUri: String) {
+        updateUiState { copy(isLoading = true) }
+        viewModelScope.launch {
+            updateProfileImageUseCase.invoke(imageUri)
+                .collect{result ->
+                    when(result){
+                        is Result.Error -> {
+                            updateUiState { copy(isLoading = false) }
+                            Log.d("ProfileViewModel", "updateProfileImage: ${result.error}")
+                        }
+                        is Result.Success -> {
+                            updateUiState { copy(isLoading = false) }
+                            Log.d("ProfileViewModel", "updateProfileImage: ${result.data}")
+                            uiState.value.userInfo?.let { getUserInfo(it.id) }
+                        }
+                    }
+                }
         }
     }
 

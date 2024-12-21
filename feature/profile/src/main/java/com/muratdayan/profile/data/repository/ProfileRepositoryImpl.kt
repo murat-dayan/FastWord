@@ -138,5 +138,31 @@ class ProfileRepositoryImpl @Inject constructor(
         }
     }
 
+    override fun updateProfileImage(imageUri: String): Flow<Result<Unit, AppError>> = flow {
+        try {
+            val user = supabaseClient.auth.currentUserOrNull()
+
+            if (user == null) {
+                emit(Result.Error(DataError.Remote.Unauthorized))
+                return@flow
+            } else {
+                supabaseClient
+                    .from("users")
+                    .update({
+                        set("avatar_uri", imageUri)
+                    }){
+                        filter {
+                            eq("id",user.id)
+                        }
+                    }
+
+                emit(Result.Success(Unit))
+            }
+        }catch (e:Exception){
+            Log.d("ProfileRepositoryImpl", "updateProfileImage: $e")
+            emit(Result.Error(DataError.Remote.ServerError))
+        }
+    }
+
 
 }

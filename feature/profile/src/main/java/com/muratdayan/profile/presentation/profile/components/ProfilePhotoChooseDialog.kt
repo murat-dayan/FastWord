@@ -17,6 +17,10 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -33,11 +37,15 @@ import com.muratdayan.ui.theme.FastWordTheme
 fun ProfilePhotoChooseDialog(
     showDialog: Boolean = false,
     onDismiss: () -> Unit = {},
+    profileImageUri: String,
     modifier: Modifier = Modifier,
     mansPhotos: List<String>? = null,
     girlsPhotos: List<String>? = null,
-    onClickOkayBtn: () -> Unit = {}
+    onClickOkayBtn: (String) -> Unit = {}
 ) {
+
+    var selectedPhoto by remember { mutableStateOf(profileImageUri) }
+
     if (showDialog) {
         Dialog(
             onDismissRequest = onDismiss
@@ -76,6 +84,9 @@ fun ProfilePhotoChooseDialog(
                             girlsPhotos?.let {
                                 items(girlsPhotos){photo->
                                     FastWordProfileImageComp(
+                                        onClick = {
+                                            selectedPhoto = photo
+                                        },
                                         imageUri = photo,
                                         size = 60
                                     )
@@ -92,6 +103,9 @@ fun ProfilePhotoChooseDialog(
                             mansPhotos?.let {
                                 items(mansPhotos){photo->
                                     FastWordProfileImageComp(
+                                        onClick = {
+                                            selectedPhoto = photo
+                                        },
                                         imageUri = photo,
                                         size = 60
                                     )
@@ -104,7 +118,9 @@ fun ProfilePhotoChooseDialog(
                         modifier = Modifier
                             .weight(0.1f),
                         text = "OKAY",
-                        onClick = {onClickOkayBtn()},
+                        onClick = {
+                            onClickOkayBtn(selectedPhoto)
+                        },
                         textAlignment = TextAlign.Center,
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         textColor = MaterialTheme.colorScheme.secondaryContainer
@@ -112,7 +128,7 @@ fun ProfilePhotoChooseDialog(
                 }
                 FastWordProfileImageComp(
                     size = 60,
-                    imagePainter = painterResource(com.muratdayan.ui.R.drawable.avatar),
+                    imageUri = selectedPhoto,
                     modifier = Modifier
                         .align(Alignment.TopCenter)
                         .offset(y = (-60).dp)
@@ -130,7 +146,10 @@ fun ProfilePhotoChooseDialog(
 private fun ProfilePhotoChooseDialogPreview() {
     FastWordTheme {
         ProfilePhotoChooseDialog(
-            showDialog = true
+            showDialog = true,
+            onDismiss = {},
+            profileImageUri = "",
+
         )
     }
 }
