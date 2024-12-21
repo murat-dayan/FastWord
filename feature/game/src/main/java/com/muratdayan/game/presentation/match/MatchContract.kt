@@ -7,6 +7,7 @@ object MatchContract {
 
     data class UiState(
         val userInfo: UserDataModel? = null,
+        val isWaiting: Boolean = false,
         val room: RoomModel? = null,
         val isLoading: Boolean = false,
     )

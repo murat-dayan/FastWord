@@ -67,16 +67,16 @@ class MatchViewModel @Inject constructor(
 
     private fun findOrCreateRoom(userId:String){
         viewModelScope.launch {
-            updateUiState { copy(isLoading = true) }
+            updateUiState { copy( isWaiting = true) }
             findOrCreateRoomUseCase.invoke(userId).collect { result ->
                 when (result) {
                     is Result.Error -> {
-                        updateUiState { copy(isLoading = false) }
+                        updateUiState { copy( isWaiting = false) }
                     }
                     is Result.Success -> {
                         when(result.data){
                             MatchResult.NoAvailableRoom -> {
-                                updateUiState { copy(isLoading = false) }
+                                updateUiState { copy( isWaiting = false) }
                                 Log.d("MatchViewModel", "findOrCreateRoom: NoAvailableRoom")
                             }
                             is MatchResult.RoomCreated -> {
@@ -86,13 +86,18 @@ class MatchViewModel @Inject constructor(
                                         it
                                     ).onEach { room->
                                         Log.d("MatchViewModel", "findOrCreateRoom: $room")
-                                        updateUiState { copy(isLoading = false, room = room) }
+                                        if (room.status == "playing"){
+                                            updateUiState { copy(isWaiting = false, room = room) }
+                                        }
+
+
                                     }.launchIn(viewModelScope)
                                 }
                             }
                             is MatchResult.RoomFound -> {
                                 Log.d("MatchViewModel", "findOrCreateRoom: RoomFound")
-                                updateUiState { copy(isLoading = false, room = (result.data as MatchResult.RoomFound).room) }
+                                val room = (result.data as MatchResult.RoomFound).room
+                                updateUiState { copy(isWaiting = false, room = room) }
                             }
                         }
                     }

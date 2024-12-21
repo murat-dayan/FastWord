@@ -133,7 +133,7 @@ private fun MatchScreen(
                     size = 100
                 )
                 FastWordTextComp(
-                    text = if (uiState.isLoading) "Waiting..." else "",
+                    text = if (uiState.isWaiting) "Waiting..." else "",
                     color = MaterialTheme.colorScheme.secondaryContainer
                 )
             }
