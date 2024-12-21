@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.muratdayan.common.Result
 import com.muratdayan.domain.usecase.GetUserInfoDomainUseCase
 import com.muratdayan.game.domain.model.MatchResult
+import com.muratdayan.game.domain.usecase.DeleteRoomUseCase
 import com.muratdayan.game.domain.usecase.FindOrCreateRoomUseCase
 import com.muratdayan.game.domain.usecase.StartRealtimeRoomListenerUseCase
 import com.muratdayan.game.presentation.base.BaseViewModel
@@ -25,7 +26,8 @@ import javax.inject.Inject
 class MatchViewModel @Inject constructor(
     getUserInfoDomainUseCase: GetUserInfoDomainUseCase,
     private val findOrCreateRoomUseCase: FindOrCreateRoomUseCase,
-    private val startRealtimeRoomListenerUseCase: StartRealtimeRoomListenerUseCase
+    private val startRealtimeRoomListenerUseCase: StartRealtimeRoomListenerUseCase,
+    private val deleteRoomUseCase: DeleteRoomUseCase
 ) : BaseViewModel(getUserInfoDomainUseCase){
 
     private val _uiState = MutableStateFlow(MatchContract.UiState())
@@ -49,8 +51,27 @@ class MatchViewModel @Inject constructor(
                     emitUiEffect(MatchContract.UiEffect.NavigateToStartScreen)
                 }
             }
+
+            is MatchContract.UiAction.GoToBack -> {
+                goToBack(action.roomId)
+            }
         }
 
+    }
+
+    private fun goToBack(roomId:String){
+        viewModelScope.launch {
+            deleteRoomUseCase.invoke(roomId).collect{deleteResult->
+                when(deleteResult){
+                    is Result.Error -> {
+                        // handle error
+                    }
+                    is Result.Success -> {
+                        emitUiEffect(MatchContract.UiEffect.NavigateToBack)
+                    }
+                }
+            }
+        }
     }
 
     private fun getUserInfo(){
@@ -81,7 +102,9 @@ class MatchViewModel @Inject constructor(
                             }
                             is MatchResult.RoomCreated -> {
                                 Log.d("MatchViewModel", "findOrCreateRoom: RoomCreated")
-                                (result.data as MatchResult.RoomCreated).room.id?.let {
+                                val room = (result.data as MatchResult.RoomCreated).room
+                                updateUiState { copy(room = room) }
+                                room.id?.let {
                                     startRealtimeRoomListenerUseCase.invoke(
                                         it
                                     ).onEach { room->

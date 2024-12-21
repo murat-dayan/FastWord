@@ -54,6 +54,9 @@ fun NavGraphBuilder.gameNavGraph(
             matchViewModel = matchViewModel,
             navigateToStartScreen = {
                 navHostController.navigate(Screen.StartScreenRoute.route)
+            },
+            navigateToBack = {
+                navHostController.popBackStack()
             }
         )
     }

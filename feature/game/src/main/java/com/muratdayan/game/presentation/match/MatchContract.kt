@@ -16,9 +16,11 @@ object MatchContract {
         data object GetUserInfo: UiAction
         data class FindOrCreateRoom(val userId:String): UiAction
         data object GoToStartScreen:UiAction
+        data class GoToBack(val roomId:String):UiAction
     }
 
     sealed class UiEffect(){
         data object NavigateToStartScreen: UiEffect()
+        data object NavigateToBack: UiEffect()
     }
 }

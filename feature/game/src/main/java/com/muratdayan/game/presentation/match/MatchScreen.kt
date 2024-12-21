@@ -1,5 +1,6 @@
 package com.muratdayan.game.presentation.match
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -12,6 +13,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,7 +34,8 @@ import kotlinx.coroutines.flow.emptyFlow
 fun MatchScreenRoot(
     modifier: Modifier = Modifier,
     matchViewModel: MatchViewModel,
-    navigateToStartScreen: () -> Unit
+    navigateToStartScreen: () -> Unit,
+    navigateToBack: () -> Unit
 ) {
     val uiState = matchViewModel.uiState.collectAsStateWithLifecycle()
     val uiEffect = matchViewModel.uiEffect
@@ -42,7 +45,8 @@ fun MatchScreenRoot(
         uiState = uiState.value,
         uiEffect = uiEffect,
         onAction = matchViewModel::onAction,
-        navigateToStartScreen = navigateToStartScreen
+        navigateToStartScreen = navigateToStartScreen,
+        navigateToBack = navigateToBack
     )
 }
 
@@ -52,13 +56,32 @@ private fun MatchScreen(
     uiState: MatchContract.UiState,
     uiEffect: Flow<MatchContract.UiEffect>,
     onAction: (MatchContract.UiAction) -> Unit,
-    navigateToStartScreen: () -> Unit
+    navigateToStartScreen: () -> Unit,
+    navigateToBack: () -> Unit
 ) {
 
     uiEffect.collectWithLifecycle { effect ->
         when (effect) {
             MatchContract.UiEffect.NavigateToStartScreen -> {
                 navigateToStartScreen()
+            }
+
+            MatchContract.UiEffect.NavigateToBack -> {
+                navigateToBack()
+            }
+        }
+    }
+
+    BackHandler {
+        uiState.room?.id?.let {
+            onAction(MatchContract.UiAction.GoToBack(it))
+        }
+    }
+
+    DisposableEffect(true) {
+        onDispose {
+            uiState.room?.id?.let {
+                onAction(MatchContract.UiAction.GoToBack(it))
             }
         }
     }
@@ -89,7 +112,11 @@ private fun MatchScreen(
     ){
 
         IconButton(
-            onClick = {}
+            onClick = {
+                uiState.room?.id?.let {
+                    onAction(MatchContract.UiAction.GoToBack(it))
+                }
+            }
         ) {
             Icon(
                 painter = painterResource(com.muratdayan.ui.R.drawable.ic_back),
@@ -150,7 +177,8 @@ private fun MatchScreenPreview() {
             onAction = {},
             uiState = MatchContract.UiState(),
             uiEffect = emptyFlow(),
-            navigateToStartScreen = {}
+            navigateToStartScreen = {},
+            navigateToBack = {}
         )
     }
 }
