@@ -34,7 +34,7 @@ import kotlinx.coroutines.flow.emptyFlow
 fun MatchScreenRoot(
     modifier: Modifier = Modifier,
     matchViewModel: MatchViewModel,
-    navigateToStartScreen: () -> Unit,
+    navigateToStartScreen: (String) -> Unit,
     navigateToBack: () -> Unit
 ) {
     val uiState = matchViewModel.uiState.collectAsStateWithLifecycle()
@@ -56,14 +56,14 @@ private fun MatchScreen(
     uiState: MatchContract.UiState,
     uiEffect: Flow<MatchContract.UiEffect>,
     onAction: (MatchContract.UiAction) -> Unit,
-    navigateToStartScreen: () -> Unit,
+    navigateToStartScreen: (String) -> Unit,
     navigateToBack: () -> Unit
 ) {
 
     uiEffect.collectWithLifecycle { effect ->
         when (effect) {
-            MatchContract.UiEffect.NavigateToStartScreen -> {
-                navigateToStartScreen()
+            is MatchContract.UiEffect.NavigateToStartScreen -> {
+                navigateToStartScreen(effect.opponentUserId)
             }
 
             MatchContract.UiEffect.NavigateToBack -> {
@@ -99,7 +99,15 @@ private fun MatchScreen(
 
     LaunchedEffect(uiState.room){
         if (uiState.room?.status == "playing"){
-            onAction(MatchContract.UiAction.GoToStartScreen)
+            uiState.userInfo?.let {user->
+                if (user.id == uiState.room.player_one_id){
+                    val opponentId = uiState.room.player_two_id
+                    onAction(MatchContract.UiAction.GoToStartScreen(opponentId!!))
+                }else{
+                    val opponentId = uiState.room.player_one_id
+                    onAction(MatchContract.UiAction.GoToStartScreen(opponentId!!))
+                }
+            }
         }
     }
 
