@@ -63,6 +63,12 @@ class ProfileViewModel @Inject constructor(
             is ProfileContract.UiAction.UpdateProfileImage -> {
                 updateProfileImage(action.imageUri)
             }
+
+            ProfileContract.UiAction.NavigateToBack -> {
+                viewModelScope.launch {
+                    emitUiEffect(ProfileContract.UiEffect.NavigateToBack)
+                }
+            }
         }
     }
 
