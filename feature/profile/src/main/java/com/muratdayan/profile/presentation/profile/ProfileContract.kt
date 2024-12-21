@@ -8,6 +8,7 @@ import io.github.jan.supabase.gotrue.user.UserInfo
 object ProfileContract {
 
     data class UiState(
+        val isProfileImageUpdated: Boolean = false,
         val userStats: UserStatsModel? = null,
         val avatarManList: List<String>? = null,
         val avatarGirlList: List<String>? = null,
@@ -22,6 +23,8 @@ object ProfileContract {
         data class SendFriendRequest(val friendId:String): UiAction
         data class GetAvatars(val folderName:String): UiAction
         data class GetUserInfo(val userId:String): UiAction
+        data class UpdateProfileImage(val imageUri:String): UiAction
+
     }
 
     sealed class UiEffect(){

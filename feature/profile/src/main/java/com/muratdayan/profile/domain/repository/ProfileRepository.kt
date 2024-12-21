@@ -12,4 +12,6 @@ interface ProfileRepository {
     fun sendFriendRequest(friendId:String): Flow<Result<Unit,AppError>>
 
     fun getAvatars(folderName:String): Flow<Result<List<String>,AppError>>
+
+    fun updateProfileImage(imageUri:String): Flow<Result<Unit,AppError>>
 }
