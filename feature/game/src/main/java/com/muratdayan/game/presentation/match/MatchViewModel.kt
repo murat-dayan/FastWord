@@ -43,17 +43,24 @@ class MatchViewModel @Inject constructor(
             is MatchContract.UiAction.FindOrCreateRoom -> {
                 findOrCreateRoom(action.userId)
             }
+
+            MatchContract.UiAction.GoToStartScreen -> {
+                viewModelScope.launch {
+                    emitUiEffect(MatchContract.UiEffect.NavigateToStartScreen)
+                }
+            }
         }
 
     }
 
     private fun getUserInfo(){
         viewModelScope.launch {
+            updateUiState { copy(isLoading = true) }
             val userInfo = fetchUserInfo()
 
             // userInfo null değilse, FindOrCreateRoom aksiyonunu başlatıyoruz
             if (userInfo != null) {
-                updateUiState { copy(userInfo = userInfo) }
+                updateUiState { copy(isLoading = false,userInfo = userInfo) }
             }
         }
     }
@@ -75,13 +82,12 @@ class MatchViewModel @Inject constructor(
                             is MatchResult.RoomCreated -> {
                                 Log.d("MatchViewModel", "findOrCreateRoom: RoomCreated")
                                 (result.data as MatchResult.RoomCreated).room.id?.let {
-                                    emitUiEffect(MatchContract.UiEffect.NavigateToStartScreen)
-                                    /*startRealtimeRoomListenerUseCase.invoke(
+                                    startRealtimeRoomListenerUseCase.invoke(
                                         it
                                     ).onEach { room->
                                         Log.d("MatchViewModel", "findOrCreateRoom: $room")
                                         updateUiState { copy(isLoading = false, room = room) }
-                                    }.launchIn(viewModelScope)*/
+                                    }.launchIn(viewModelScope)
                                 }
                             }
                             is MatchResult.RoomFound -> {

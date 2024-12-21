@@ -14,6 +14,7 @@ object MatchContract {
     sealed interface UiAction{
         data object GetUserInfo: UiAction
         data class FindOrCreateRoom(val userId:String): UiAction
+        data object GoToStartScreen:UiAction
     }
 
     sealed class UiEffect(){
