@@ -83,6 +83,7 @@ private fun StartScreen(
 
     LaunchedEffect(true) {
         onAction(StartContract.UiAction.GetUserInfo)
+        onAction(StartContract.UiAction.GetRandomQuestion)
         if (roomId.isNotEmpty()) {
             onAction(StartContract.UiAction.GetRoom(roomId))
         }
@@ -226,7 +227,7 @@ private fun StartScreen(
                     .height(50.dp)
             ) {
                 FastWordTextComp(
-                    text = "Question",
+                    text = uiState.question?.question_text?:"Loading",
                     fontWeight = FontWeight.Bold
                 )
             }

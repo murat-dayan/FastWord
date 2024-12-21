@@ -1,6 +1,7 @@
 package com.muratdayan.game.presentation.start
 
 import com.muratdayan.domain.model.UserDataModel
+import com.muratdayan.game.domain.model.QuestionModel
 import com.muratdayan.game.domain.model.RoomModel
 
 object StartContract {
@@ -8,6 +9,7 @@ object StartContract {
     data class UiState(
         val isLoading: Boolean = false,
         val userInfo: UserDataModel? = null,
+        val question: QuestionModel? = null,
         val opponentInfo: UserDataModel? = null,
         val room: RoomModel? = null
     )
@@ -16,6 +18,7 @@ object StartContract {
         data object GetUserInfo: UiAction
         data class GetRoom(val roomId: String): UiAction
         data class GetOpponentInfo(val opponentId: String): UiAction
+        data object GetRandomQuestion: UiAction
     }
 
 
