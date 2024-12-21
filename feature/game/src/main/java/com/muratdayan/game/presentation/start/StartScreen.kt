@@ -40,16 +40,18 @@ import kotlinx.coroutines.delay
 @Composable
 fun StartScreenRoot(
     modifier: Modifier = Modifier,
-
+    opponentUserId: String?=null
     ) {
     StartScreen(
-        modifier = modifier
+        modifier = modifier,
+        opponentUserId = opponentUserId ?: ""
     )
 }
 
 @Composable
 private fun StartScreen(
     modifier: Modifier = Modifier,
+    opponentUserId: String
 ) {
 
     var count by remember { mutableStateOf(10) }
@@ -262,6 +264,8 @@ private fun StartScreen(
 @Composable
 private fun StartScreenPreview() {
     FastWordTheme {
-        StartScreen()
+        StartScreen(
+            opponentUserId = ""
+        )
     }
 }
