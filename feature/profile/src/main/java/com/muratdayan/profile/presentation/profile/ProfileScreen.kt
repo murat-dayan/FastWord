@@ -143,7 +143,6 @@ private fun ProfileScreen(
                         onAction(ProfileContract.UiAction.GetAvatars("mans"))
                         onAction(ProfileContract.UiAction.GetAvatars("girls"))
                         showProfileDialog = true
-
                     },
                     profileImageUri = uiState.userInfo?.avatar_uri ?: ""
                 )
@@ -244,7 +243,12 @@ private fun ProfileScreen(
                     showProfileDialog = false
                 },
                 mansPhotos = uiState.avatarManList,
-                girlsPhotos = uiState.avatarGirlList
+                girlsPhotos = uiState.avatarGirlList,
+                profileImageUri = uiState.userInfo?.avatar_uri ?: "",
+                onClickOkayBtn = {selectedPhoto->
+                    showProfileDialog = false
+                    onAction(ProfileContract.UiAction.UpdateProfileImage(selectedPhoto))
+                }
             )
         }
 
