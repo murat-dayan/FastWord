@@ -74,6 +74,12 @@ private fun MatchScreen(
         }
     }
 
+    LaunchedEffect(uiState.room){
+        if (uiState.room?.status == "playing"){
+            onAction(MatchContract.UiAction.GoToStartScreen)
+        }
+    }
+
     Box (
         modifier = modifier
             .fillMaxSize()
