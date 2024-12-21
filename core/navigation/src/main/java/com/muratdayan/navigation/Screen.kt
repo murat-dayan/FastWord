@@ -5,8 +5,8 @@ sealed class Screen(val route:String) {
     data object SignInScreenRoute: Screen("sign_in_screen")
     data object MainScreenRoute: Screen("main_screen")
     data object MatchScreenRoute: Screen("match_screen")
-    data object StartScreenRoute: Screen("start_screen/{opponentUserId}"){
-        fun withOpponentUserId(opponentUserId:String) = "start_screen/$opponentUserId"
+    data object StartScreenRoute: Screen("start_screen/{roomId}"){
+        fun withroomId(roomId:String) = "start_screen/$roomId"
     }
     data object ShopScreenRoute: Screen("shop_screen")
     data object LeaderBoardScreenRoute: Screen("leaderboard_screen")

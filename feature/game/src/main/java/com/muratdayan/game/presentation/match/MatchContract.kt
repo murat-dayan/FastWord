@@ -15,12 +15,12 @@ object MatchContract {
     sealed interface UiAction{
         data object GetUserInfo: UiAction
         data class FindOrCreateRoom(val userId:String): UiAction
-        data class GoToStartScreen(val opponentUserId:String):UiAction
+        data class GoToStartScreen(val roomId:String):UiAction
         data class GoToBack(val roomId:String):UiAction
     }
 
     sealed class UiEffect(){
-        data class NavigateToStartScreen(val opponentUserId:String): UiEffect()
+        data class NavigateToStartScreen(val roomId:String): UiEffect()
         data object NavigateToBack: UiEffect()
     }
 }

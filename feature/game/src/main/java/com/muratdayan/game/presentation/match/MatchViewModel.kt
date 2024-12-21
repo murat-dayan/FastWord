@@ -48,7 +48,7 @@ class MatchViewModel @Inject constructor(
 
             is MatchContract.UiAction.GoToStartScreen -> {
                 viewModelScope.launch {
-                    emitUiEffect(MatchContract.UiEffect.NavigateToStartScreen(action.opponentUserId))
+                    emitUiEffect(MatchContract.UiEffect.NavigateToStartScreen(action.roomId))
                 }
             }
 
