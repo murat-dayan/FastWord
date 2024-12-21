@@ -35,6 +35,12 @@ class SettingsViewModel @Inject constructor(
             SettingsContract.UiAction.Exit -> {
                 exitApp()
             }
+
+            SettingsContract.UiAction.NavigateToBack ->{
+                viewModelScope.launch {
+                    emitUiEffect(SettingsContract.UiEffect.NavigateToBack)
+                }
+            }
         }
     }
 

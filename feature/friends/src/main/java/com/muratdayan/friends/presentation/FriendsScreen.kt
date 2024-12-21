@@ -48,7 +48,8 @@ import kotlinx.coroutines.flow.emptyFlow
 @Composable
 fun FriendsScreenRoot(
     modifier: Modifier = Modifier,
-    friendsViewModel: FriendsViewModel
+    friendsViewModel: FriendsViewModel,
+    navigateToBack: () -> Unit
 ) {
 
     val uiState = friendsViewModel.uiState.collectAsStateWithLifecycle()
@@ -58,7 +59,8 @@ fun FriendsScreenRoot(
         modifier = modifier,
         uiState = uiState.value,
         uiEffect = uiEffect,
-        onAction = friendsViewModel::onAction
+        onAction = friendsViewModel::onAction,
+        navigateToBack = navigateToBack
     )
 }
 
@@ -67,13 +69,17 @@ private fun FriendsScreen(
     modifier: Modifier = Modifier,
     uiState: FriendsContract.UiState,
     uiEffect: Flow<FriendsContract.UiEffect>,
-    onAction: (FriendsContract.UiAction) -> Unit
+    onAction: (FriendsContract.UiAction) -> Unit,
+    navigateToBack: () -> Unit
 ) {
 
     uiEffect.collectWithLifecycle { effect ->
         when (effect) {
             FriendsContract.UiEffect.NavigateToProfileScreen -> {}
             FriendsContract.UiEffect.NavigateToShopScreen -> {}
+            FriendsContract.UiEffect.NavigateToBack -> {
+                navigateToBack()
+            }
         }
     }
 
@@ -98,7 +104,9 @@ private fun FriendsScreen(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             IconButton(
-                onClick = {}
+                onClick = {
+                    onAction(FriendsContract.UiAction.NavigateToBack)
+                }
             ) {
                 Icon(
                     painter = painterResource(com.muratdayan.ui.R.drawable.ic_back),
@@ -245,7 +253,8 @@ private fun FriendsScreenPreview() {
         FriendsScreen(
             uiState = FriendsContract.UiState(),
             uiEffect = emptyFlow(),
-            onAction = {}
+            onAction = {},
+            navigateToBack = {}
         )
     }
 }

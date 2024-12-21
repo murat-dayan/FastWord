@@ -21,6 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.muratdayan.core_ui.ui.theme.Dimensions
+import com.muratdayan.foodrecipecomposemvi.common.collectWithLifecycle
 import com.muratdayan.shop.R
 import com.muratdayan.shop.presentation.components.ShopCardComp
 import com.muratdayan.shop.presentation.components.ShopTitleTextComp
@@ -34,7 +35,8 @@ import kotlinx.coroutines.flow.emptyFlow
 @Composable
 fun ShopScreenRoot(
     modifier: Modifier = Modifier,
-    shopViewModel: ShopViewModel
+    shopViewModel: ShopViewModel,
+    navigateToBack: () -> Unit
 ){
 
     val uiState = shopViewModel.uiState.collectAsStateWithLifecycle()
@@ -44,7 +46,8 @@ fun ShopScreenRoot(
         modifier = modifier,
         uiState = uiState.value,
         uiEffect = uiEffect,
-        onAction = shopViewModel::onAction
+        onAction = shopViewModel::onAction,
+        navigateToBack = navigateToBack
     )
 }
 
@@ -53,8 +56,17 @@ private fun ShopScreen(
     modifier: Modifier = Modifier,
     uiState: ShopScreenContract.UiState,
     uiEffect: Flow<ShopScreenContract.UiEffect>,
-    onAction: (ShopScreenContract.UiAction) -> Unit
+    onAction: (ShopScreenContract.UiAction) -> Unit,
+    navigateToBack: () -> Unit
 ){
+
+    uiEffect.collectWithLifecycle { effect ->
+        when(effect){
+            ShopScreenContract.UiEffect.NavigateToBack -> {
+                navigateToBack()
+            }
+        }
+    }
 
     LaunchedEffect(true) {
         onAction(ShopScreenContract.UiAction.GetUserStats)
@@ -73,7 +85,9 @@ private fun ShopScreen(
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             IconButton(
-                onClick = {}
+                onClick = {
+                    onAction(ShopScreenContract.UiAction.NavigateToBack)
+                }
             ) {
                 Icon(
                     painter = painterResource(com.muratdayan.ui.R.drawable.ic_back),
@@ -222,7 +236,8 @@ private fun ShopScreenPreview() {
         ShopScreen(
             uiState = ShopScreenContract.UiState(),
             uiEffect = emptyFlow(),
-            onAction = {}
+            onAction = {},
+            navigateToBack = {}
         )
     }
 }
