@@ -9,6 +9,7 @@ import com.muratdayan.game.presentation.main.MainScreenRoot
 import com.muratdayan.game.presentation.main.MainScreenViewModel
 import com.muratdayan.game.presentation.match.MatchScreenRoot
 import com.muratdayan.game.presentation.match.MatchViewModel
+import com.muratdayan.game.presentation.play.PlayScreenRoot
 import com.muratdayan.game.presentation.start.StartScreenRoot
 import com.muratdayan.navigation.Screen
 
@@ -70,6 +71,16 @@ fun NavGraphBuilder.gameNavGraph(
             modifier = modifier,
             startViewModel = startViewModel,
             roomId = roomId
+        )
+    }
+
+    composable(
+        route = Screen.PlayScreenRoute.route
+    ){
+        val playScreenViewModel = hiltViewModel<com.muratdayan.game.presentation.play.PlayScreenViewModel>()
+        PlayScreenRoot(
+            modifier = modifier,
+            playScreenViewModel = playScreenViewModel
         )
     }
 
