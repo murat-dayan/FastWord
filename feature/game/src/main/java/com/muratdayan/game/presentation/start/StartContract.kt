@@ -18,7 +18,6 @@ object StartContract {
         data object GetUserInfo: UiAction
         data class GetRoom(val roomId: String): UiAction
         data class GetOpponentInfo(val opponentId: String): UiAction
-        data object GetRandomQuestion: UiAction
     }
 
 

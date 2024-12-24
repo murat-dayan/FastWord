@@ -10,5 +10,5 @@ interface StartRepository {
 
     fun getRoom(roomId:String): Flow<Result<RoomModel,AppError>>
 
-    fun getRandomQuestion(): Flow<Result<QuestionModel,AppError>>
+    fun getQuestion(questionId:String): Flow<Result<QuestionModel,AppError>>
 }
