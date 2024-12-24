@@ -10,11 +10,14 @@ import com.muratdayan.game.domain.usecase.FindOrCreateRoomUseCase
 import com.muratdayan.game.domain.usecase.StartRealtimeRoomListenerUseCase
 import com.muratdayan.game.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -27,7 +30,7 @@ class MatchViewModel @Inject constructor(
     getUserInfoDomainUseCase: GetUserInfoDomainUseCase,
     private val findOrCreateRoomUseCase: FindOrCreateRoomUseCase,
     private val startRealtimeRoomListenerUseCase: StartRealtimeRoomListenerUseCase,
-    private val deleteRoomUseCase: DeleteRoomUseCase
+    private val deleteRoomUseCase: DeleteRoomUseCase,
 ) : BaseViewModel(getUserInfoDomainUseCase){
 
     private val _uiState = MutableStateFlow(MatchContract.UiState())
@@ -54,6 +57,10 @@ class MatchViewModel @Inject constructor(
 
             is MatchContract.UiAction.GoToBack -> {
                 goToBack(action.roomId)
+            }
+
+            is MatchContract.UiAction.StartRoomStatusListener -> {
+                startRoomStatusListener(action.roomId)
             }
         }
 
@@ -89,6 +96,8 @@ class MatchViewModel @Inject constructor(
     private fun findOrCreateRoom(userId:String){
         viewModelScope.launch {
             updateUiState { copy( isWaiting = true) }
+
+
             findOrCreateRoomUseCase.invoke(userId).collect { result ->
                 when (result) {
                     is Result.Error -> {
@@ -104,28 +113,43 @@ class MatchViewModel @Inject constructor(
                                 Log.d("MatchViewModel", "findOrCreateRoom: RoomCreated")
                                 val room = (result.data as MatchResult.RoomCreated).room
                                 updateUiState { copy(room = room) }
-                                room.id?.let {
-                                    startRealtimeRoomListenerUseCase.invoke(
-                                        it
-                                    ).onEach { room->
-                                        Log.d("MatchViewModel", "findOrCreateRoom: $room")
-                                        if (room.status == "playing"){
-                                            updateUiState { copy(isWaiting = false, room = room) }
-                                        }
 
-
-                                    }.launchIn(viewModelScope)
+                                room.id?.let {roomId->
+                                    startRoomStatusListener(roomId)
                                 }
                             }
                             is MatchResult.RoomFound -> {
                                 Log.d("MatchViewModel", "findOrCreateRoom: RoomFound")
                                 val room = (result.data as MatchResult.RoomFound).room
                                 updateUiState { copy(isWaiting = false, room = room) }
+
+                                room.id?.let {roomId->
+                                    startRoomStatusListener(roomId)
+                                }
                             }
                         }
                     }
                 }
             }
+        }
+    }
+
+    private fun startRoomStatusListener(roomId:String){
+        var roomListener: Job?=null
+        roomListener = viewModelScope.launch {
+            roomListener?.cancel()
+            startRealtimeRoomListenerUseCase.invoke(roomId)
+                .catch { e ->
+                    Log.e("MatchViewModel", "Room listener error", e)
+                    updateUiState { copy(isWaiting = false) }
+                }
+                .collect { updatedRoom ->
+                    Log.d("MatchViewModel", "Room update received: $updatedRoom")
+                    if (updatedRoom.status == "playing") {
+                        updateUiState { copy(isWaiting = false, room = updatedRoom) }
+                    }
+
+                }
         }
     }
 

@@ -4,10 +4,9 @@ import android.util.Log
 import androidx.lifecycle.viewModelScope
 import com.muratdayan.common.Result
 import com.muratdayan.domain.usecase.GetUserInfoDomainUseCase
-import com.muratdayan.game.domain.usecase.GetRandomQuestionUseCase
+import com.muratdayan.game.domain.usecase.GetQuestionUseCase
 import com.muratdayan.game.domain.usecase.GetRoomUseCase
 import com.muratdayan.game.presentation.base.BaseViewModel
-import com.muratdayan.game.presentation.match.MatchContract
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
@@ -23,7 +22,7 @@ import javax.inject.Inject
 class StartViewModel @Inject constructor(
     getUserInfoDomainUseCase: GetUserInfoDomainUseCase,
     private val getRoomUseCase: GetRoomUseCase,
-    private val getRandomQuestionUseCase: GetRandomQuestionUseCase
+    private val getRandomQuestionUseCase: GetQuestionUseCase
 ) : BaseViewModel(getUserInfoDomainUseCase){
 
     private val _uiState = MutableStateFlow(StartContract.UiState())
@@ -45,18 +44,14 @@ class StartViewModel @Inject constructor(
             is StartContract.UiAction.GetRoom -> {
                 getRoom(action.roomId)
             }
-
-            StartContract.UiAction.GetRandomQuestion -> {
-                getRandomQuestion()
-            }
         }
     }
 
-    private fun getRandomQuestion(){
+    private fun getQuestion(questionId:String){
         viewModelScope.launch {
             updateUiState { copy(isLoading = true) }
 
-            getRandomQuestionUseCase.invoke()
+            getRandomQuestionUseCase.invoke(questionId)
                 .collect{getRandomQuestionResult ->
                     when(getRandomQuestionResult){
                         is Result.Error -> {

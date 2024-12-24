@@ -9,8 +9,7 @@ import com.muratdayan.game.domain.model.RoomModel
 import com.muratdayan.game.domain.repository.StartRepository
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
-import io.github.jan.supabase.postgrest.postgrest
-import io.github.jan.supabase.postgrest.rpc
+import io.github.jan.supabase.postgrest.query.Columns
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
@@ -41,25 +40,30 @@ class StartRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getRandomQuestion(): Flow<Result<QuestionModel, AppError>> = flow {
+    override fun getQuestion(questionId: String): Flow<Result<QuestionModel, AppError>> = flow {
 
         try {
             val response = supabaseClient
-                .postgrest
-                .rpc("get_random_question")
+                .from("questions")
+                .select (Columns.raw("*")){
+                    select()
+                    filter {
+                        eq("id",questionId)
+                    }
+                }
 
-            Log.e("StartRepositoryImpl","getRandomQuestion: $response")
+            Log.e("StartRepositoryImpl","getQuestion: $response")
 
             val question = response.decodeSingleOrNull<QuestionModel>()
 
             if (question != null) {
                 emit(Result.Success(question))
             } else {
-                Log.e("StartRepositoryImpl", "getRandomQuestion: Question not found")
+                Log.e("StartRepositoryImpl", "getQuestion: Question not found")
                 emit(Result.Error(DataError.Remote.ServerError))
             }
         }catch (e:Exception){
-            Log.e("StartRepositoryImpl","getRandomQuestion: ${e.message}")
+            Log.e("StartRepositoryImpl","getQuestion: ${e.message}")
             emit(Result.Error(DataError.Remote.ServerError))
         }
 

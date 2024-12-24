@@ -97,10 +97,9 @@ private fun MatchScreen(
         }
     }
 
-    LaunchedEffect(uiState.room){
-        if (uiState.room?.status == "playing"){
-            uiState.room.id?.let { MatchContract.UiAction.GoToStartScreen(it) }
-                ?.let { onAction.invoke(it) }
+    LaunchedEffect(uiState.room?.status) {
+        uiState.room?.id?.let {
+            onAction(MatchContract.UiAction.StartRoomStatusListener(it))
         }
     }
 

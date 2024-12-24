@@ -83,7 +83,6 @@ private fun StartScreen(
 
     LaunchedEffect(true) {
         onAction(StartContract.UiAction.GetUserInfo)
-        onAction(StartContract.UiAction.GetRandomQuestion)
         if (roomId.isNotEmpty()) {
             onAction(StartContract.UiAction.GetRoom(roomId))
         }
