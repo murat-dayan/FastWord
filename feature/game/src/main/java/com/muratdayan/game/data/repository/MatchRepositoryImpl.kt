@@ -6,6 +6,7 @@ import com.muratdayan.common.DataError
 import com.muratdayan.common.Result
 import com.muratdayan.game.domain.model.MatchResult
 import com.muratdayan.game.domain.model.RoomModel
+import com.muratdayan.game.domain.model.RoomRoundModel
 import com.muratdayan.game.domain.repository.MatchRepository
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
@@ -16,6 +17,7 @@ import io.github.jan.supabase.postgrest.rpc
 import io.github.jan.supabase.realtime.PostgresAction
 import io.github.jan.supabase.realtime.channel
 import io.github.jan.supabase.realtime.postgresChangeFlow
+import io.github.jan.supabase.realtime.realtime
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
@@ -85,8 +87,11 @@ class MatchRepositoryImpl @Inject constructor(
                             waitingRooms[0].id?.let { eq("id", it) }
                         }
                     }.decodeSingleOrNull<RoomModel>()
+
+
+                val roomRoundCreated = createRoomRound(updatedRoomResponse?.id)
                 Log.d("MatchRepositoryImpl", "findRoom - updatedRoomResponse: $updatedRoomResponse")
-                updatedRoomResponse
+                if (roomRoundCreated) updatedRoomResponse else null
             } else {
                 null
             }
@@ -99,13 +104,10 @@ class MatchRepositoryImpl @Inject constructor(
     private suspend fun createRoom(userId: String): RoomModel? {
         return try {
 
-            val questionId = getRandomQuestion()
-
             val roomModel = RoomModel(
                 player_one_id = userId,
                 player_two_id = null,
                 status = "waiting",
-                question_id = questionId
             )
 
             val newRoomResponse = supabaseClient
@@ -125,6 +127,36 @@ class MatchRepositoryImpl @Inject constructor(
         }
     }
 
+    private suspend fun createRoomRound(
+        roomId: String?
+    ) : Boolean{
+        return try {
+            if (roomId == null) {
+                false
+            }else{
+                val questionId = getRandomQuestion()
+
+                val roomRoundModel = RoomRoundModel(
+                    id = null,
+                    room_id = roomId,
+                    round_number = 1,
+                    player_one_score = 0,
+                    player_two_score = 0,
+                    question_id = questionId
+                )
+
+                supabaseClient
+                    .from("room_rounds")
+                    .insert(roomRoundModel)
+
+                true
+            }
+        }catch (e:Exception){
+            Log.d("MatchRepositoryImpl", "createRoomRound: ${e.message}")
+            false
+        }
+    }
+
 
     private  suspend fun getRandomQuestion(): String{
         val response = supabaseClient
@@ -137,7 +169,7 @@ class MatchRepositoryImpl @Inject constructor(
     }
 
     override fun startRealtimeRoomListener(roomId: String): Flow<RoomModel> = channelFlow {
-        val channel = supabaseClient.channel("rooms_channel_$roomId") // Add roomId to make channel unique
+        val channel = supabaseClient.realtime.channel(roomId)
 
         try {
             channel.subscribe()
@@ -204,23 +236,6 @@ class MatchRepositoryImpl @Inject constructor(
             Log.d("MatchRepositoryImpl", "deleteRoomUseCase: ${e.message}")
             emit(Result.Error(DataError.Remote.ServerError))
         }
-    }
-
-    override suspend fun setStatusPlaying(roomId: String){
-        try {
-            supabaseClient
-                .from("rooms")
-                .update({
-                    set("status","playing")
-                }){
-                    filter {
-                        eq("id",roomId)
-                    }
-                }
-        }catch (e:Exception){
-            Log.d("MatchRepositoryImpl", "setStatusPlaying: ${e.message}")
-        }
-
     }
 
 

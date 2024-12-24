@@ -13,6 +13,4 @@ interface MatchRepository {
     fun startRealtimeRoomListener(roomId:String): Flow<RoomModel>
 
     fun deleteRoomUseCase(roomId:String): Flow<Result<Unit,AppError>>
-
-    suspend fun setStatusPlaying(roomId:String)
 }

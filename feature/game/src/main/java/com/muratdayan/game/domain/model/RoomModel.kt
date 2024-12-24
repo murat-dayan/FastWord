@@ -9,7 +9,6 @@ data class RoomModel(
     val player_two_id:String?=null,
     val status:String = "waiting",
     val is_room_ready : Boolean = false,
-    val question_id:String,
     val created_at:String? = null,
 
 )

@@ -7,7 +7,6 @@ import com.muratdayan.domain.usecase.GetUserInfoDomainUseCase
 import com.muratdayan.game.domain.model.MatchResult
 import com.muratdayan.game.domain.usecase.DeleteRoomUseCase
 import com.muratdayan.game.domain.usecase.FindOrCreateRoomUseCase
-import com.muratdayan.game.domain.usecase.SetStatusPlayingUseCase
 import com.muratdayan.game.domain.usecase.StartRealtimeRoomListenerUseCase
 import com.muratdayan.game.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,7 +31,6 @@ class MatchViewModel @Inject constructor(
     private val findOrCreateRoomUseCase: FindOrCreateRoomUseCase,
     private val startRealtimeRoomListenerUseCase: StartRealtimeRoomListenerUseCase,
     private val deleteRoomUseCase: DeleteRoomUseCase,
-    private val setStatusPlayingUseCase: SetStatusPlayingUseCase
 ) : BaseViewModel(getUserInfoDomainUseCase){
 
     private val _uiState = MutableStateFlow(MatchContract.UiState())
@@ -149,10 +147,6 @@ class MatchViewModel @Inject constructor(
                     Log.d("MatchViewModel", "Room update received: $updatedRoom")
                     if (updatedRoom.status == "playing") {
                         updateUiState { copy(isWaiting = false, room = updatedRoom) }
-
-                        if (updatedRoom.is_room_ready){
-                            emitUiEffect(MatchContract.UiEffect.NavigateToStartScreen(updatedRoom.id!!))
-                        }
                     }
 
                 }

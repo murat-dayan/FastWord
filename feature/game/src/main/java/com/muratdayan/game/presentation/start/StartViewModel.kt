@@ -88,7 +88,6 @@ class StartViewModel @Inject constructor(
                     }
                     is Result.Success -> {
                         updateUiState { copy(isLoading = false,room = getRoomResult.data) }
-                        getQuestion(getRoomResult.data.question_id)
                     }
                 }
             }
