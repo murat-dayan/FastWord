@@ -8,7 +8,10 @@ data class RoomModel(
     val player_one_id:String?=null,
     val player_two_id:String?=null,
     val status:String = "waiting",
-    val created_at:String? = null
+    val is_room_ready : Boolean = false,
+    val question_id:String,
+    val created_at:String? = null,
+
 )
 
 sealed class MatchResult{
