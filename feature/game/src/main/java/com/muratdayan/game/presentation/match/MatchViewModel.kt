@@ -136,6 +136,8 @@ class MatchViewModel @Inject constructor(
 
     private fun startRoomStatusListener(roomId:String){
         var roomListener: Job?=null
+
+
         roomListener = viewModelScope.launch {
             roomListener?.cancel()
             startRealtimeRoomListenerUseCase.invoke(roomId)
@@ -147,6 +149,9 @@ class MatchViewModel @Inject constructor(
                     Log.d("MatchViewModel", "Room update received: $updatedRoom")
                     if (updatedRoom.status == "playing") {
                         updateUiState { copy(isWaiting = false, room = updatedRoom) }
+                    }
+                    if (updatedRoom.is_room_ready){
+                        emitUiEffect(MatchContract.UiEffect.NavigateToStartScreen(roomId))
                     }
 
                 }
