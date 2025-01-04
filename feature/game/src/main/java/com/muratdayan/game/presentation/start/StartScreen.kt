@@ -140,7 +140,7 @@ private fun StartScreen(
 
 
         FastWordTextComp(
-            text = "Round 1",
+            text = "Round ${uiState.roomRound?.round_number}",
             fontWeight = FontWeight.Bold,
             fontSize = Dimensions.textSizeTitle
         )
@@ -167,7 +167,7 @@ private fun StartScreen(
             }
 
             FastWordTextComp(
-                text = "0",
+                text = uiState.roomRound?.player_one_score.toString(),
                 fontWeight = FontWeight.Bold,
                 fontSize = Dimensions.textSizeTitle
             )
@@ -179,7 +179,7 @@ private fun StartScreen(
             )
 
             FastWordTextComp(
-                text = "0",
+                text = uiState.roomRound?.player_two_score.toString(),
                 fontWeight = FontWeight.Bold,
                 fontSize = Dimensions.textSizeTitle
             )

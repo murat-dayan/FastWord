@@ -6,6 +6,7 @@ import com.muratdayan.common.DataError
 import com.muratdayan.common.Result
 import com.muratdayan.game.domain.model.QuestionModel
 import com.muratdayan.game.domain.model.RoomModel
+import com.muratdayan.game.domain.model.RoomRoundModel
 import com.muratdayan.game.domain.repository.StartRepository
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.postgrest.from
@@ -67,6 +68,31 @@ class StartRepositoryImpl @Inject constructor(
             emit(Result.Error(DataError.Remote.ServerError))
         }
 
+    }
+
+    override fun getRoomRound(roomRoundId: String): Flow<Result<RoomRoundModel, AppError>> = flow{
+        try {
+            val response = supabaseClient
+                .from("room_rounds")
+                .select (Columns.raw("*")){
+                    filter {
+                        eq("id",roomRoundId)
+                    }
+                }
+
+            val decodedResponse = response.decodeSingleOrNull<RoomRoundModel>()
+
+            if (decodedResponse != null) {
+                emit(Result.Success(decodedResponse))
+            } else {
+                Log.e("StartRepositoryImpl","getRoomRound: RoomRound not found")
+                emit(Result.Error(DataError.Remote.ServerError))
+            }
+
+        }catch (e:Exception){
+            Log.e("StartRepositoryImpl","getRoomRound: ${e.message}")
+            emit(Result.Error(DataError.Remote.ServerError))
+        }
     }
 
 

@@ -97,12 +97,6 @@ private fun MatchScreen(
         }
     }
 
-    LaunchedEffect(uiState.room?.status) {
-        uiState.room?.id?.let {
-            onAction(MatchContract.UiAction.StartRoomStatusListener(it))
-        }
-    }
-
     Box (
         modifier = modifier
             .fillMaxSize()

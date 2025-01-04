@@ -16,10 +16,15 @@ import io.github.jan.supabase.postgrest.query.filter.FilterOperator
 import io.github.jan.supabase.postgrest.rpc
 import io.github.jan.supabase.realtime.PostgresAction
 import io.github.jan.supabase.realtime.channel
+import io.github.jan.supabase.realtime.decodeRecordOrNull
 import io.github.jan.supabase.realtime.postgresChangeFlow
+import io.github.jan.supabase.realtime.postgresSingleDataFlow
 import io.github.jan.supabase.realtime.realtime
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
@@ -27,6 +32,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromJsonElement
+import java.util.Locale.filter
 import javax.inject.Inject
 
 class MatchRepositoryImpl @Inject constructor(
@@ -129,11 +135,11 @@ class MatchRepositoryImpl @Inject constructor(
 
     private suspend fun createRoomRound(
         roomId: String?
-    ) : Boolean{
+    ): Boolean {
         return try {
             if (roomId == null) {
                 false
-            }else{
+            } else {
                 val questionId = getRandomQuestion()
 
                 val roomRoundModel = RoomRoundModel(
@@ -151,14 +157,14 @@ class MatchRepositoryImpl @Inject constructor(
 
                 true
             }
-        }catch (e:Exception){
+        } catch (e: Exception) {
             Log.d("MatchRepositoryImpl", "createRoomRound: ${e.message}")
             false
         }
     }
 
 
-    private  suspend fun getRandomQuestion(): String{
+    private suspend fun getRandomQuestion(): String {
         val response = supabaseClient
             .postgrest
             .rpc("get_random_question_id")
@@ -172,35 +178,22 @@ class MatchRepositoryImpl @Inject constructor(
         val channel = supabaseClient.realtime.channel(roomId)
 
         try {
-            channel.subscribe()
 
-            val roomChangeFlow = channel.postgresChangeFlow<PostgresAction.Update>(
+
+            val room: Flow<RoomModel> = channel.postgresSingleDataFlow(
                 schema = "public",
-            ) {
-                table = "rooms"
-                filter("id", FilterOperator.EQ, roomId)
+                table = "rooms",
+                primaryKey = RoomModel::id
+            ){
+                eq("id",roomId)
             }
 
-            val initialRoom = supabaseClient
-                .from("rooms")
-                .select {
-                    select()
-                    filter {
-                        eq("id", roomId)
-                    }
-                }.decodeSingleOrNull<RoomModel>()
-
-            initialRoom?.let {
+            room.collect{
+                Log.d("MatchRepositoryImpl", "startRealtimeRoomListener: $it")
                 send(it)
             }
 
-            roomChangeFlow.onEach { action ->
-                action.record.let { jsonObject ->
-                    val room = Json.decodeFromJsonElement<RoomModel>(jsonObject)
-                    Log.d("MatchRepositoryImpl", "Room updated: $room")
-                    send(room)
-                }
-            }.launchIn(this)
+            channel.subscribe()
 
             awaitClose {
                 launch { // launch a new coroutine for unsubscribe
@@ -224,15 +217,15 @@ class MatchRepositoryImpl @Inject constructor(
         try {
             supabaseClient
                 .from("rooms")
-                .delete{
+                .delete {
                     filter {
-                        eq("id",roomId)
+                        eq("id", roomId)
                     }
                 }
 
             emit(Result.Success(Unit))
 
-        }catch (e:Exception){
+        } catch (e: Exception) {
             Log.d("MatchRepositoryImpl", "deleteRoomUseCase: ${e.message}")
             emit(Result.Error(DataError.Remote.ServerError))
         }
