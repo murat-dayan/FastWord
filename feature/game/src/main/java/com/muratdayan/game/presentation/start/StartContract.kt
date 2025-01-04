@@ -3,6 +3,7 @@ package com.muratdayan.game.presentation.start
 import com.muratdayan.domain.model.UserDataModel
 import com.muratdayan.game.domain.model.QuestionModel
 import com.muratdayan.game.domain.model.RoomModel
+import com.muratdayan.game.domain.model.RoomRoundModel
 
 object StartContract {
 
@@ -11,7 +12,8 @@ object StartContract {
         val userInfo: UserDataModel? = null,
         val question: QuestionModel? = null,
         val opponentInfo: UserDataModel? = null,
-        val room: RoomModel? = null
+        val room: RoomModel? = null,
+        val roomRound: RoomRoundModel? = null,
     )
 
     sealed interface UiAction{
