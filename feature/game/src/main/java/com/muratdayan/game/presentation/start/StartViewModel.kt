@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.muratdayan.common.Result
 import com.muratdayan.domain.usecase.GetUserInfoDomainUseCase
 import com.muratdayan.game.domain.usecase.GetQuestionUseCase
+import com.muratdayan.game.domain.usecase.GetRoomRoundUseCase
 import com.muratdayan.game.domain.usecase.GetRoomUseCase
 import com.muratdayan.game.presentation.base.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,7 +23,8 @@ import javax.inject.Inject
 class StartViewModel @Inject constructor(
     getUserInfoDomainUseCase: GetUserInfoDomainUseCase,
     private val getRoomUseCase: GetRoomUseCase,
-    private val getRandomQuestionUseCase: GetQuestionUseCase
+    private val getRandomQuestionUseCase: GetQuestionUseCase,
+    private val getRoomRoundUseCase: GetRoomRoundUseCase
 ) : BaseViewModel(getUserInfoDomainUseCase){
 
     private val _uiState = MutableStateFlow(StartContract.UiState())
@@ -44,6 +46,26 @@ class StartViewModel @Inject constructor(
             is StartContract.UiAction.GetRoom -> {
                 getRoom(action.roomId)
             }
+        }
+    }
+
+    private fun getRoomRound(roomRoundId:String){
+        viewModelScope.launch {
+            updateUiState { copy(isLoading = true) }
+            getRoomRoundUseCase.invoke(roomRoundId)
+                .collect{roomRoundResult->
+                    when(roomRoundResult){
+                        is Result.Error -> {
+                            updateUiState { copy(isLoading = false) }
+                            Log.e("StartViewModel","getRoomRound: ${roomRoundResult.error}")
+                        }
+                        is Result.Success -> {
+                            updateUiState { copy(isLoading = false,roomRound = roomRoundResult.data) }
+
+                            getQuestion(roomRoundResult.data.question_id)
+                        }
+                    }
+                }
         }
     }
 
@@ -88,6 +110,7 @@ class StartViewModel @Inject constructor(
                     }
                     is Result.Success -> {
                         updateUiState { copy(isLoading = false,room = getRoomResult.data) }
+                        getRoomResult.data.id?.let { getRoomRound(it) }
                     }
                 }
             }
