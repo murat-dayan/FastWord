@@ -12,6 +12,9 @@ import io.github.jan.supabase.gotrue.providers.Facebook
 import io.github.jan.supabase.postgrest.Postgrest
 import io.github.jan.supabase.realtime.Realtime
 import io.github.jan.supabase.storage.Storage
+import io.ktor.client.engine.okhttp.OkHttpConfig
+import io.ktor.client.engine.okhttp.OkHttpEngine
+import io.ktor.client.plugins.websocket.WebSockets
 import javax.inject.Singleton
 
 @Module
@@ -20,14 +23,17 @@ object SupabaseModule {
 
     @Provides
     @Singleton
-    fun provideSupabaseClient() : SupabaseClient{
+    fun provideSupabaseClient(): SupabaseClient {
         val supabaseUrl = BuildConfig.SUPABASE_URL
         val supabaseKey = BuildConfig.SUPABASE_KEY
-        return createSupabaseClient(supabaseUrl = supabaseUrl, supabaseKey = supabaseKey){
+        return createSupabaseClient(supabaseUrl = supabaseUrl, supabaseKey = supabaseKey) {
             install(Realtime)
             install(Postgrest)
             install(Auth)
             install(Storage)
+            httpEngine = OkHttpEngine(
+                config = OkHttpConfig()
+            )
         }
     }
 }
